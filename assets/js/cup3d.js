@@ -132,6 +132,13 @@ window.CUP3D = (function () {
     host.style.setProperty('--lid-top', LID_TOP + 'px');
     host.style.setProperty('--zoom', '1');
 
+    /* The lighting overlay is a rectangle, but the cup is a frustum — so
+       without these the overlay's dark edge hangs in the air either side of
+       the narrow base. They let the CSS clip it to the real silhouette. */
+    var shadeH = (BODY_TOP + BODY_H) - LID_TOP;
+    host.style.setProperty('--shade-body', (((BODY_TOP - LID_TOP) / shadeH) * 100).toFixed(2) + '%');
+    host.style.setProperty('--shade-inset', (((1 - R_BASE / R_TOP) / 2) * 100).toFixed(2) + '%');
+
     var scene = el('c3d__scene', host);
     var obj = el('c3d__obj', scene);
 

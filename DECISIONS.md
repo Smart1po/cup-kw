@@ -1,5 +1,35 @@
 # Decisions, and why
 
+## The marque rebuild
+
+The site was rebuilt against the reference the client gave: Aston Martin's
+structure and Bentley's entrance. What that actually meant in practice:
+
+- **Frames, not bands.** Each section is one idea at full height — a label, one
+  line, one way out. Prose was cut hard. If a paragraph runs past three lines it
+  is almost always two sentences that should have been one.
+- **Two type registers and no more.** Display, very large and tight; micro,
+  small and widely tracked, for labels, nav and buttons. Arabic drops the
+  tracking and the uppercasing, because tracking damages its joins and it has
+  no case to change.
+- **No nav bar.** A hamburger, a centred wordmark, one action. The menu is a
+  frame of its own, which is what gives the language, motion, theme and accent
+  controls room to be labelled instead of crowded into chips.
+- **The accent belongs to the visitor**, stored separately for day and night.
+  Day offers six dark colours (they carry white button text), night offers six
+  light ones (they carry near-black). The picker cannot be used to make the site
+  unreadable — that is the difference between a colour choice and a trap.
+- **The entrance runs on every load**, as asked. The cost is paid down: capped
+  at 2.2 seconds, ended by any key or tap, and removed entirely under reduced
+  motion. It is a curtain in front of a finished room, never a gate in front of
+  an empty one — the page is fully rendered behind it the whole time.
+
+The count to one hundred is theatre and is written as such: paced, not polled.
+It does not pretend to measure a load that has already happened.
+
+---
+
+
 This file exists so that somebody editing this repository — including us in three months —
 does not undo a choice without knowing what it cost to make.
 

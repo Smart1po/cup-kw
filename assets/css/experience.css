@@ -1,178 +1,168 @@
-/* The experience layer: waiting screen, the show, the character, the assistant
-   and the furniture.
+/* The experience layer: the entrance, the menu, the colour picker, the cup,
+   the frames of photography, and the assistant.
 
-   Everything here is additive. None of it mounts without JavaScript, and the
-   pages underneath are complete without any of it. Load it after cup.css. */
+   Additive. None of it mounts without JavaScript, and the pages underneath
+   stay complete. Load after cup.css. */
 
-/* ---- day / night switch ---- */
+/* =========================================================================
+   THE ENTRANCE
+   A count to one hundred and a curtain. It runs on arrival and on every
+   refresh, because that is what was asked for — but it is capped, skippable
+   on any key or tap, and removed entirely when reduced motion is on.
+   ========================================================================= */
 
-.chip--icon { display: inline-flex; align-items: center; gap: .45rem; }
-
-.schemeicon {
-  inline-size: 1rem; block-size: 1rem; border-radius: 50%; flex: none;
-  display: block; background: var(--ink);
-}
-/* The moon is the sun with a bite taken out of it — one element rather than two
-   icons, and it swaps instantly. */
-.schemeicon[data-shows="dark"] {
-  background: transparent;
-  box-shadow: inset -4px -1px 0 0 var(--ink);
-}
-.schemetext { font-size: var(--step--1); }
-
-/* ---- back to top ---- */
-
-.totop {
-  position: fixed; inset-block-end: 1.1rem; inset-inline-start: 1.1rem;
-  inline-size: 46px; block-size: 46px; border-radius: 50%;
-  display: grid; place-items: center; z-index: 40;
-  background: var(--accent); color: var(--accent-ink);
-  border: 0; cursor: pointer; padding: 0;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, .28);
-  opacity: 0; transform: translateY(12px); pointer-events: none;
-  transition: opacity calc(.25s * var(--motion)) ease,
-              transform calc(.25s * var(--motion)) ease;
-}
-.totop.is-in { opacity: 1; transform: none; pointer-events: auto; }
-.totop svg { inline-size: 22px; block-size: 22px; }
-.totop:hover { filter: brightness(1.12); }
-
-/* ---- the waiting screen ---- */
-
-.wait {
-  position: fixed; inset: 0; z-index: 90;
+.intro {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--bg);
   display: grid; place-items: center;
-  background: var(--paper);
-  opacity: 0; pointer-events: none;
-  transition: opacity .28s ease;
+  transition: clip-path 1s cubic-bezier(.7, 0, .2, 1), opacity .4s ease .6s;
+  clip-path: inset(0 0 0 0);
 }
-.wait.is-on { opacity: 1; pointer-events: auto; }
-
-.wait__in { display: grid; justify-items: center; gap: 1.2rem; padding: 2rem; text-align: center; }
-.wait__mark svg { inline-size: clamp(84px, 22vw, 120px); block-size: auto; }
-
-.wait__lid, .wait__straw { fill: var(--ink); }
-.wait__outline { fill: none; stroke: var(--ink); stroke-width: 3; }
-.wait__glass { fill: var(--paper-raised); }
-
-/* The cup filling is the whole animation: one rectangle rising behind a clip
-   path shaped like the cup. */
-.wait__fill { fill: var(--accent); }
-.wait.is-on .wait__fill { animation: pour calc(1.5s * var(--motion)) ease-in-out infinite; }
-@keyframes pour {
-  0%   { transform: translateY(112px); }
-  55%  { transform: translateY(26px); }
-  100% { transform: translateY(112px); }
-}
-:root[data-motion="off"] .wait__fill { transform: translateY(50px); animation: none; }
-
-.wait__line {
-  font-size: var(--step-1); max-inline-size: 24rem; margin: 0;
-  color: var(--ink); font-weight: 600;
-}
-.wait__skip { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
-
-/* ---- the collection, properly ----
-   Colour is the thing being chosen, so the colour is the control. The old pills
-   put a small dot beside a word; these are swatches you can actually judge. */
-
-.palette {
-  display: grid; gap: .8rem; padding: 0; margin: 0; border: 0;
-  grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
-}
-.palette .swatch { position: relative; }
-.palette .swatch input {
-  position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer;
-}
-.palette .swatch span {
-  display: grid; justify-items: center; gap: .45rem;
-  padding: .55rem .35rem; border-radius: 12px; cursor: pointer;
-  border: 2px solid transparent; background: transparent;
-  font-size: var(--step--1); line-height: 1.25; text-align: center;
-}
-/* A flat disc reads as a paint chip. The inset shadows give it a shoulder, so
-   it reads as an object the colour of the cup. */
-.palette .swatch span::before {
-  content: ""; inline-size: 100%; aspect-ratio: 1; border-radius: 50%;
-  background: var(--sw); border: 1px solid rgba(0, 0, 0, .18);
-  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, .30),
-              inset 5px 6px 12px rgba(255, 255, 255, .16);
-  transition: transform calc(.2s * var(--motion)) ease;
-}
-.palette .swatch span:hover::before { transform: scale(1.07); }
-.palette .swatch input:checked + span { border-color: var(--accent); font-weight: 700; }
-.palette .swatch input:checked + span::before {
-  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, .30),
-              inset 5px 6px 12px rgba(255, 255, 255, .16),
-              0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
-}
-.palette .swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-/* ---- the face ----
-   Sclera and pupil are fixed colours, not tokens, because they have to read as
-   eyes on all fourteen collection colours — cream through matte black. */
-
-/* No margin offset here: cup3d.js already centres this with translateX(-50%)
-   in its transform, and doing it twice pushes the face off the side of the cup. */
-.c3d__face {
-  position: absolute; left: 50%; inline-size: 78px;
-  display: flex; justify-content: center; gap: 14px;
-  backface-visibility: hidden; pointer-events: none;
-  opacity: 0; transition: opacity calc(.3s * var(--motion)) ease;
-  --look-x: 0; --look-y: 0;
-}
-.c3d[data-face] .c3d__face { opacity: 1; }
-
-/* A face and a technical line drawing on the same panel compete, and the
-   drawing wins on visual weight while the face wins on meaning. When the cup
-   has a face, the artwork stands down. */
-.c3d[data-face] .c3d__blueprint { opacity: 0; }
-
-.c3d__eye {
-  inline-size: 17px; block-size: 19px; border-radius: 50%;
-  background: #F6F1E7; position: relative; flex: none;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
-  transition: block-size calc(.18s * var(--motion)) ease;
-}
-.c3d__pupil {
-  position: absolute; inline-size: 8px; block-size: 8px; border-radius: 50%;
-  background: #241F1B; inset-block-start: 50%; inset-inline-start: 50%;
-  transform: translate(calc(-50% + (var(--look-x) * 4px)), calc(-50% + (var(--look-y) * 3px)));
-  transition: transform calc(.2s * var(--motion)) ease;
+.intro.is-out {
+  /* The curtain lifts rather than fading — the page is already behind it. */
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
 }
 
-.c3d[data-face="idle"] .c3d__eye { animation: blink 5s infinite; }
-:root[data-motion="off"] .c3d__eye { animation: none !important; }
-@keyframes blink {
-  0%, 92%, 100% { block-size: 19px; }
-  95%, 97%      { block-size: 3px; }
+.intro__in { display: grid; justify-items: center; gap: 2.5rem; text-align: center; padding: var(--bleed); }
+
+.intro__mark {
+  font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 700; letter-spacing: -.05em;
+  direction: ltr; line-height: 1;
 }
+.intro__mark b { color: var(--accent); }
 
-/* Squinting against the afternoon. */
-.c3d[data-face="heat"] .c3d__eye { block-size: 7px; }
-.c3d[data-face="heat"] .c3d__pupil { block-size: 5px; }
-
-/* Wide, and very slightly shivering. */
-.c3d[data-face="cold"] .c3d__eye { block-size: 21px; }
-
-/* Looking out of the window. */
-.c3d[data-face="car"] .c3d__face { --look-x: .9; }
-
-/* Asleep in the bag. */
-.c3d[data-face="bag"] .c3d__eye { block-size: 3px; border-radius: 3px; }
-.c3d[data-face="bag"] .c3d__pupil { opacity: 0; }
-
-/* Held, and pleased about it. Arc eyes are the whole trick for a happy face. */
-.c3d[data-face="held"] .c3d__eye,
-.c3d[data-face="proud"] .c3d__eye {
-  block-size: 10px; background: transparent; box-shadow: none;
-  border-block-start: 3px solid #F6F1E7;
-  border-radius: 50% 50% 0 0;
+/* The count. Tabular so the digits do not jitter as they climb. */
+.intro__count {
+  font-size: clamp(3.5rem, 16vw, 9rem); font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: -.05em;
+  line-height: 1; color: var(--fg); direction: ltr;
 }
-.c3d[data-face="held"] .c3d__pupil,
-.c3d[data-face="proud"] .c3d__pupil { opacity: 0; }
+.intro__count sup { font-size: .3em; vertical-align: super; color: var(--fg-dim); margin-inline-start: .15em; }
 
-/* ---- handle and blueprint ---- */
+.intro__bar { inline-size: min(70vw, 22rem); block-size: 1px; background: var(--line); position: relative; }
+.intro__bar i { position: absolute; inset-block: 0; inset-inline-start: 0; inline-size: 0%; background: var(--accent); display: block; }
+
+.intro__line { font-size: var(--micro); text-transform: uppercase; letter-spacing: .22em; color: var(--fg-dim); min-block-size: 1.2em; }
+html[lang="ar"] .intro__line { text-transform: none; letter-spacing: 0; }
+
+.intro__skip {
+  position: absolute; inset-block-end: var(--bleed); inset-inline-end: var(--bleed);
+  font-size: var(--micro); letter-spacing: .2em; text-transform: uppercase;
+  color: var(--fg-dim); background: none; border: 0; cursor: pointer; font-family: inherit;
+}
+html[lang="ar"] .intro__skip { text-transform: none; letter-spacing: 0; }
+
+/* =========================================================================
+   THE MENU
+   Full frame, six words, one column. Not a nav bar.
+   ========================================================================= */
+
+.menu {
+  position: fixed; inset: 0; z-index: 95;
+  background: var(--bg);
+  display: grid; align-content: center;
+  padding: 6rem var(--bleed) var(--bleed);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .7s cubic-bezier(.7, 0, .2, 1);
+  overflow-y: auto;
+}
+.menu.is-open { clip-path: inset(0 0 0 0); }
+.menu[hidden] { display: none; }
+
+.menu__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; inline-size: min(100%, 82rem); margin-inline: auto; }
+.menu__list li { border-block-end: 1px solid var(--line); }
+.menu__link {
+  display: flex; align-items: baseline; gap: 1.5rem;
+  padding-block: clamp(.7rem, 2.2vw, 1.4rem);
+  text-decoration: none; color: var(--fg);
+  font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.05;
+  transition: color calc(.25s * var(--motion)) ease, padding-inline-start calc(.25s * var(--motion)) ease;
+}
+html[lang="ar"] .menu__link { letter-spacing: 0; }
+.menu__link:hover { color: var(--accent); padding-inline-start: 1rem; }
+.menu__link .n { font-size: var(--micro); letter-spacing: .2em; color: var(--fg-dim); font-weight: 600; direction: ltr; }
+.menu__foot { inline-size: min(100%, 82rem); margin-inline: auto; margin-block-start: 2.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+
+/* =========================================================================
+   THE COLOUR PICKER
+   The visitor's accent, kept separately for day and night, because a colour
+   that sings on cream is often illegible on charcoal.
+   ========================================================================= */
+
+.picker { display: grid; gap: 1rem; }
+.picker__row { display: flex; gap: .55rem; flex-wrap: wrap; align-items: center; }
+.picker__dot {
+  inline-size: 30px; block-size: 30px; border-radius: 50%; padding: 0;
+  border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
+  background: var(--c); cursor: pointer; position: relative;
+}
+.picker__dot[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg); }
+.picker__dot:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+/* =========================================================================
+   THE CUP
+   ========================================================================= */
+
+.c3d {
+  --cup-body: #2A3A52;
+  --cup-ink: #F4EEE3;
+  display: block; inline-size: 100%;
+  perspective: 1500px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  cursor: grab;
+  position: relative;
+  user-select: none; -webkit-user-select: none;
+  /* The cup is a physical object and does not mirror in Arabic — a lid is on
+     the same side in every language. Forcing LTR inside makes every logical
+     property resolve identically in both directions. */
+  direction: ltr;
+}
+.c3d.is-dragging { cursor: grabbing; }
+.c3d:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+
+.c3d__scene { position: relative; block-size: var(--scene-h, 420px); inline-size: 100%; z-index: 0; }
+.c3d__obj {
+  position: absolute; left: 50%; inset-block-start: 0; inline-size: 0; block-size: 0;
+  transform-style: preserve-3d; will-change: transform; z-index: 1;
+}
+.c3d__group { position: absolute; left: 0; inline-size: 0; block-size: 0; transform-style: preserve-3d; }
+
+/* Matte anodised steel: a soft vertical sheen over the body colour, no
+   specular highlight. A shiny cup would read as plastic. */
+.c3d__panel {
+  position: absolute; inset-block-start: 0; left: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(255,255,255,.07) 0%,
+      rgba(255,255,255,.02) 22%,
+      rgba(0,0,0,.05) 72%,
+      rgba(0,0,0,.12) 100%),
+    var(--cup-body);
+  backface-visibility: hidden;
+}
+.c3d__disc { position: absolute; left: 50%; border-radius: 50%; background: var(--cup-body); backface-visibility: hidden; }
+
+.c3d__lid .c3d__panel { background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,.10)), color-mix(in srgb, var(--cup-body) 92%, #000); }
+.c3d__lidtop {
+  background:
+    radial-gradient(ellipse at 40% 34%, rgba(255,255,255,.13), transparent 60%),
+    color-mix(in srgb, var(--cup-body) 86%, #000);
+  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--cup-body) 74%, #000);
+}
+.c3d__hole { background: color-mix(in srgb, var(--cup-body) 62%, #000); box-shadow: inset 0 0 7px rgba(0,0,0,.6); }
+.c3d__straw .c3d__panel { background: color-mix(in srgb, var(--cup-body) 84%, #000); }
+.c3d__strawtop { background: color-mix(in srgb, var(--cup-body) 50%, #000); }
+.c3d__base { background: #16161A; box-shadow: inset 0 0 0 2px rgba(255,255,255,.05); }
+
+.c3d__band .c3d__panel {
+  background-color: #6B2028;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 6px, #E9DCC6 6px 7.5px),
+    repeating-linear-gradient(-45deg, transparent 0 6px, #E9DCC6 6px 7.5px);
+  box-shadow: inset 0 3px 0 #E9DCC6, inset 0 -3px 0 #E9DCC6;
+}
 
 .c3d__handle {
   position: absolute; left: 0; inline-size: 26px;
@@ -184,378 +174,341 @@
 }
 .c3d.has-handle .c3d__handle { opacity: 1; }
 
-/* The architectural line artwork, reduced to what survives at model size. */
-.c3d__blueprint {
-  inline-size: 52px; block-size: 74px; opacity: .5;
-  background-image:
-    linear-gradient(currentColor, currentColor),
-    linear-gradient(currentColor, currentColor),
-    linear-gradient(currentColor, currentColor),
-    linear-gradient(currentColor, currentColor),
-    linear-gradient(currentColor, currentColor);
-  background-repeat: no-repeat;
-  background-size: 1px 100%, 1px 72%, 1px 86%, 22px 1px, 32px 1px;
-  background-position: 12px 100%, 25px 100%, 38px 100%, 8px 34%, 6px 62%;
+/* No margin offset: cup3d.js centres these with translateX(-50%) already, and
+   doing it twice pushes the printing off the side of the cup. */
+.c3d__decal {
+  position: absolute; left: 50%; inline-size: 86px;
+  display: grid; justify-items: center; gap: 6px;
+  color: var(--cup-ink); font-family: var(--face-display);
+  backface-visibility: hidden; pointer-events: none;
 }
+.c3d__logo { border: 1.5px solid currentColor; padding: 3px 10px; font-size: 12px; font-weight: 600; letter-spacing: .1em; }
+.c3d__blueprint {
+  inline-size: 46px; block-size: 78px; opacity: .8;
+  background-image: radial-gradient(currentColor .9px, transparent 1px);
+  background-size: 6px 6px;
+}
+.c3d__word { font-size: 9px; letter-spacing: .16em; opacity: .9; }
+.c3d__eng {
+  min-block-size: 18px; font-weight: 600; text-align: center; inline-size: 86px;
+  white-space: nowrap; overflow: hidden;
+  border-block-start: 1px solid currentColor; padding-block-start: 5px; opacity: .95;
+}
+.c3d__eng:empty { border-block-start: 0; }
+
+/* The face. Fixed colours, because they must read as eyes on all fourteen
+   collection colours, cream through matte black. */
+.c3d__face {
+  position: absolute; left: 50%; inline-size: 78px;
+  display: flex; justify-content: center; gap: 14px;
+  backface-visibility: hidden; pointer-events: none;
+  opacity: 0; transition: opacity calc(.3s * var(--motion)) ease;
+  --look-x: 0; --look-y: 0;
+}
+.c3d[data-face] .c3d__face { opacity: 1; }
+/* A face and a technical texture on the same panel compete. The face wins. */
+.c3d[data-face] .c3d__blueprint { opacity: 0; }
+
+.c3d__eye {
+  inline-size: 16px; block-size: 18px; border-radius: 50%;
+  background: #F6F1E7; position: relative; flex: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
+  transition: block-size calc(.18s * var(--motion)) ease;
+}
+.c3d__pupil {
+  position: absolute; inline-size: 7px; block-size: 7px; border-radius: 50%;
+  background: #201C18; inset-block-start: 50%; inset-inline-start: 50%;
+  transform: translate(calc(-50% + (var(--look-x) * 4px)), calc(-50% + (var(--look-y) * 3px)));
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+.c3d[data-face="idle"] .c3d__eye { animation: blink 5s infinite; }
+:root[data-motion="off"] .c3d__eye { animation: none !important; }
+@keyframes blink { 0%, 92%, 100% { block-size: 18px; } 95%, 97% { block-size: 3px; } }
+.c3d[data-face="heat"] .c3d__eye { block-size: 7px; }
+.c3d[data-face="cold"] .c3d__eye { block-size: 20px; }
+.c3d[data-face="car"] .c3d__face { --look-x: .9; }
+.c3d[data-face="bag"] .c3d__eye { block-size: 3px; border-radius: 3px; }
+.c3d[data-face="bag"] .c3d__pupil { opacity: 0; }
+.c3d[data-face="held"] .c3d__eye, .c3d[data-face="proud"] .c3d__eye {
+  block-size: 9px; background: transparent; box-shadow: none;
+  border-block-start: 2.5px solid #F6F1E7; border-radius: 50% 50% 0 0;
+}
+.c3d[data-face="held"] .c3d__pupil, .c3d[data-face="proud"] .c3d__pupil { opacity: 0; }
+
+/* Fixed lighting, scaled about the same origin the model scales about — get
+   that origin wrong and zooming slides the light off the cup. */
+.c3d__shade {
+  position: absolute; z-index: 4; pointer-events: none; left: 50%;
+  inline-size: calc(var(--cup-r) * 2 + 6px);
+  margin-left: calc((var(--cup-r) * -1) - 3px);
+  inset-block-start: var(--lid-top);
+  block-size: calc(var(--body-top) + var(--body-h) - var(--lid-top));
+  background: linear-gradient(90deg,
+    rgba(0,0,0,.44) 0%, rgba(0,0,0,.20) 12%, rgba(0,0,0,.01) 30%,
+    rgba(255,255,255,.14) 40%, rgba(255,255,255,.03) 50%,
+    rgba(0,0,0,.06) 66%, rgba(0,0,0,.26) 86%, rgba(0,0,0,.46) 100%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) + 3px) calc(var(--lid-top) * -1);
+  /* Full width down the lid, then narrowing with the body, so the overlay
+     stops at the cup instead of hanging in the air beside the base. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% var(--shade-body, 0%),
+    calc(100% - var(--shade-inset, 0%)) 100%,
+    var(--shade-inset, 0%) 100%,
+    0 var(--shade-body, 0%));
+}
+.c3d__shadow {
+  position: absolute; z-index: 0; pointer-events: none; left: 50%;
+  inline-size: calc(var(--cup-r) * 3.4); margin-left: calc(var(--cup-r) * -1.7);
+  inset-block-start: calc(var(--body-top) + var(--body-h) - 12px);
+  block-size: 34px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.42), rgba(0,0,0,0) 70%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) * 1.7) calc((var(--body-top) + var(--body-h) - 12px) * -1);
+}
+
+.c3d__zoombar {
+  position: absolute; z-index: 6; inset-block-end: 0; left: 50%; transform: translateX(-50%);
+  display: flex; gap: .3rem; opacity: .35;
+  transition: opacity calc(.2s * var(--motion)) ease;
+}
+.c3d:hover .c3d__zoombar, .c3d:focus-within .c3d__zoombar { opacity: 1; }
+.c3d__zoombtn {
+  inline-size: 34px; block-size: 34px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--fg);
+  font: inherit; font-size: .95rem; line-height: 1; cursor: pointer; padding: 0;
+  display: grid; place-items: center;
+}
+.c3d__zoombtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* =========================================================================
+   THE COLLECTION
+   ========================================================================= */
+
+.palette { display: flex; gap: .6rem; flex-wrap: wrap; padding: 0; margin: 0; border: 0; }
+.palette .swatch { position: relative; }
+.palette .swatch input { position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
+.palette .swatch span {
+  display: grid; place-items: center; cursor: pointer;
+  inline-size: 42px; block-size: 42px; border-radius: 50%;
+  background: var(--sw); border: 1px solid rgba(0,0,0,.25);
+  box-shadow: inset -5px -6px 12px rgba(0,0,0,.32), inset 4px 5px 10px rgba(255,255,255,.14);
+  font-size: 0;
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+.palette .swatch span:hover { transform: scale(1.1); }
+.palette .swatch input:checked + span { box-shadow: inset -5px -6px 12px rgba(0,0,0,.32), 0 0 0 2px var(--bg), 0 0 0 4px var(--fg); }
+.palette .swatch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 4px; }
+/* The name is announced, not printed — fourteen labels in a row is a wall. */
+.palette .swatch span::after { content: attr(data-name); position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+
+.swatchname { font-size: var(--micro); letter-spacing: .2em; text-transform: uppercase; color: var(--fg-dim); min-block-size: 1.2em; }
+html[lang="ar"] .swatchname { text-transform: none; letter-spacing: 0; }
+
+.scripttoggle { display: flex; gap: 0; border: 1px solid var(--line); inline-size: fit-content; }
+.scripttoggle .swatch input { position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
+.scripttoggle .swatch span {
+  display: block; padding: .8rem 1.6rem; cursor: pointer;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .18em; font-weight: 600;
+}
+html[lang="ar"] .scripttoggle .swatch span { text-transform: none; letter-spacing: 0; }
+.scripttoggle .swatch input:checked + span { background: var(--accent); color: var(--accent-fg); }
+
+.counter { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--fg); }
+.counter[data-state="over"] { color: #E8A972; }
+
+/* =========================================================================
+   PHOTOGRAPHY
+   ========================================================================= */
+
+.gallery { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.shot { margin: 0; position: relative; overflow: hidden; }
+.shot img { inline-size: 100%; aspect-ratio: 3 / 4; object-fit: cover; transition: transform calc(.8s * var(--motion)) ease; }
+.shot:hover img { transform: scale(1.04); }
+.shot figcaption {
+  position: absolute; inset-block-end: 0; inset-inline: 0; padding: 1rem;
+  font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase; color: #F4EEE3;
+  background: linear-gradient(to top, rgba(0,0,0,.75), transparent);
+}
+html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
+
+/* A full-bleed photographic frame. */
+.photoframe { position: relative; min-block-size: 100svh; display: grid; align-items: end; overflow: hidden; }
+.photoframe img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; z-index: 0; }
+.photoframe__in { position: relative; z-index: 2; padding: var(--bleed); inline-size: min(100%, 82rem); margin-inline: auto; }
+.photoframe::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.25) 45%, transparent 75%);
+}
+.photoframe .display, .photoframe .micro, .photoframe .lede { color: #F4EEE3; }
+.photoframe .micro, .photoframe .lede { color: #CFC7B8; }
 
 /* =========================================================================
    THE SHOW
    ========================================================================= */
 
 .show { display: grid; gap: 1.5rem; }
-@media (min-width: 56rem) {
-  .show { grid-template-columns: 1fr 1fr; align-items: center; }
-  .show__controls { grid-column: 1 / -1; }
-}
+@media (min-width: 60rem) { .show { grid-template-columns: 1.1fr .9fr; align-items: center; } .show__controls { grid-column: 1 / -1; } }
 
 .show__stage {
   position: relative; display: grid; place-items: center;
-  min-block-size: 340px; border-radius: 20px; overflow: hidden;
-  background:
-    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
-    var(--paper-raised);
-  border: 1px solid var(--rule);
-  transition: background calc(.6s * var(--motion)) ease;
+  min-block-size: min(62svh, 460px); overflow: hidden;
+  background: var(--bg-2); border: 1px solid var(--line);
 }
 .show__cup { position: relative; z-index: 2; inline-size: 100%; }
+.show__cup[hidden] { display: none; }
+.show__photo { position: absolute; inset: 0; z-index: 2; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.show__photo[hidden] { display: none; }
 
 .show__props { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.show__props i { position: absolute; display: block; opacity: 0;
-  transition: opacity calc(.5s * var(--motion)) ease; }
+.show__props i { position: absolute; display: block; opacity: 0; transition: opacity calc(.5s * var(--motion)) ease; }
 
-/* --- morning: warm light --- */
-.show__stage[data-prop="hot"] { background:
-  radial-gradient(120% 80% at 50% 10%, rgba(214, 138, 60, .30), transparent 68%), var(--paper-raised); }
-/* Steam: three rising strokes. */
 .show__stage[data-prop="hot"] i:nth-child(-n+3) {
-  opacity: .7; inline-size: 3px; block-size: 46px; border-radius: 3px;
-  background: linear-gradient(to top, transparent, var(--ink-soft));
-  inset-block-start: 14%; animation: steam calc(2.6s * var(--motion)) ease-in-out infinite;
+  opacity: .6; inline-size: 3px; block-size: 46px; border-radius: 3px;
+  background: linear-gradient(to top, transparent, var(--fg-dim));
+  inset-block-start: 12%; animation: steam calc(2.6s * var(--motion)) ease-in-out infinite;
 }
 .show__stage[data-prop="hot"] i:nth-child(1) { inset-inline-start: 44%; }
 .show__stage[data-prop="hot"] i:nth-child(2) { inset-inline-start: 50%; animation-delay: .5s; }
 .show__stage[data-prop="hot"] i:nth-child(3) { inset-inline-start: 56%; animation-delay: 1s; }
-@keyframes steam {
-  0%   { transform: translateY(10px) scaleY(.6); opacity: 0; }
-  40%  { opacity: .75; }
-  100% { transform: translateY(-30px) scaleY(1.15); opacity: 0; }
-}
+@keyframes steam { 0% { transform: translateY(10px) scaleY(.6); opacity: 0; } 40% { opacity: .7; } 100% { transform: translateY(-30px) scaleY(1.15); opacity: 0; } }
 
-/* --- noon: the heat --- */
-.show__stage[data-prop="heat"] { background:
-  radial-gradient(120% 90% at 50% 0%, rgba(200, 90, 40, .34), transparent 70%), var(--paper-raised); }
-/* Shimmer: horizontal bars that wobble, the way hot air over asphalt reads. */
-.show__stage[data-prop="heat"] i {
-  opacity: .5; inline-size: 62%; block-size: 2px; border-radius: 2px;
-  background: linear-gradient(90deg, transparent, var(--warn), transparent);
-  inset-inline-start: 19%;
-  animation: shimmer calc(2s * var(--motion)) ease-in-out infinite;
-}
-.show__stage[data-prop="heat"] i:nth-child(1) { inset-block-start: 22%; }
-.show__stage[data-prop="heat"] i:nth-child(2) { inset-block-start: 40%; animation-delay: .3s; }
-.show__stage[data-prop="heat"] i:nth-child(3) { inset-block-start: 62%; animation-delay: .6s; }
-.show__stage[data-prop="heat"] i:nth-child(4) { inset-block-start: 80%; animation-delay: .9s; }
-@keyframes shimmer {
-  0%, 100% { transform: translateX(-6px) scaleX(.96); }
-  50%      { transform: translateX(6px) scaleX(1.04); }
-}
-
-/* --- cold --- */
-.show__stage[data-prop="cold"] { background:
-  radial-gradient(120% 90% at 50% 0%, rgba(90, 150, 190, .30), transparent 70%), var(--paper-raised); }
-/* Condensation: four beads running down. */
-.show__stage[data-prop="cold"] i {
-  opacity: .8; inline-size: 7px; block-size: 7px; border-radius: 50%;
-  background: rgba(255, 255, 255, .75); box-shadow: 0 0 6px rgba(255, 255, 255, .5);
-  animation: bead calc(3.4s * var(--motion)) linear infinite;
-}
-.show__stage[data-prop="cold"] i:nth-child(1) { inset-inline-start: 40%; inset-block-start: 30%; }
-.show__stage[data-prop="cold"] i:nth-child(2) { inset-inline-start: 58%; inset-block-start: 26%; animation-delay: .8s; }
-.show__stage[data-prop="cold"] i:nth-child(3) { inset-inline-start: 46%; inset-block-start: 40%; animation-delay: 1.6s; }
-.show__stage[data-prop="cold"] i:nth-child(4) { inset-inline-start: 54%; inset-block-start: 36%; animation-delay: 2.4s; }
-@keyframes bead {
-  0%   { transform: translateY(0); opacity: 0; }
-  15%  { opacity: .85; }
-  100% { transform: translateY(90px); opacity: 0; }
-}
-
-/* --- the car --- */
-.show__stage[data-prop="car"] { background:
-  radial-gradient(120% 90% at 50% 100%, rgba(40, 50, 70, .28), transparent 70%), var(--paper-raised); }
-/* A cup-holder ring under the cup, and a dashboard sweep behind it. */
-.show__stage[data-prop="car"] i:nth-child(1) {
-  opacity: 1; inline-size: 132px; block-size: 34px; border-radius: 50%;
-  border: 3px solid var(--ink-soft); inset-block-end: 16%; inset-inline-start: 50%;
-  margin-inline-start: -66px;
-}
-.show__stage[data-prop="car"] i:nth-child(2) {
-  opacity: .5; inline-size: 150%; block-size: 150px;
-  border-start-start-radius: 60%; border-start-end-radius: 60%;
-  border-block-start: 3px solid var(--ink-soft);
-  inset-block-end: -60px; inset-inline-start: -25%;
-}
-
-/* --- the bag --- */
-.show__stage[data-prop="bag"] { background:
-  radial-gradient(120% 90% at 50% 100%, rgba(30, 30, 34, .32), transparent 68%), var(--paper-raised); }
-/* A bag mouth in front of the cup, so the cup is genuinely inside it.
-   Fixed colours, not tokens: --ink inverts between day and night, and a bag
-   that turns cream at night reads as a cardboard box. A bag is dark in both. */
 .show__stage[data-prop="bag"] i:nth-child(1) {
   opacity: 1; inline-size: 74%; block-size: 40%; inset-block-end: 0; inset-inline-start: 13%;
-  background: #2B2724;
-  border-start-start-radius: 26px; border-start-end-radius: 26px;
-  z-index: 3;
+  background: #211E1A; border-start-start-radius: 26px; border-start-end-radius: 26px; z-index: 3;
 }
 .show__stage[data-prop="bag"] i:nth-child(2) {
   opacity: 1; inline-size: 78%; block-size: 14px; inset-block-end: 39%; inset-inline-start: 11%;
-  background: #4A433C; border-radius: 10px; z-index: 3;
-}
-.show__stage[data-prop="bag"] { align-items: start; padding-block-start: 1rem; }
-
-/* --- held --- */
-.show__stage[data-prop="held"] { background:
-  radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%), var(--paper-raised); }
-/* A hand: a palm and a thumb, in front of the cup. */
-.show__stage[data-prop="held"] i:nth-child(1) {
-  opacity: 1; inline-size: 120px; block-size: 86px;
-  inset-block-end: 22%; inset-inline-start: 50%; margin-inline-start: -60px;
-  background: color-mix(in srgb, var(--warn) 55%, var(--paper));
-  border-radius: 40px 40px 30px 30px; z-index: 3;
-}
-.show__stage[data-prop="held"] i:nth-child(2) {
-  opacity: 1; inline-size: 34px; block-size: 54px;
-  inset-block-end: 42%; inset-inline-start: 50%; margin-inline-start: 42px;
-  background: color-mix(in srgb, var(--warn) 48%, var(--paper));
-  border-radius: 20px; transform: rotate(-18deg); z-index: 4;
+  background: #3E382F; border-radius: 10px; z-index: 3;
 }
 
-/* --- night --- */
-.show__stage[data-prop="night"] { background:
-  radial-gradient(120% 90% at 50% 0%, rgba(60, 70, 110, .38), transparent 70%),
-  color-mix(in srgb, var(--paper-raised) 80%, #0B0A14); }
 .show__stage[data-prop="night"] i {
   opacity: .8; inline-size: 3px; block-size: 3px; border-radius: 50%;
-  background: var(--ink); animation: twinkle calc(3s * var(--motion)) ease-in-out infinite;
+  background: var(--fg); animation: twinkle calc(3s * var(--motion)) ease-in-out infinite;
 }
 .show__stage[data-prop="night"] i:nth-child(1) { inset-inline-start: 24%; inset-block-start: 18%; }
 .show__stage[data-prop="night"] i:nth-child(2) { inset-inline-start: 72%; inset-block-start: 24%; animation-delay: .7s; }
 .show__stage[data-prop="night"] i:nth-child(3) { inset-inline-start: 62%; inset-block-start: 12%; animation-delay: 1.4s; }
 .show__stage[data-prop="night"] i:nth-child(4) { inset-inline-start: 34%; inset-block-start: 30%; animation-delay: 2.1s; }
-@keyframes twinkle { 0%, 100% { opacity: .25; } 50% { opacity: .9; } }
+@keyframes twinkle { 0%, 100% { opacity: .2; } 50% { opacity: .9; } }
 
-/* --- the script --- */
-
-.show__script { position: relative; }
-.show__scene {
-  /* Every scene is in the DOM and readable. The animation only decides which
-     one is foregrounded — it never decides whether the words exist. */
-  padding-block: .5rem;
-  opacity: .38;
-  transition: opacity calc(.4s * var(--motion)) ease;
-  border-inline-start: 3px solid transparent;
-  padding-inline-start: 1rem;
-}
-.show__scene.is-on { opacity: 1; border-inline-start-color: var(--accent); }
-.show__time {
-  font-variant-numeric: tabular-nums; direction: ltr;
-  font-size: var(--step--1); color: var(--accent); font-weight: 700;
-  letter-spacing: .1em; margin: 0 0 .15em;
-}
-html[dir="rtl"] .show__time { text-align: start; }
-.show__h { font-size: var(--step-1); margin: 0 0 .2em; }
-.show__b { margin: 0; color: var(--ink-soft); }
-
-/* With motion off there is no foregrounding to do, so every scene is shown at
-   full strength and the day simply reads as a list. */
-:root[data-motion="off"] .show__scene { opacity: 1; }
 :root[data-motion="off"] .show__props i { animation: none; }
 
-.show__controls { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
-.show__dots { display: flex; gap: .35rem; margin-inline: .3rem; }
-.show__dot {
-  inline-size: 10px; block-size: 10px; border-radius: 50%; padding: 0;
-  border: 1px solid var(--rule); background: transparent; cursor: pointer;
+/* Every scene's words are in the page from the start. The animation only
+   decides which is foregrounded; with motion off the day reads as a list. */
+.show__script { position: relative; display: grid; gap: .2rem; }
+.show__scene {
+  padding: .8rem 0 .8rem 1rem; opacity: .3;
+  border-inline-start: 2px solid transparent;
+  transition: opacity calc(.4s * var(--motion)) ease;
 }
-.show__dot.is-on { background: var(--accent); border-color: var(--accent); }
+.show__scene.is-on { opacity: 1; border-inline-start-color: var(--accent); }
+:root[data-motion="off"] .show__scene { opacity: 1; }
+.show__time { font-size: var(--micro); letter-spacing: .2em; color: var(--accent); font-variant-numeric: tabular-nums; direction: ltr; margin: 0 0 .2em; }
+.show__h { font-size: var(--lede); margin: 0 0 .2em; font-weight: 700; }
+.show__b { margin: 0; color: var(--fg-dim); font-size: var(--small); }
+
+.show__controls { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.show__controls .chip {
+  font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .18em;
+  background: none; color: var(--fg-dim); border: 1px solid var(--line);
+  padding: .55rem 1rem; cursor: pointer;
+}
+html[lang="ar"] .show__controls .chip { text-transform: none; letter-spacing: 0; }
+.show__controls .chip:hover { border-color: var(--accent); color: var(--accent); }
+.show__dots { display: flex; gap: .3rem; margin-inline: .4rem; }
+.show__dot { inline-size: 22px; block-size: 2px; padding: 0; border: 0; background: var(--line); cursor: pointer; }
+.show__dot.is-on { background: var(--accent); }
 
 /* =========================================================================
-   THE ASSISTANT
+   FURNITURE
    ========================================================================= */
 
-.assist { position: fixed; inset-block-end: 1.1rem; inset-inline-end: 1.1rem; z-index: 45; }
+.totop {
+  position: fixed; inset-block-end: 1.2rem; inset-inline-start: 1.2rem;
+  inline-size: 44px; block-size: 44px; z-index: 40;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--bg-2); color: var(--fg); border: 1px solid var(--line);
+  cursor: pointer; padding: 0;
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity calc(.25s * var(--motion)) ease, transform calc(.25s * var(--motion)) ease;
+}
+.totop.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.totop:hover { border-color: var(--accent); color: var(--accent); }
+.totop svg { inline-size: 20px; block-size: 20px; }
 
+.assist { position: fixed; inset-block-end: 1.2rem; inset-inline-end: 1.2rem; z-index: 45; }
 .assist__fab {
-  inline-size: 56px; block-size: 56px; border-radius: 50%;
-  border: 0; cursor: pointer; padding: 0;
-  background: var(--accent); color: var(--accent-ink);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+  inline-size: 52px; block-size: 52px; border-radius: 50%;
+  border: 1px solid var(--accent); cursor: pointer; padding: 0;
+  background: var(--accent); color: var(--accent-fg);
   display: grid; place-items: center;
 }
-.assist__fab:hover { filter: brightness(1.12); }
-/* The mark is the cup, reduced until only the lid and the taper are left. */
+.assist__fab:hover { background: transparent; color: var(--accent); }
 .assist__fabmark {
-  inline-size: 20px; block-size: 26px; display: block; position: relative;
-  border: 2.5px solid currentColor;
-  border-start-start-radius: 3px; border-start-end-radius: 3px;
-  border-end-start-radius: 7px; border-end-end-radius: 7px;
-  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
+  inline-size: 17px; block-size: 23px; display: block; position: relative;
+  border: 2px solid currentColor;
+  border-start-start-radius: 2px; border-start-end-radius: 2px;
+  border-end-start-radius: 6px; border-end-end-radius: 6px;
+  clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%);
 }
 .assist__fabmark::after {
-  content: ""; position: absolute; inset-block-start: -7px; inset-inline-start: 45%;
-  inline-size: 3px; block-size: 8px; background: currentColor; border-radius: 2px;
+  content: ""; position: absolute; inset-block-start: -7px; inset-inline-start: 44%;
+  inline-size: 3px; block-size: 8px; background: currentColor;
 }
 
-/* display:grid below would otherwise beat the hidden attribute, and the panel
-   would open itself on every page load. */
 .assist__panel[hidden] { display: none; }
-
 .assist__panel {
-  position: absolute; inset-block-end: 68px; inset-inline-end: 0;
+  position: absolute; inset-block-end: 64px; inset-inline-end: 0;
   inline-size: min(92vw, 22rem);
-  background: var(--paper-raised); border: 1px solid var(--rule);
-  border-radius: 16px; box-shadow: 0 14px 44px rgba(0, 0, 0, .3);
-  display: grid; gap: .6rem; padding: .9rem;
+  background: var(--bg-2); border: 1px solid var(--line);
+  display: grid; gap: .6rem; padding: 1rem;
 }
 .assist__head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
-.assist__x {
-  border: 0; background: transparent; color: var(--ink-soft);
-  font-size: 1.4rem; line-height: 1; cursor: pointer; padding: .1rem .4rem;
-}
-.assist__note { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
-
-.assist__log {
-  display: grid; gap: .5rem; max-block-size: 44vh; overflow-y: auto;
-  padding-inline-end: .2rem;
-}
-.assist__msg {
-  margin: 0; padding: .55rem .75rem; border-radius: 12px;
-  font-size: var(--step--1); max-inline-size: 90%;
-}
-.assist__msg--bot { background: var(--paper); border: 1px solid var(--rule); justify-self: start; }
-.assist__msg--me { background: var(--accent); color: var(--accent-ink); justify-self: end; }
-
-.assist__chips { display: flex; gap: .35rem; flex-wrap: wrap; }
+.assist__head strong { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; }
+html[lang="ar"] .assist__head strong { text-transform: none; letter-spacing: 0; }
+.assist__x { border: 0; background: none; color: var(--fg-dim); font-size: 1.4rem; line-height: 1; cursor: pointer; padding: .1rem .4rem; }
+.assist__note { font-size: var(--micro); color: var(--fg-dim); margin: 0; letter-spacing: .02em; }
+.assist__log { display: grid; gap: .5rem; max-block-size: 42vh; overflow-y: auto; }
+.assist__msg { margin: 0; padding: .55rem .75rem; font-size: var(--small); max-inline-size: 92%; }
+.assist__msg--bot { background: var(--bg-3); justify-self: start; }
+.assist__msg--me { background: var(--accent); color: var(--accent-fg); justify-self: end; }
+.assist__chips { display: flex; gap: .3rem; flex-wrap: wrap; }
 .assist__chip {
-  font: inherit; font-size: var(--step--1);
-  background: transparent; color: var(--accent);
-  border: 1px solid var(--rule); border-radius: 999px;
-  padding: .3rem .7rem; cursor: pointer; text-align: start;
+  font: inherit; font-size: var(--micro); background: none; color: var(--accent);
+  border: 1px solid var(--line); padding: .35rem .7rem; cursor: pointer; text-align: start;
 }
 .assist__chip:hover { border-color: var(--accent); }
-
 .assist__form { display: flex; gap: .4rem; }
 .assist__input {
-  font: inherit; flex: 1; min-inline-size: 0;
-  padding: .6rem .8rem; border-radius: 10px;
-  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  font: inherit; flex: 1; min-inline-size: 0; padding: .6rem .7rem;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
 }
 .assist__send {
-  font: inherit; font-weight: 600; cursor: pointer;
-  padding: .6rem .9rem; border-radius: 10px; border: 0;
-  background: var(--accent); color: var(--accent-ink);
+  font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .15em;
+  cursor: pointer; padding: .6rem .9rem; border: 0;
+  background: var(--accent); color: var(--accent-fg);
 }
+html[lang="ar"] .assist__send { text-transform: none; letter-spacing: 0; }
 
 @media (max-width: 30rem) {
-  .assist__panel { inline-size: calc(100vw - 2.2rem); }
-  .totop { inline-size: 42px; block-size: 42px; }
+  .assist__panel { inline-size: calc(100vw - 2.4rem); }
+  .totop { inline-size: 40px; block-size: 40px; }
 }
 
-/* ---- zoom controls ----
-   A gesture nobody can see is a feature nobody uses, and on a touch screen
-   there is no wheel at all. */
-.c3d__zoombar {
-  position: absolute; z-index: 6;
-  inset-block-end: .25rem; left: 50%; transform: translateX(-50%);
-  display: flex; gap: .35rem;
-  opacity: .45; transition: opacity calc(.2s * var(--motion)) ease;
-}
-.c3d:hover .c3d__zoombar, .c3d:focus-within .c3d__zoombar { opacity: 1; }
-.c3d__zoombtn {
-  inline-size: 32px; block-size: 32px; border-radius: 50%;
-  border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink);
-  font: inherit; font-size: 1rem; line-height: 1; cursor: pointer; padding: 0;
-  display: grid; place-items: center;
-}
-.c3d__zoombtn:hover { border-color: var(--accent); }
+/* ---- page layouts ---- */
+.authlay { display: grid; gap: clamp(2rem, 6vw, 4rem); align-items: center; }
+@media (min-width: 60rem) { .authlay { grid-template-columns: 1fr .9fr; } .authlay__art { order: 2; } .authlay__form { order: 1; } }
 
-/* ---- the photographs ---- */
-
-.gallery {
-  display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-}
-.shot { margin: 0; display: grid; gap: .55rem; }
-.shot img {
-  inline-size: 100%; block-size: auto; display: block;
-  aspect-ratio: 3 / 4; object-fit: cover;
-  border-radius: var(--radius); border: 1px solid var(--rule);
-  background: var(--paper-raised);
-}
-.shot figcaption { font-size: var(--step--1); color: var(--ink-soft); }
-
-/* A photograph inside the show fills the stage, and the model steps aside. */
-.show__photo {
-  position: absolute; inset: 0; z-index: 2;
-  inline-size: 100%; block-size: 100%; object-fit: cover;
-}
-.show__photo[hidden] { display: none; }
-.show__cup[hidden] { display: none; }
-.show__stage.has-photo { padding: 0; }
-
-/* =========================================================================
-   PAGE LAYOUTS
-   ========================================================================= */
-
-/* The sign-in page. A cup on it because a sign-in screen with nothing but two
-   fields is the coldest page on any website. */
-.authlay { display: grid; gap: clamp(1.5rem, 5vw, 3rem); align-items: center; }
-@media (min-width: 54rem) {
-  .authlay { grid-template-columns: .85fr 1fr; }
-  /* Form first in the source so keyboard and screen-reader users reach the
-     thing they came for without walking past a decorative model. */
-  .authlay__art { order: 2; }
-  .authlay__form { order: 1; }
-}
-
-.cupstage--big .c3d { max-inline-size: 460px; margin-inline: auto; }
-
-/* Password reveal. A real accessibility feature on phones, where long
-   passwords are mistyped constantly. */
 .pwwrap { position: relative; display: flex; }
 .pwwrap input { padding-inline-end: 3rem; }
 .pweye {
-  position: absolute; inset-inline-end: .5rem; inset-block-start: 50%;
-  transform: translateY(-50%);
-  inline-size: 2rem; block-size: 2rem; border-radius: 50%;
-  border: 0; background: transparent; cursor: pointer; padding: 0;
-  display: grid; place-items: center;
+  position: absolute; inset-inline-end: 0; inset-block-start: 50%; transform: translateY(-50%);
+  inline-size: 2.2rem; block-size: 2.2rem; border: 0; background: none; cursor: pointer;
+  display: grid; place-items: center; padding: 0;
 }
-/* The eye is a lens outline with a pupil, drawn from two boxes. Pressed, a
-   stroke crosses it. */
-.pweye::before {
-  content: ""; inline-size: 1.1rem; block-size: 1.1rem; border-radius: 50% 0;
-  border: 2px solid var(--ink-soft); transform: rotate(45deg);
-}
-.pweye::after {
-  content: ""; position: absolute; inline-size: 1.3rem; block-size: 2px;
-  background: var(--ink-soft); transform: rotate(-45deg); opacity: 0;
-}
+.pweye::before { content: ""; inline-size: 1.05rem; block-size: 1.05rem; border-radius: 50% 0; border: 1.5px solid var(--fg-dim); transform: rotate(45deg); }
+.pweye::after { content: ""; position: absolute; inline-size: 1.3rem; block-size: 1.5px; background: var(--fg-dim); transform: rotate(-45deg); opacity: 0; }
 .pweye[aria-pressed="true"]::after { opacity: 1; }
-.pweye:hover::before, .pweye:hover::after { border-color: var(--accent); background-color: var(--accent); }
-
-/* The Latin / Arabic switch on the engraving page. Bigger than a colour chip,
-   because it changes what the whole preview is doing. */
-.scripttoggle { display: flex; gap: .5rem; }
-.scripttoggle .swatch input {
-  position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer;
-}
-.scripttoggle .swatch span {
-  display: block; padding: .6rem 1.2rem; border-radius: 999px; cursor: pointer;
-  border: 2px solid var(--rule); background: var(--paper-raised);
-  font-size: var(--step-0); font-weight: 600;
-}
-.scripttoggle .swatch input:checked + span {
-  border-color: var(--accent); background: var(--accent); color: var(--accent-ink);
-}
-.scripttoggle .swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }

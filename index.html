@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-t-title="home.title">cup.kw — one cup, with your name on it</title>
-<meta name="description" content="An insulated stainless steel cup made for Kuwait, engraved with your name. 887 ml, 2-in-1 lid, foldable handle. One cup, one link.">
+<meta name="description" content="An insulated stainless steel cup made for Kuwait, engraved with your name. 887 ml, 2-in-1 lid, foldable handle.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/cup.css">
 <link rel="stylesheet" href="assets/css/experience.css">
@@ -14,185 +14,148 @@
 <a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
 
 <header class="top">
-  <div class="wrap top__in">
-    <a class="mark" href="index.html">cup<b>.kw</b></a>
-    <nav class="nav" aria-label="Main">
-      <a href="index.html" data-t="nav.home">Home</a>
-      <a href="engrave.html" data-t="nav.engrave">Engraving</a>
-      <a href="reserve.html" data-t="nav.reserve">Your cup</a>
-      <a href="login.html" data-t="nav.login">Sign in</a>
-    </nav>
-    <div class="switches">
-      <button type="button" class="chip" data-lang-btn>العربية</button>
-      <button type="button" class="chip" data-motion-btn aria-pressed="true">Motion on</button>
-    </div>
-  </div>
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end">
+    <a class="btn btn--ghost" href="engrave.html" data-t="home.cta">Engrave yours</a>
+  </span>
 </header>
 
 <main id="main">
 
-  <!-- 1. The promise, and the cup -->
-  <section class="hero">
-    <div class="wrap hero__grid">
+  <!-- 01 · the promise, and the object -->
+  <section class="frame glow">
+    <p class="frame__no">01</p>
+    <div class="frame__in split split--wide">
+      <div class="stack" data-rise>
+        <p class="micro" data-t="f.hero.label">Kuwait · 887 ml</p>
+        <h1 class="display" data-t="home.h1">Yours, not everyone&rsquo;s.</h1>
+        <a class="btn" href="engrave.html">
+          <span data-t="home.cta">Engrave yours</span><span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
       <div>
-        <p class="eyebrow" data-t="home.eyebrow">One cup, one link</p>
-        <h1 data-t="home.h1">Yours, not everyone&rsquo;s.</h1>
-        <p class="lede" data-t="home.lede">A double-walled steel cup with your name cut into it. The same cup everyone gets. Not the same cup.</p>
-        <div class="cta-row">
-          <a class="btn" href="engrave.html" data-t="home.cta">Engrave yours</a>
-          <a class="btn btn--ghost" href="#proof" data-t="home.cta2">See the proof</a>
-        </div>
+        <div data-cup3d data-face="idle" data-height="460"
+             aria-label="A three-dimensional model of the cup. Drag to turn it in any direction; buttons below zoom and tilt."></div>
+        <p class="micro" style="text-align:center;margin-block-start:.8rem" data-t="home.cup.hint"></p>
       </div>
-
-      <figure class="cupstage">
-        <!-- Real geometry, built by cup3d.js. No image file and no 3D library. -->
-        <div data-cup3d data-face="idle" data-height="440"
-             aria-label="A three-dimensional model of the cup. Drag to turn it in any direction, and zoom with the buttons below."></div>
-        <figcaption class="cuphint" data-t="home.cup.hint">Drag to turn it any direction. Arrow keys turn it, + and − zoom.</figcaption>
-      </figure>
     </div>
   </section>
 
-  <hr class="weave">
-
-  <!-- 2. The show. Every scene's words are in the page whether it animates or not. -->
-  <section class="band band--raised">
-    <div class="wrap">
-      <h2 data-t="show.h">One day with it</h2>
-      <p class="lede" data-t="show.p">From the first gahwa to the last karak. Press play, or just read it — every scene is written out below whether it is animating or not.</p>
-      <div class="show" data-show></div>
+  <!-- a photographic breath -->
+  <section class="photoframe">
+    <img src="assets/img/pilates.jpg" alt="The cup on a table in daylight, filled with an iced matcha, its lid resting beside it" loading="lazy" decoding="async">
+    <div class="photoframe__in stack" data-rise>
+      <p class="micro" data-t="f.spec.label">The object</p>
+      <p class="display display--2" data-t="f.spec.h">Steel, and a vacuum.</p>
     </div>
   </section>
 
-  <!-- 3. The photographs. The one place a real photo beats anything drawn. -->
-  <section class="band band--rule">
-    <div class="wrap">
-      <h2 data-t="gal.h">The cup, actually</h2>
-      <p class="lede" data-t="gal.p">Not renders. The cup as it is, in the places it ends up.</p>
-      <div class="gallery" data-gallery></div>
+  <!-- 02 · the numbers, and nothing else -->
+  <section class="frame frame--auto">
+    <p class="frame__no">02</p>
+    <div class="frame__in" data-rise>
+      <ul class="facts" data-specs></ul>
     </div>
   </section>
 
-  <!-- 4. The collection -->
-  <section class="band band--raised" id="collection">
-    <div class="wrap">
-      <h2 data-t="home.collection.h">The Kuwait Collection</h2>
-      <div class="narrow" data-t="home.collection.p" data-t-prose>
-        <p>Fourteen colours, taken from Sadu rather than from a paint chart. Pick one and the cup above changes to it.</p>
-        <p>A colour name should tell you something you can already picture.</p>
-      </div>
+  <!-- 03 · the collection -->
+  <section class="frame frame--auto">
+    <p class="frame__no">03</p>
+    <div class="frame__in stack" data-rise>
+      <p class="micro" data-t="f.coll.label">The collection</p>
+      <h2 class="display display--2" data-t="f.coll.h">Fourteen, from Sadu.</h2>
       <div class="palette" data-swatches="colour" data-drives-cup></div>
+      <p class="swatchname" data-swatchname></p>
     </div>
   </section>
 
-  <!-- 4. Why engraving is the promise -->
-  <section class="band band--raised">
-    <div class="wrap">
-      <h2 data-t="home.sticker.h">The name goes in the steel, not on a sticker</h2>
-      <div class="narrow" data-t="home.sticker.p" data-t-prose>
-        <p>Stickers peel. Vinyl lifts in a car that has been sitting outside since ten in the morning. An engraving is material taken out of the surface, so it lasts exactly as long as the cup does.</p>
-        <p>Write it in Arabic or in Latin letters. A name, a nickname only two people use, a plate number. It is your cup, and we do not have opinions about what goes on it.</p>
-      </div>
-      <div class="cta-row">
-        <a class="btn" href="engrave.html" data-t="home.cta">Engrave yours</a>
-      </div>
+  <!-- fit, shown rather than argued -->
+  <section class="photoframe">
+    <img src="assets/img/in-car.jpg" alt="The cup standing in a car cup holder, a hand resting on it" loading="lazy" decoding="async">
+    <div class="photoframe__in stack" data-rise>
+      <p class="micro" data-t="f.car.label">Fit</p>
+      <p class="display display--2" data-t="f.car.h">It fits the holder.</p>
     </div>
   </section>
 
-  <!-- 5. The small things -->
-  <section class="band band--rule">
-    <div class="wrap">
-      <h2 data-t="home.claims.h">What that gets you</h2>
-      <ul class="claims">
-        <li data-t="home.claim1">No leaks in the tote.</li>
-        <li data-t="home.claim2">No sweat ring on the desk.</li>
-        <li data-t="home.claim3">No lid that smells like yesterday&rsquo;s coffee.</li>
-        <li data-t="home.claim5">No plastic taste in the third sip.</li>
-        <li data-t="home.claim6">No sticker to peel off in August.</li>
-        <li data-t="home.claim4">No arguing over whose cup this is.</li>
-      </ul>
+  <!-- 04 · the promise itself -->
+  <section class="frame glow">
+    <p class="frame__no">04</p>
+    <div class="frame__in stack" data-rise style="justify-items:center;text-align:center">
+      <p class="micro" data-t="f.eng.label">Engraving</p>
+      <h2 class="display" data-t="f.eng.h">In the steel. Not a sticker.</h2>
+      <a class="btn" href="engrave.html">
+        <span data-t="home.cta">Engrave yours</span><span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </section>
 
-  <!-- 6. How it works -->
-  <section class="band band--raised">
-    <div class="wrap">
-      <h2 data-t="home.steel.h">Steel does not remember.</h2>
-      <div class="narrow" data-t="home.steel.p" data-t-prose>
-        <p>The wall your drink touches is stainless steel. It does not hold on to what you drank yesterday, and it does not soften the way plastic does when something hot goes into it every day.</p>
-        <p>Between the two walls there is a vacuum. Nothing in there to carry heat in, nothing to carry cold out. That is not a claim about our cup — that is what a vacuum wall is.</p>
-      </div>
-      <div class="grid grid--3" data-specs></div>
+  <!-- 05 · one day -->
+  <section class="frame frame--auto">
+    <p class="frame__no">05</p>
+    <div class="frame__in stack" data-rise>
+      <p class="micro" data-t="f.day.label">One day</p>
+      <div class="show" data-show style="width:100%"></div>
     </div>
   </section>
 
-  <!-- 7. Proof. No character anywhere near this section, by design. -->
-  <section class="band band--rule" id="proof">
-    <div class="wrap">
-      <h2 data-t="home.proof.h">The Kuwait Heat Test</h2>
-      <div class="narrow" data-t="home.proof.p" data-t-prose>
-        <p>Ice in the cup at seven in the morning. Cup in a car in Shuwaikh, windows up. A reading every hour until it fails.</p>
-        <p>We publish the hour it fails, too. A test you only half publish is an advert.</p>
-      </div>
-      <div data-heattest>
-        <div class="pending">The test has not been run yet, so there are no numbers on this page. When it is run, the whole log goes here — the hours it held, and the hour it stopped.</div>
-      </div>
+  <!-- 06 · the photographs -->
+  <section class="frame frame--auto">
+    <p class="frame__no">06</p>
+    <div class="frame__in stack" data-rise>
+      <p class="micro" data-t="f.shots.label">In the world</p>
+      <div class="gallery" data-gallery style="width:100%"></div>
     </div>
   </section>
 
-  <!-- 8. Fit -->
-  <section class="band band--raised">
-    <div class="wrap">
-      <h2 data-t="home.fit.h">Does it fit your car?</h2>
-      <div class="narrow" data-t="home.fit.p" data-t-prose>
-        <p>A cup that will not sit in the holder is a cup you stop carrying. We are testing cars one at a time and publishing what we find, including the ones it does not fit.</p>
-      </div>
-      <div data-fit>
-        <div class="pending">No cars tested yet. This list will only ever hold cars we have physically put the cup into — never a guess off a spec sheet.</div>
-      </div>
+  <!-- 07 · proof. No character, no flourish: this frame is the honest one. -->
+  <section class="frame frame--auto">
+    <p class="frame__no">07</p>
+    <div class="frame__in stack" data-rise>
+      <p class="micro" data-t="f.proof.label">Proof</p>
+      <h2 class="display display--2" data-t="home.proof.h">The Kuwait Heat Test</h2>
+      <div data-heattest></div>
+      <div data-fit></div>
     </div>
   </section>
 
-  <!-- 9. Where it stops -->
-  <section class="band band--rule">
-    <div class="wrap">
-      <h2 data-t="home.notfor.h">What it is not good for</h2>
-      <div data-notfor></div>
-    </div>
-  </section>
-
-  <!-- 10. The price, and what is still undecided -->
-  <section class="band band--raised">
-    <div class="wrap">
-      <h2 data-t="home.honest.h">What we have not decided yet</h2>
-      <div class="narrow" data-t="home.honest.p" data-t-prose>
-        <p>We would rather leave a gap than fill it with something we made up. Not settled today: how long it holds temperature, when the first batch exists, and how it reaches you.</p>
-        <p>There are no reviews here because nobody has used the cup yet. No logos, because nobody has partnered with us. No customer count, because there are no customers. Each of those appears the day it is real.</p>
-      </div>
+  <!-- 08 · the way out -->
+  <section class="frame glow">
+    <p class="frame__no">08</p>
+    <div class="frame__in stack" data-rise style="justify-items:center;text-align:center">
+      <p class="micro" data-t="f.price.label">Reserve</p>
+      <h2 class="display" data-t="f.price.h">Costs nothing. Owes nothing.</h2>
       <div data-price></div>
-      <div class="cta-row">
-        <a class="btn" href="engrave.html" data-t="home.cta">Engrave yours</a>
-        <a class="btn btn--ghost" href="reserve.html" data-t="nav.reserve">Your cup</a>
-      </div>
+      <a class="btn" href="reserve.html">
+        <span data-t="nav.reserve">Your cup</span><span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </section>
 
 </main>
 
 <footer class="foot">
-  <div class="wrap">
-    <p data-t="foot.note">cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.</p>
-    <p data-contact></p>
-    <p><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  <div class="foot__in">
+    <div class="stack" style="gap:.6rem">
+      <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+      <p class="micro" data-contact></p>
+    </div>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
   </div>
 </footer>
 
 <script src="assets/js/content.js"></script>
 <script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
 <script src="assets/js/cup3d.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/nav.js"></script>
 <script src="assets/js/ui.js"></script>
-<script src="assets/js/loader.js"></script>
+<script src="assets/js/intro.js"></script>
 <script src="assets/js/show.js"></script>
 <script src="assets/js/chat.js"></script>
 </body>

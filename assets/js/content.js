@@ -180,6 +180,7 @@ window.CUP_STRINGS = {
   'nav.reserve':  { en: 'Your cup',  ar: 'كوبك' },
   'nav.login':    { en: 'Sign in',   ar: 'دخول' },
   'nav.skip':     { en: 'Skip to content', ar: 'تخطَّ إلى المحتوى' },
+  'nav.menu':     { en: 'Menu', ar: 'القائمة' },
 
   'switch.lang':       { en: 'العربية', ar: 'English' },
   'switch.lang.aria':  { en: 'Switch to Arabic', ar: 'التبديل إلى الإنجليزية' },
@@ -290,6 +291,11 @@ window.CUP_STRINGS = {
   'auth.password': { en: 'Password', ar: 'كلمة السر' },
   'auth.pwHint':   { en: 'Use a password you do not use anywhere else. It goes straight to our authentication provider, which keeps only a hash of it. This site never stores it and never logs it.',
                  ar: 'استخدم كلمة سر ما تستخدمها بمكان ثاني. تروح مباشرة لمزود المصادقة وهو يحفظ بصمتها بس. هالموقع ما يخزنها ولا يسجلها أبداً.' },
+  'auth.pwShort': { en: 'Never stored here. Only a hash of it is kept, and not by us.',
+                 ar: 'ما تنحفظ هني. بس بصمتها تنحفظ، ومو عندنا.' },
+  'res.short':    { en: 'Not an order. Holds no money. Commits you to nothing.',
+                 ar: 'مو طلب. وما يمسك فلوس. وما يلزمك بشي.' },
+
   'auth.art':  { en: 'Your engraving and your reservation live behind this.',
                  ar: 'حفرك وحجزك محفوظين ورا هذي الصفحة.' },
   'auth.show': { en: 'Show password', ar: 'أظهر كلمة السر' },
@@ -364,6 +370,36 @@ window.CUP_STRINGS = {
                        ar: 'القاعدة ٧٫٥ سم. والسيارات اللي جربناها فعلاً موجودة تحت بهالصفحة، وصريحة إنها قائمة قصيرة.' },
 
   /* ---- furniture ---- */
+
+  /* ---- the frames. Deliberately few words: a label, one line, one way out. ---- */
+
+  'menu.theme':  { en: 'Display',  ar: 'العرض' },
+  'menu.accent': { en: 'Accent',   ar: 'اللون' },
+
+  'f.hero.label': { en: 'Kuwait · 887 ml', ar: 'الكويت · ٨٨٧ مل' },
+  'f.spec.label': { en: 'The object', ar: 'الشي نفسه' },
+  'f.spec.h':     { en: 'Steel, and a vacuum.', ar: 'ستيل، وفراغ.' },
+  'f.coll.label': { en: 'The collection', ar: 'المجموعة' },
+  'f.coll.h':     { en: 'Fourteen, from Sadu.', ar: 'أربعتعشر لون، من السدو.' },
+  'f.car.label':  { en: 'Fit', ar: 'المقاس' },
+  'f.car.h':      { en: 'It fits the holder.', ar: 'يدخل الحامل.' },
+  'f.eng.label':  { en: 'Engraving', ar: 'الحفر' },
+  'f.eng.h':      { en: 'In the steel. Not a sticker.', ar: 'بالستيل. مو ملصق.' },
+  'f.day.label':  { en: 'One day', ar: 'يوم واحد' },
+  'f.shots.label':{ en: 'In the world', ar: 'بالواقع' },
+  'f.proof.label':{ en: 'Proof', ar: 'الإثبات' },
+  'f.price.label':{ en: 'Reserve', ar: 'الحجز' },
+  'f.price.h':    { en: 'Costs nothing. Owes nothing.', ar: 'ببلاش. وما يلزمك بشي.' },
+
+  'k.capacity': { en: 'Capacity', ar: 'الحجم' },
+  'k.height':   { en: 'Height',   ar: 'الطول' },
+  'k.base':     { en: 'Base',     ar: 'القاعدة' },
+  'k.lid':      { en: 'Lid',      ar: 'الغطا' },
+  'k.handle':   { en: 'Handle',   ar: 'اليد' },
+  'k.material': { en: 'Material', ar: 'المادة' },
+  'v.lid':      { en: '2-in-1',   ar: '٢ في ١' },
+  'v.handle':   { en: 'Folds',    ar: 'تنطوي' },
+  'v.steel':    { en: 'Steel',    ar: 'ستيل' },
 
   'ui.cup.tiltup':   { en: 'Tilt the cup up',   ar: 'ميّل الكوب فوق' },
   'ui.cup.tiltdown': { en: 'Tilt the cup down', ar: 'ميّل الكوب تحت' },

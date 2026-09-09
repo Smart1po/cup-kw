@@ -1,499 +1,309 @@
-/* cup.kw — one stylesheet.
+/* cup.kw — the design system.
 
-   The palette is the Sadu collection's own: cream and beige ground, burgundy
-   as the single accent, and the collection colours themselves used only on the
-   product where they belong. A page that shouts in fourteen colours makes the
-   fourteen colours worth less.
+   Built the way a marque site is built: a dark tonal ground, one accent, two
+   type registers and almost nothing else. Everything that used to be a band of
+   prose is now a full-height frame with a label, a line and a way out.
 
-   Mobile-first at 375px. Every colour is a custom property in the block below,
-   and boxes use CSS logical properties throughout, so the Arabic RTL layout
-   mirrors because it was built to, not because a second sheet undoes it. */
+   TWO TYPE REGISTERS, AND ONLY TWO
+     · display — very large, very tight, for the one thing a frame is saying
+     · micro   — small, uppercase, widely tracked, for labels, nav and buttons
+   Body copy exists but is rationed. If a paragraph runs past three lines it is
+   almost always two sentences that should have been one.
+
+   THE ACCENT IS THE VISITOR'S
+   --accent is chosen by the person reading, separately for day and night, and
+   stored on the root element by theme.js. Everything tonal derives from it, so
+   picking a colour re-tunes the whole page rather than recolouring a button. */
 
 :root {
-  /* Light — cream ground, the colour of the collection's own packaging.
-     Deliberately softened: the ink is a warm dark brown rather than near-black
-     and the paper is not paper-white, which takes body text from about 13.7:1
-     down to 10.7:1. Still far past AAA, and considerably easier to sit in front
-     of for the length of time it takes to read a product page. */
-  --paper:        #F5EFE4;
-  --paper-raised: #FCF8F1;
-  --ink:          #3A342D;
-  --ink-soft:     #6B6157;
-  --rule:         #DFD3BE;
-  --accent:       #6B2028;   /* Sadu burgundy */
-  --accent-ink:   #F7F0E4;
-  --warn:         #8A4A1E;
+  /* Night is the default here — the product is a dark object and it sits
+     better on a dark ground. Day is the override, not the base. */
+  --bg:        #14120F;
+  --bg-2:      #1C1916;
+  --bg-3:      #262119;
+  --fg:        #EDE6D9;
+  --fg-dim:    #9C9384;
+  --line:      #322C25;
 
-  /* The weave, used for the band and for rules that want to feel woven. */
-  --weave-thread: #E9DCC6;
+  --accent:    #C8A46A;          /* replaced by theme.js from the visitor's pick */
+  --accent-fg: #16130F;
 
-  /* System stacks only — no font file is fetched. The Arabic families come
-     first for Arabic so Windows does not fall back to a Latin face that has to
-     synthesise the script. */
-  --face-latin: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-                "Helvetica Neue", Arial, sans-serif;
-  --face-arabic: "Segoe UI", "Dubai", "Geeza Pro", "Noto Naskh Arabic",
-                 "Noto Sans Arabic", "Arabic Typesetting", system-ui, sans-serif;
+  --face-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                  "Helvetica Neue", Arial, sans-serif;
+  --face-arabic:  "Segoe UI", "Dubai", "Geeza Pro", "Noto Naskh Arabic",
+                  "Noto Sans Arabic", "Arabic Typesetting", system-ui, sans-serif;
 
-  --step--1: clamp(.82rem, .8rem + .1vw, .9rem);
-  --step-0:  clamp(1rem, .96rem + .2vw, 1.1rem);
-  --step-1:  clamp(1.18rem, 1.08rem + .5vw, 1.45rem);
-  --step-2:  clamp(1.55rem, 1.25rem + 1.4vw, 2.35rem);
-  --step-3:  clamp(2.1rem, 1.45rem + 3.1vw, 4rem);
+  --micro:   clamp(.66rem, .62rem + .12vw, .76rem);
+  --small:   clamp(.85rem, .82rem + .15vw, .95rem);
+  --body:    clamp(1rem, .95rem + .2vw, 1.1rem);
+  --lede:    clamp(1.1rem, 1rem + .5vw, 1.45rem);
+  --display: clamp(2.6rem, 1.3rem + 5.6vw, 7rem);
+  --display-2: clamp(1.9rem, 1.1rem + 3.4vw, 4rem);
 
-  --bleed: 1.25rem;
-  --measure: 34rem;
-  --radius: 14px;
+  --bleed: clamp(1.15rem, 4vw, 3.5rem);
+  --motion: 1;
+}
 
-  --motion: 1;  /* driven to 0 by the switch or by the OS preference */
+/* Day. Warm paper rather than white, and ink rather than black — the contrast
+   sits near 10:1, which is past AAA and does not glare. */
+:root[data-scheme="light"] {
+  --bg:        #F2EDE3;
+  --bg-2:      #FAF6EE;
+  --bg-3:      #E8E0D1;
+  --fg:        #37312A;
+  --fg-dim:    #6C6357;
+  --line:      #DCD1BD;
+  --accent-fg: #FFFFFF;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-scheme="dark"]):not([data-scheme="light"]) {
+    --bg:        #F2EDE3;
+    --bg-2:      #FAF6EE;
+    --bg-3:      #E8E0D1;
+    --fg:        #37312A;
+    --fg-dim:    #6C6357;
+    --line:      #DCD1BD;
+    --accent-fg: #FFFFFF;
+  }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; color-scheme: light; }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-scheme="light"]) {
-    /* Night, softened. The ground is lifted off near-black to a warm charcoal
-       and the ink pulled back from cream-white, which is what stops a dark
-       theme glaring. Body text lands at about 11.4:1 rather than 15.2:1. */
-    --paper:        #201C18;
-    --paper-raised: #2A2521;
-    --ink:          #DDD3C4;
-    --ink-soft:     #A99D8D;
-    --rule:         #3E372F;
-    --accent:       #E0A0A4;   /* rosewood, so the accent still passes on dark */
-    --accent-ink:   #241014;
-    --warn:         #E8A972;
-    --weave-thread: #E9DCC6;
-    color-scheme: dark;
-  }
-}
-
-/* Must stay identical to the media-query block above, or choosing "night"
-   explicitly would give a different night from letting the device decide. */
-:root[data-scheme="dark"] {
-  --paper:        #201C18;
-  --paper-raised: #2A2521;
-  --ink:          #DDD3C4;
-  --ink-soft:     #A99D8D;
-  --rule:         #3E372F;
-  --accent:       #E0A0A4;
-  --accent-ink:   #241014;
-  --warn:         #E8A972;
-  color-scheme: dark;
-}
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+:root[data-motion="off"] html, html:has([data-motion="off"]) { scroll-behavior: auto; }
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--face-latin);
-  font-size: var(--step-0);
-  line-height: 1.62;
-  text-wrap: pretty;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--face-display);
+  font-size: var(--body);
+  line-height: 1.55;
+  overflow-x: hidden;
 }
 
-/* Arabic wants more leading and a slightly larger optical size than Latin, or
-   the joins close up and the text turns into a grey band. */
-html[lang="ar"] body {
-  font-family: var(--face-arabic);
-  line-height: 1.85;
-  font-size: calc(var(--step-0) * 1.06);
+html[lang="ar"] body { font-family: var(--face-arabic); line-height: 1.8; }
+
+img { max-width: 100%; display: block; }
+
+/* ---- the two registers ---- */
+
+.micro {
+  font-size: var(--micro);
+  text-transform: uppercase;
+  letter-spacing: .2em;
+  font-weight: 600;
+  color: var(--fg-dim);
+  margin: 0;
 }
+/* Arabic has no case and tracking damages its joins, so the micro register
+   becomes small-and-quiet rather than small-and-spaced. */
+html[lang="ar"] .micro { text-transform: none; letter-spacing: 0; font-weight: 700; }
 
-h1, h2, h3 { line-height: 1.14; text-wrap: balance; margin: 0 0 .5em; letter-spacing: -.022em; }
-html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3 { line-height: 1.4; letter-spacing: 0; }
-h1 { font-size: var(--step-3); }
-h2 { font-size: var(--step-2); }
-h3 { font-size: var(--step-1); }
-p  { margin: 0 0 1em; max-inline-size: var(--measure); }
+.display {
+  font-size: var(--display);
+  line-height: .95;
+  letter-spacing: -.035em;
+  margin: 0;
+  text-wrap: balance;
+}
+.display--2 { font-size: var(--display-2); line-height: 1.02; }
+html[lang="ar"] .display { line-height: 1.25; letter-spacing: 0; }
+html[lang="ar"] .display--2 { line-height: 1.3; }
 
-a { color: var(--accent); text-underline-offset: .2em; }
-a:focus-visible, button:focus-visible, input:focus-visible,
-select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
-  outline: 3px solid var(--accent);
+.lede { font-size: var(--lede); color: var(--fg-dim); margin: 0; max-inline-size: 30ch; line-height: 1.4; }
+.note { font-size: var(--small); color: var(--fg-dim); margin: 0; max-inline-size: 46ch; }
+
+h1, h2, h3 { margin: 0; font-weight: 700; }
+p { margin: 0; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
-.wrap { inline-size: min(100% - (var(--bleed) * 2), 70rem); margin-inline: auto; }
-.narrow { max-inline-size: 46rem; }
+.wrap { inline-size: min(100% - (var(--bleed) * 2), 82rem); margin-inline: auto; }
+.sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 .skip {
-  position: absolute; inset-block-start: -100vh; inset-inline-start: 0;
-  background: var(--accent); color: var(--accent-ink);
-  padding: .7rem 1rem; z-index: 60;
+  position: fixed; inset-block-start: -100vh; inset-inline-start: 0; z-index: 200;
+  background: var(--accent); color: var(--accent-fg); padding: .8rem 1.2rem;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em;
 }
 .skip:focus { inset-block-start: 0; }
 
-/* ---- header ---- */
-
-.top {
-  position: sticky; inset-block-start: 0; z-index: 30;
-  background: var(--paper);
-  border-block-end: 1px solid var(--rule);
-}
-.top__in { display: flex; align-items: center; gap: 1rem; padding-block: .7rem; flex-wrap: wrap; }
-
-.mark {
-  font-weight: 700; letter-spacing: -.04em; font-size: var(--step-1);
-  color: var(--ink); text-decoration: none; margin-inline-end: auto;
-  /* The brand is the domain. It stays Latin and left-to-right in both
-     languages, so it is pinned out of the RTL flow. */
-  font-family: var(--face-latin);
-  direction: ltr; unicode-bidi: isolate;
-}
-.mark b { color: var(--accent); font-weight: 700; }
-
-.nav { display: flex; gap: .2rem; flex-wrap: wrap; }
-.nav a {
-  color: var(--ink-soft); text-decoration: none; padding: .4rem .6rem;
-  border-radius: 8px; font-size: var(--step--1);
-}
-.nav a:hover { background: var(--paper-raised); color: var(--ink); }
-.nav a[aria-current="page"] { color: var(--ink); background: var(--paper-raised); font-weight: 600; }
-
-.switches { display: flex; gap: .4rem; }
-
-.chip {
-  font: inherit; font-size: var(--step--1);
-  background: var(--paper-raised); color: var(--ink);
-  border: 1px solid var(--rule); border-radius: 999px;
-  padding: .35rem .75rem; cursor: pointer; white-space: nowrap;
-}
-.chip:hover { border-color: var(--accent); }
-
-/* ---- buttons ---- */
+/* ---- buttons ----
+   Two only: a solid one for the single action a frame wants, and a ghost for
+   everything else. */
 
 .btn {
-  font: inherit; font-weight: 600;
-  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  padding: .8rem 1.5rem; border-radius: 999px; border: 1px solid transparent;
-  background: var(--accent); color: var(--accent-ink);
-  cursor: pointer; text-decoration: none; min-block-size: 48px;
+  display: inline-flex; align-items: center; justify-content: center; gap: .7rem;
+  font: inherit; font-size: var(--micro); font-weight: 700;
+  text-transform: uppercase; letter-spacing: .18em;
+  padding: 1.15rem 2.2rem; min-block-size: 52px;
+  background: var(--accent); color: var(--accent-fg);
+  border: 1px solid var(--accent); border-radius: 0;
+  text-decoration: none; cursor: pointer;
+  transition: background calc(.25s * var(--motion)) ease, color calc(.25s * var(--motion)) ease;
 }
-.btn:hover { filter: brightness(1.12); }
-.btn--ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
-.btn--ghost:hover { border-color: var(--accent); filter: none; }
-.btn[disabled], .btn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; filter: none; }
+html[lang="ar"] .btn { text-transform: none; letter-spacing: 0; }
+.btn:hover { background: transparent; color: var(--accent); }
 
-/* ---- the woven rule ----
-   A two-thread line that reads as Sadu without shouting. Used to separate
-   bands instead of a plain border. */
-.weave {
-  block-size: 6px; border: 0; margin: 0;
+.btn--ghost { background: transparent; color: var(--fg); border-color: var(--line); }
+.btn--ghost:hover { background: transparent; border-color: var(--accent); color: var(--accent); }
+.btn[aria-disabled="true"] { opacity: .4; pointer-events: none; }
+
+/* An arrow that leans into the reading direction without needing a second icon. */
+.btn .arrow { display: inline-block; transition: transform calc(.25s * var(--motion)) ease; }
+html[dir="rtl"] .btn .arrow { transform: scaleX(-1); }
+.btn:hover .arrow { transform: translateX(4px); }
+html[dir="rtl"] .btn:hover .arrow { transform: scaleX(-1) translateX(4px); }
+
+/* ---- header ----
+   A hamburger, a wordmark, one action. No horizontal nav: the menu is a frame
+   of its own, and it can afford to be. */
+
+.top {
+  position: fixed; inset-block-start: 0; inset-inline: 0; z-index: 90;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  padding: 1.1rem var(--bleed);
+  transition: background calc(.3s * var(--motion)) ease;
+}
+.top.is-stuck { background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); }
+
+.mark {
+  grid-column: 2; justify-self: center;
+  font-weight: 700; font-size: 1.15rem; letter-spacing: -.04em;
+  text-decoration: none; color: var(--fg);
+  direction: ltr; unicode-bidi: isolate;
+}
+.mark b { color: var(--accent); }
+
+.top__end { grid-column: 3; justify-self: end; display: flex; gap: .5rem; align-items: center; }
+
+.burger {
+  grid-column: 1; justify-self: start;
+  display: inline-flex; align-items: center; gap: .7rem;
+  background: none; border: 0; padding: .4rem; cursor: pointer; color: var(--fg);
+  font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; font-weight: 600;
+}
+html[lang="ar"] .burger { text-transform: none; letter-spacing: 0; }
+.burger__bars { inline-size: 22px; display: grid; gap: 5px; }
+.burger__bars i { display: block; block-size: 1.5px; background: currentColor; transition: transform calc(.3s * var(--motion)) ease, opacity calc(.2s * var(--motion)) ease; }
+[aria-expanded="true"] .burger__bars i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+[aria-expanded="true"] .burger__bars i:nth-child(2) { opacity: 0; }
+[aria-expanded="true"] .burger__bars i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.iconbtn {
+  inline-size: 40px; block-size: 40px; display: grid; place-items: center;
+  background: none; border: 1px solid transparent; color: var(--fg);
+  cursor: pointer; padding: 0; border-radius: 50%;
+}
+.iconbtn:hover { border-color: var(--line); }
+
+/* ---- frames ----
+   The unit of this site. One idea, one label, plenty of air. */
+
+.frame {
+  position: relative;
+  min-block-size: 100svh;
+  display: grid; align-content: center;
+  padding: 7rem var(--bleed) 5rem;
+  overflow: hidden;
+}
+.frame--auto { min-block-size: 0; padding-block: clamp(4rem, 12vw, 8rem); }
+.frame__in { inline-size: min(100%, 82rem); margin-inline: auto; width: 100%; }
+
+/* A hairline index down the side, the way a printed spread numbers its pages. */
+.frame__no {
+  position: absolute; inset-block-start: 6.5rem; inset-inline-start: var(--bleed);
+  font-size: var(--micro); letter-spacing: .2em; color: var(--fg-dim);
+  font-variant-numeric: tabular-nums; direction: ltr;
+}
+
+.split { display: grid; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
+@media (min-width: 60rem) { .split { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 60rem) { .split--wide { grid-template-columns: 1.15fr .85fr; } }
+
+.stack { display: grid; gap: 1.6rem; justify-items: start; }
+html[dir="rtl"] .stack { justify-items: start; }
+
+/* ---- the tonal ground ----
+   Derived from the accent, so choosing a colour re-tunes the page instead of
+   repainting one button. */
+.glow::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:
-    repeating-linear-gradient(45deg, transparent 0 4px, var(--accent) 4px 6px),
-    var(--weave-thread);
-  opacity: .5;
+    radial-gradient(80% 60% at 70% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 20% 80%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
 }
 
-/* ---- sections ---- */
+/* ---- rules and lists ---- */
 
-.band { padding-block: clamp(2.5rem, 8vw, 4.5rem); }
-.band--raised { background: var(--paper-raised); }
-.band--rule { border-block-start: 1px solid var(--rule); }
+.rule { block-size: 1px; background: var(--line); border: 0; margin: 0; }
 
-.eyebrow {
-  font-size: var(--step--1); text-transform: uppercase; letter-spacing: .16em;
-  color: var(--accent); margin-block-end: 1rem; font-weight: 700;
+.facts { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.facts li {
+  display: flex; justify-content: space-between; gap: 1.5rem; align-items: baseline;
+  padding-block: 1rem; border-block-end: 1px solid var(--line);
 }
-html[lang="ar"] .eyebrow { text-transform: none; letter-spacing: 0; }
-
-.lede { font-size: var(--step-1); color: var(--ink-soft); max-inline-size: 30rem; }
-.cta-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-block-start: 1.5rem; }
-
-.grid { display: grid; gap: 1.25rem; }
-@media (min-width: 40rem) { .grid--2 { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 54rem) { .grid--3 { grid-template-columns: repeat(3, 1fr); } }
-
-.card {
-  background: var(--paper-raised); border: 1px solid var(--rule);
-  border-radius: var(--radius); padding: 1.35rem;
-}
-.band--raised .card { background: var(--paper); }
-.card h3 { margin-block-end: .35rem; }
-.card p:last-child { margin-block-end: 0; }
-
-.claims { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
-.claims li {
-  padding-inline-start: 1.7rem; position: relative; color: var(--ink);
-  max-inline-size: var(--measure);
-}
-.claims li::before {
-  content: ""; position: absolute; inset-inline-start: 0; inset-block-start: .58em;
-  inline-size: .75rem; block-size: 3px; background: var(--accent);
-}
+.facts dt, .facts .k { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); }
+html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }
+.facts .v { font-size: var(--lede); font-variant-numeric: tabular-nums; }
 
 /* ---- the honest empty state ----
-   A fact nobody has given us yet renders as a deliberate sentence, never as an
-   empty box or a dangling unit. This is what makes it legible as a choice. */
+   Kept, because it is the most important component on the site. Quieter now,
+   but never a spinner and never a blank. */
 .pending {
-  border: 1px dashed var(--rule); border-radius: var(--radius);
-  padding: 1rem 1.15rem; color: var(--ink-soft); background: transparent;
-  max-inline-size: var(--measure);
+  border: 1px solid var(--line); border-inline-start: 2px solid var(--accent);
+  padding: 1.1rem 1.3rem; color: var(--fg-dim);
+  font-size: var(--small); max-inline-size: 52ch;
 }
-.pending strong { color: var(--ink); font-weight: 600; }
-
-/* ---- tables ---- */
-
-.tablewrap { overflow-x: auto; }
-table { border-collapse: collapse; inline-size: 100%; font-size: var(--step--1); }
-th, td { text-align: start; padding: .6rem .75rem; border-block-end: 1px solid var(--rule); }
-th { font-weight: 600; color: var(--ink-soft); }
-/* Readings are numbers in a column. They stay left-to-right and line up on the
-   decimal whichever direction the page reads. */
-td.num, th.num { font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
 
 /* ---- forms ---- */
 
-.field { display: grid; gap: .35rem; margin-block-end: 1rem; max-inline-size: 26rem; }
-.field label, .field legend { font-weight: 600; font-size: var(--step--1); padding: 0; }
+.field { display: grid; gap: .5rem; margin-block-end: 1.4rem; max-inline-size: 30rem; }
+.field label, .field legend { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); padding: 0; }
+html[lang="ar"] .field label, html[lang="ar"] .field legend { text-transform: none; letter-spacing: 0; }
 .field input, .field select, .field textarea {
-  font: inherit; padding: .75rem .9rem; min-block-size: 48px;
-  background: var(--paper-raised); color: var(--ink);
-  border: 1px solid var(--rule); border-radius: 10px; inline-size: 100%;
+  font: inherit; font-size: var(--body);
+  padding: .95rem 0; min-block-size: 52px; inline-size: 100%;
+  background: transparent; color: var(--fg);
+  border: 0; border-block-end: 1px solid var(--line); border-radius: 0;
 }
-.field .hint { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
+.field input:focus { outline: none; border-block-end-color: var(--accent); }
+.field .hint { font-size: var(--small); color: var(--fg-dim); }
 fieldset.field { border: 0; margin-inline: 0; padding: 0; }
 
 .notice {
-  border-inline-start: 4px solid var(--warn); background: var(--paper-raised);
-  padding: .8rem 1rem; border-radius: 8px; margin-block-end: 1rem;
-  max-inline-size: 26rem; color: var(--ink);
+  border-inline-start: 2px solid var(--accent); padding: .9rem 1.1rem;
+  background: var(--bg-2); font-size: var(--small); margin-block-end: 1.2rem;
+  max-inline-size: 34rem;
 }
-.notice--ok { border-inline-start-color: var(--accent); }
 .notice[hidden] { display: none; }
-
-/* ---- the collection ---- */
-
-.swatches { display: flex; gap: .5rem; flex-wrap: wrap; padding: 0; margin: 0; border: 0; }
-.swatch { position: relative; }
-.swatch input { position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
-.swatch span {
-  display: flex; align-items: center; gap: .5rem;
-  padding: .4rem .85rem .4rem .4rem; border-radius: 999px;
-  border: 2px solid var(--rule); font-size: var(--step--1); cursor: pointer;
-  background: var(--paper-raised);
-}
-html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
-.swatch span::before {
-  content: ""; inline-size: 1.4rem; block-size: 1.4rem; border-radius: 50%;
-  background: var(--sw); border: 1px solid rgba(0, 0, 0, .22); flex: none;
-}
-.swatch input:checked + span { border-color: var(--accent); font-weight: 600; }
-.swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-/* =========================================================================
-   THE CUP, IN THREE DIMENSIONS
-   Built by cup3d.js out of rings of panels. See that file for why the
-   lighting is a flat layer in front rather than shading on the panels.
-   ========================================================================= */
-
-.c3d {
-  --cup-body: #2A3A52;
-  --cup-ink: #F4EEE3;
-  display: block; inline-size: 100%;
-  perspective: 1100px;
-  perspective-origin: 50% 42%;
-  touch-action: pan-y;      /* vertical scroll still works over the cup */
-  cursor: grab;
-  position: relative;
-  /* Dragging the cup must not drag a text selection across the page behind it. */
-  user-select: none; -webkit-user-select: none;
-  /* The cup is a physical object, so it must NOT mirror in Arabic — a lid is
-     on the same side of the cup in every language. Forcing LTR inside makes
-     every logical property below resolve the same way in both directions.
-     The engraving itself sets its own dir, since text does mirror. */
-  direction: ltr;
-}
-.c3d.is-dragging { cursor: grabbing; }
-.c3d:focus-visible { outline: 3px solid var(--accent); outline-offset: 6px; border-radius: 12px; }
-
-.c3d__scene {
-  position: relative;
-  block-size: var(--scene-h, 420px);
-  inline-size: 100%;
-  z-index: 0;
-}
-
-.c3d__obj {
-  position: absolute; left: 50%; inset-block-start: 0;
-  inline-size: 0; block-size: 0;
-  transform-style: preserve-3d;
-  will-change: transform;
-  z-index: 1;
-}
-
-.c3d__group {
-  position: absolute; inset-inline-start: 0; inline-size: 0; block-size: 0;
-  transform-style: preserve-3d;
-}
-
-.c3d__panel {
-  position: absolute; inset-block-start: 0; inset-inline-start: 0;
-  background: var(--cup-body);
-  backface-visibility: hidden;   /* the far half never shows through the near */
-}
-
-.c3d__disc {
-  position: absolute; inset-inline-start: 50%;
-  border-radius: 50%;
-  background: var(--cup-body);
-  backface-visibility: hidden;
-}
-
-/* The lid is a touch darker than the body and a touch wider, as it is on the
-   real cup, so the seam reads without a drawn line. */
-.c3d__lid .c3d__panel { background: color-mix(in srgb, var(--cup-body) 93%, #000); }
-.c3d__lidtop {
-  background:
-    radial-gradient(ellipse at 38% 32%, rgba(255,255,255,.16), transparent 62%),
-    color-mix(in srgb, var(--cup-body) 88%, #000);
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--cup-body) 78%, #000);
-}
-.c3d__hole {
-  background: color-mix(in srgb, var(--cup-body) 70%, #000);
-  box-shadow: inset 0 0 6px rgba(0,0,0,.5);
-}
-
-.c3d__straw .c3d__panel { background: color-mix(in srgb, var(--cup-body) 86%, #000); }
-.c3d__strawtop { background: color-mix(in srgb, var(--cup-body) 55%, #000); }
-
-/* The rubber base. Unbranded on purpose. */
-.c3d__base {
-  background: #1A1A1C;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,.05);
-}
-
-/* The Sadu band: a woven sleeve, so it sits proud of the body on its own ring.
-   The weave is two crossed thread gradients over burgundy — a diamond lattice,
-   which is what the pattern reduces to at this size. */
-.c3d__band .c3d__panel {
-  background-color: #6B2028;
-  background-image:
-    repeating-linear-gradient(45deg, transparent 0 6px, var(--weave-thread) 6px 7.5px),
-    repeating-linear-gradient(-45deg, transparent 0 6px, var(--weave-thread) 6px 7.5px);
-  box-shadow:
-    inset 0 3px 0 var(--weave-thread),
-    inset 0 -3px 0 var(--weave-thread);
-}
-
-/* The printing rides on a plane at the front of the cylinder, so it turns out
-   of view as the cup spins. */
-.c3d__decal {
-  position: absolute; left: 50%;
-  inline-size: 86px;
-  display: grid; justify-items: center; gap: 6px;
-  color: var(--cup-ink);
-  font-family: var(--face-latin);
-  backface-visibility: hidden;
-  pointer-events: none;
-}
-.c3d__logo {
-  border: 2px solid currentColor; border-radius: 2px;
-  padding: 2px 9px; font-size: 13px; font-weight: 700; letter-spacing: .06em;
-}
-/* The triangle texture column from the render sheet, as a dot lattice. */
-.c3d__dots {
-  inline-size: 44px; block-size: 92px;
-  background-image: radial-gradient(currentColor 1px, transparent 1.2px);
-  background-size: 7px 7px;
-  opacity: .75;
-}
-.c3d__word { font-size: 10px; letter-spacing: .12em; opacity: .95; }
-.c3d__eng {
-  min-block-size: 18px; font-weight: 600; text-align: center;
-  inline-size: 86px; white-space: nowrap;
-  border-block-start: 1px solid currentColor; padding-block-start: 5px;
-  opacity: .95;
-  /* cup3d.js scales the type down as the text lengthens, so a name inside the
-     limit always fits. This only catches the overflow case, which the counter
-     has already flagged in words. */
-  overflow: hidden;
-}
-.c3d__eng:empty { border-block-start: 0; }
-
-/* Fixed lighting. A cylinder spinning about its own axis keeps the same
-   silhouette, so the light can stay still while the printing moves past it.
-
-   This is deliberately a plain alpha gradient. A blend mode here reads slightly
-   richer, but it forces the browser to flatten the whole preserve-3d subtree
-   into a texture on every single frame, which locks up the renderer once the
-   cup is turning. Cheap and always smooth beats handsome and stuttering. */
-/* Shade and shadow sit outside the 3D context so they stay flat, and are
-   scaled about the exact point the model scales about — the model's own origin,
-   which is the horizontal centre of the scene at its very top. Get this origin
-   wrong and zooming slides the lighting off the side of the cup. */
-.c3d__shade {
-  position: absolute; z-index: 4; pointer-events: none;
-  left: 50%;
-  inline-size: calc(var(--cup-r) * 2 + 6px);
-  margin-left: calc((var(--cup-r) * -1) - 3px);
-  inset-block-start: var(--lid-top);
-  block-size: calc(var(--body-top) + var(--body-h) - var(--lid-top));
-  border-end-start-radius: 14px; border-end-end-radius: 14px;
-  transform: scale(var(--zoom, 1));
-  transform-origin: calc(var(--cup-r) + 3px) calc(var(--lid-top) * -1);
-  background: linear-gradient(90deg,
-    rgba(0,0,0,.40) 0%,
-    rgba(0,0,0,.22) 11%,
-    rgba(0,0,0,.02) 27%,
-    rgba(255,255,255,.16) 37%,
-    rgba(255,255,255,.05) 48%,
-    rgba(0,0,0,.05) 63%,
-    rgba(0,0,0,.24) 84%,
-    rgba(0,0,0,.44) 100%);
-}
-
-.c3d__shadow {
-  position: absolute; z-index: 0; pointer-events: none;
-  left: 50%;
-  inline-size: calc(var(--cup-r) * 3.1);
-  margin-left: calc(var(--cup-r) * -1.55);
-  inset-block-start: calc(var(--body-top) + var(--body-h) - 10px);
-  block-size: 30px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.30), rgba(0,0,0,0) 68%);
-  transform: scale(var(--zoom, 1));
-  transform-origin: calc(var(--cup-r) * 1.55)
-                    calc((var(--body-top) + var(--body-h) - 10px) * -1);
-}
-
-.cupstage { display: grid; place-items: center; margin: 0; }
-.cuphint { font-size: var(--step--1); color: var(--ink-soft); text-align: center; margin-block-start: .5rem; }
-
-/* ---- page layouts ---- */
-
-.hero { padding-block: clamp(1.5rem, 5vw, 3rem) clamp(2rem, 6vw, 3.5rem); }
-.hero__grid { display: grid; gap: clamp(1.5rem, 5vw, 3rem); align-items: center; }
-@media (min-width: 54rem) { .hero__grid { grid-template-columns: 1.05fr .95fr; } }
-
-.engrave-lay { display: grid; gap: 2rem; align-items: start; }
-@media (min-width: 54rem) { .engrave-lay { grid-template-columns: 1fr 1fr; } }
-
-.counter { font-variant-numeric: tabular-nums; font-weight: 700; }
-.counter[data-state="over"] { color: var(--warn); }
 
 /* ---- footer ---- */
 
-.foot { border-block-start: 1px solid var(--rule); padding-block: 2rem 3rem; color: var(--ink-soft); font-size: var(--step--1); }
-.foot a { color: var(--ink-soft); }
+.foot { padding: 4rem var(--bleed) 3rem; border-block-start: 1px solid var(--line); }
+.foot__in { display: grid; gap: 2rem; inline-size: min(100%, 82rem); margin-inline: auto; }
+@media (min-width: 50rem) { .foot__in { grid-template-columns: 1fr auto; align-items: end; } }
+.foot a { color: var(--fg-dim); text-decoration: none; }
+.foot a:hover { color: var(--accent); }
 
 /* ---- motion ----
-   Two gates, not one. The OS preference sets the default; the visible switch
-   overrides it in BOTH directions, which is why the rules key off data-motion
-   and never off the media query alone. Nothing here is ever the only reason
-   content is visible. */
+   Two gates. The OS sets the default; the visible switch overrides it in both
+   directions. Nothing here is ever the only reason content exists. */
 @media (prefers-reduced-motion: reduce) {
   :root:not([data-motion="on"]) { --motion: 0; }
 }
 :root[data-motion="off"] { --motion: 0; }
 
-.rise { transition: transform calc(.45s * var(--motion)) ease, opacity calc(.45s * var(--motion)) ease; }
-:root[data-motion="off"] .rise { transition: none; }
-
-.sr {
-  position: absolute; inline-size: 1px; block-size: 1px;
-  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-}
+/* Frames rise as they arrive. The class is added by script only when motion is
+   wanted, so with it off the markup is simply never given anything to undo. */
+.rise { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+.rise.is-in { opacity: 1; transform: none; }
+:root[data-motion="off"] .rise { opacity: 1; transform: none; transition: none; }

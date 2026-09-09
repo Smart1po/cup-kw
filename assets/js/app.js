@@ -135,6 +135,10 @@
     });
   }
 
+  /* Exposed because the menu builds its motion button after boot, and a button
+     that mounts later still has to be labelled. */
+  window.cupApplyMotion = applyMotion;
+
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-motion-btn]');
     if (!b) return;
@@ -290,13 +294,28 @@
         input.value = col.slug;
         if (col.slug === current) input.checked = true;
         var span = document.createElement('span');
-        span.textContent = label(col);
+        /* The name is carried for screen readers and for the readout below the
+           row. Printing fourteen labels beside fourteen dots is a wall of text
+           where the colours should be doing the talking. */
+        span.setAttribute('data-name', label(col));
         span.style.setProperty('--sw', col.hex);
+        input.setAttribute('aria-label', label(col));
         l.appendChild(input);
         l.appendChild(span);
         host.appendChild(l);
       });
     });
+    showSwatchName();
+  }
+
+  /* One line under the row saying which colour is selected — so the choice is
+     legible without labelling every dot. */
+  function showSwatchName() {
+    var out = document.querySelector('[data-swatchname]');
+    if (!out) return;
+    var picked = document.querySelector('[data-drives-cup] input:checked');
+    var found = window.cupColours().filter(function (c) { return c.slug === (picked && picked.value); })[0];
+    out.textContent = found ? label(found) : '';
   }
 
   /* ---- the 3D cup ------------------------------------------------------ */
@@ -312,31 +331,34 @@
     return input ? input.value : (window.cupColours()[0] || {}).slug;
   }
 
-  /* Cards built from the spec-sheet booleans in content.js, so switching a
-     feature off removes its card rather than leaving a claim behind. */
+  /* A specification is a list of numbers, so it is rendered as one. Every row
+     comes off the client's own spec sheet — switch a feature off in content.js
+     and its row disappears rather than leaving a claim behind. Nothing here
+     attaches a number of hours to hot or cold, because that is not measured. */
   function renderSpecs() {
     var host = document.querySelector('[data-specs]');
     if (!host) return;
     var p = C.product || {};
     var rows = [];
-    if (p.capacityMl) rows.push(['spec.capacity', p.capacityMl + ' ml' + (p.capacityOz ? ' · ' + p.capacityOz + ' oz' : '')]);
-    if (p.material) rows.push(['spec.material', label(p.material)]);
-    if (p.twoInOneLid) rows.push(['spec.lid', '']);
-    if (p.foldableHandle) rows.push(['spec.handle', '']);
-    if (p.leakResistant) rows.push(['spec.leak', '']);
-    if (p.carHolderFriendly) rows.push(['spec.car', '']);
+    if (p.capacityMl) rows.push(['k.capacity', p.capacityMl + ' ml']);
+    if (p.heightCm) rows.push(['k.height', p.heightCm + ' cm']);
+    if (p.baseDiameterCm) rows.push(['k.base', p.baseDiameterCm + ' cm']);
+    if (p.twoInOneLid) rows.push(['k.lid', t('v.lid')]);
+    if (p.foldableHandle) rows.push(['k.handle', t('v.handle')]);
+    if (p.material) rows.push(['k.material', t('v.steel')]);
 
     host.innerHTML = '';
     rows.forEach(function (row) {
-      var card = document.createElement('div');
-      card.className = 'card';
-      var h = document.createElement('h3');
-      h.textContent = t(row[0] + '.h');
-      var body = document.createElement('p');
-      body.textContent = row[1] || t(row[0] + '.p');
-      card.appendChild(h);
-      card.appendChild(body);
-      host.appendChild(card);
+      var li = document.createElement('li');
+      var k = document.createElement('span');
+      k.className = 'k';
+      k.textContent = t(row[0]);
+      var v = document.createElement('span');
+      v.className = 'v';
+      v.textContent = row[1];
+      li.appendChild(k);
+      li.appendChild(v);
+      host.appendChild(li);
     });
   }
 
@@ -356,6 +378,7 @@
     document.addEventListener('change', function (e) {
       if (!e.target.closest || !e.target.closest('[data-drives-cup]')) return;
       window.cupModel.setColour(hexFor(e.target.value));
+      showSwatchName();
     });
   }
 
