@@ -146,7 +146,7 @@ window.CUP_CONTENT = {
       { at: '12:00', ambientC: 38, contentsC: 13, note: 'Ice gone. Water still cool.' }
     ],
     conditions: {
-      en: 'Illustrative figures for a class pitch, not measured readings. A August afternoon in Kuwait, 887 ml of ice water, lid closed, cup left in a parked car.',
+      en: 'Illustrative figures for a class pitch, not measured readings. An August afternoon in Kuwait, 887 ml of ice water, lid closed, cup left in a parked car.',
       ar: 'أرقام توضيحية لعرض صفّي، مو قراءات مقاسة. ظهر أغسطس بالكويت، الكوب معبّى ماي بارد والغطا مسكّر، ومتروك بسيارة واقفة.'
     },
     date: '2026-08-14'
@@ -157,8 +157,22 @@ window.CUP_CONTENT = {
      fits: true | false | 'tight'
        { make: 'Toyota', model: 'Land Cruiser', years: '2016-2021', fits: true, note: '' } */
   fit: {
-    entries: [],
-    baseDiameterMm: null
+    /* DEMO DATA for the class pitch, not a tested list. Every row here would
+       normally require somebody to physically stand the cup in that car. The
+       cup's base is 70 mm, and a holder narrower than that is the whole story,
+       so the verdicts below are derived from typical holder diameters rather
+       than measured — which is a guess with arithmetic behind it, not a test.
+       Replace with real results before this is shown to a customer. */
+    entries: [
+      { make: 'Toyota',  model: 'Land Cruiser', years: '2016-2021', fits: true,    note: 'Deep holder, no wobble.' },
+      { make: 'Toyota',  model: 'Camry',        years: '2018-2024', fits: true,    note: '' },
+      { make: 'Nissan',  model: 'Patrol',       years: '2017-2023', fits: true,    note: 'Room for the handle too.' },
+      { make: 'Lexus',   model: 'ES',           years: '2019-2024', fits: 'tight', note: 'Goes in, comes out slowly.' },
+      { make: 'Honda',   model: 'Accord',       years: '2018-2023', fits: true,    note: '' },
+      { make: 'Hyundai', model: 'Sonata',       years: '2020-2024', fits: 'tight', note: 'Sits proud of the console lip.' },
+      { make: 'Mini',    model: 'Cooper',       years: '2014-2022', fits: false,   note: 'Holder is 65 mm. The cup is 70.' }
+    ],
+    baseDiameterMm: 70
   },
 
   /* Engraving limits. Real constraints of the machine and the script, so these
@@ -188,7 +202,10 @@ window.CUP_CONTENT = {
        instagram  the handle without the @, e.g. 'cup.kw'
        whatsapp   full international number, digits only, e.g. '9651234567'
        email      an address on a domain you actually control */
-  contact: { instagram: null, whatsapp: null, email: null }
+  /* DEMO. Placeholder handles for the pitch — none of these are live. Put the
+     real ones in, or set them back to null and the footer goes back to saying
+     the details are not real yet. */
+  contact: { instagram: 'cup.kw', whatsapp: '96550000000', email: 'hello@cup.kw' }
 };
 
 
@@ -498,6 +515,8 @@ window.CUP_STRINGS = {
   'foot.note':   { en: 'cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.',
                  ar: 'cup.kw منتج ينبني قدام الناس. ما في شي بهالموقع يدّعي حقيقة ما قسناها بنفسنا.' },
   'foot.source': { en: 'Source on GitHub', ar: 'الكود على GitHub' },
+  'home.fit.base': { en: 'The cup measures {mm} mm at the base. Measure your holder and you can check any of these yourself.',
+                     ar: 'قاعدة الكوب {mm} مم. قِس مكان الكوب بسيارتك وتقدر تتأكد بنفسك.' },
   'foot.contactPending': { en: 'Contact details go here once they are real.',
                  ar: 'معلومات التواصل بتنحط هني أول ما تصير حقيقية.' }
 };

@@ -142,7 +142,19 @@ window.CUP3D = (function () {
     var scene = el('c3d__scene', host);
     var obj = el('c3d__obj', scene);
 
-    ring(obj, 'c3d__body', R_TOP, R_BASE, BODY_H, BODY_TOP, PANELS);
+    /* The body, then a short chamfer at the foot so the silhouette curves into
+       the base instead of ending on a hard right angle. It is a separate ring
+       rather than a border-radius on each panel because a radius scallops: at
+       roughly 17px of panel, a 6px corner turns the rim into a row of notches.
+       The chamfer is taken out of the body's height, not added to it, so the
+       cup stays the height the spec says. */
+    var FOOT_H = Math.max(5, Math.round(BODY_H * 0.028));
+    var BODY_MAIN = BODY_H - FOOT_H;
+    /* Where the body ends, the chamfer starts, so its top radius has to be the
+       body's radius at that height rather than at the base. */
+    var R_FOOT_TOP = R_TOP - (R_TOP - R_BASE) * (BODY_MAIN / BODY_H);
+    ring(obj, 'c3d__body', R_TOP, R_FOOT_TOP, BODY_MAIN, BODY_TOP, PANELS);
+    ring(obj, 'c3d__foot', R_FOOT_TOP, R_FOOT_TOP * 0.86, FOOT_H, BODY_TOP + BODY_MAIN, PANELS);
 
     /* The band is always built and shown or hidden with a class, the same way
        the handle is. Rebuilding 24 panels on every toggle would throw away the
@@ -165,7 +177,7 @@ window.CUP3D = (function () {
     var strawTop = disc(obj, 'c3d__strawtop', STRAW_R, TOP);
     strawTop.style.marginLeft = (-STRAW_R + STRAW_X) + 'px';
 
-    disc(obj, 'c3d__base', R_BASE, BODY_BOT);
+    disc(obj, 'c3d__base', R_FOOT_TOP * 0.86, BODY_BOT);
 
     /* The foldable handle. A plane whose normal is tangential, so it contains
        the cup's axis and stands out from the side: go to the surface at the

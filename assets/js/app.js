@@ -205,6 +205,19 @@
     });
     wrap.appendChild(table);
     el.appendChild(wrap);
+
+    /* The conditions line is not decoration. It is where the test says what it
+       actually was — and, right now, that these figures are illustrative rather
+       than measured. A table of numbers with no statement of conditions is the
+       exact shape of a claim you cannot check. */
+    var cond = (C.heatTest && C.heatTest.conditions) || {};
+    var text = lang === 'ar' ? cond.ar : cond.en;
+    if (text) {
+      var p = document.createElement('p');
+      p.className = 'note';
+      p.textContent = text + (C.heatTest.date ? ' — ' + C.heatTest.date : '');
+      el.appendChild(p);
+    }
   }
 
   function renderFit() {
@@ -224,6 +237,15 @@
       ul.appendChild(li);
     });
     el.appendChild(ul);
+
+    /* The one number the whole list turns on. Without it a "does not fit" is an
+       opinion; with it, anyone can measure their own holder and check. */
+    if (C.fit && C.fit.baseDiameterMm) {
+      var note = document.createElement('p');
+      note.className = 'note';
+      note.textContent = t('home.fit.base').replace('{mm}', C.fit.baseDiameterMm);
+      el.appendChild(note);
+    }
   }
 
   function renderNotFor() {

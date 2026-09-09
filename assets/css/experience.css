@@ -129,16 +129,26 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
 }
 .c3d__group { position: absolute; left: 0; inline-size: 0; block-size: 0; transform-style: preserve-3d; }
 
-/* Matte anodised steel: a soft vertical sheen over the body colour, no
-   specular highlight. A shiny cup would read as plastic. */
+/* Matte anodised steel: a soft vertical sheen over the body colour, no specular
+   highlight. A shiny cup would read as plastic, and the real thing is powder
+   matte — in the photographs the surface has no hot spot anywhere on it.
+
+   The tonal ramp only: a matte cylinder catches a broad soft band about a sixth
+   down and falls away steadily to the foot, so the light stops sit close
+   together at the top and spread out below. A fine vertical grain was tried
+   here for the anodised texture and had to come out — at a 3px repeat against
+   a ~17px panel it striped the whole cup. No blend modes and no filters either;
+   an earlier version put one in and locked the renderer up. */
 .c3d__panel {
   position: absolute; inset-block-start: 0; left: 0;
   background:
     linear-gradient(to bottom,
-      rgba(255,255,255,.07) 0%,
-      rgba(255,255,255,.02) 22%,
-      rgba(0,0,0,.05) 72%,
-      rgba(0,0,0,.12) 100%),
+      rgba(255,255,255,.11) 0%,
+      rgba(255,255,255,.06) 12%,
+      rgba(255,255,255,.02) 30%,
+      rgba(0,0,0,.03) 56%,
+      rgba(0,0,0,.09) 80%,
+      rgba(0,0,0,.17) 100%),
     var(--cup-body);
   backface-visibility: hidden;
 }
@@ -147,14 +157,22 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
 .c3d__lid .c3d__panel { background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,.10)), color-mix(in srgb, var(--cup-body) 92%, #000); }
 .c3d__lidtop {
   background:
-    radial-gradient(ellipse at 40% 34%, rgba(255,255,255,.13), transparent 60%),
+    radial-gradient(ellipse at 38% 30%, rgba(255,255,255,.16), transparent 62%),
+    radial-gradient(ellipse at 62% 82%, rgba(0,0,0,.22), transparent 58%),
     color-mix(in srgb, var(--cup-body) 86%, #000);
-  box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--cup-body) 74%, #000);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--cup-body) 74%, #000),
+    inset 0 2px 6px rgba(255,255,255,.06);
 }
 .c3d__hole { background: color-mix(in srgb, var(--cup-body) 62%, #000); box-shadow: inset 0 0 7px rgba(0,0,0,.6); }
 .c3d__straw .c3d__panel { background: color-mix(in srgb, var(--cup-body) 84%, #000); }
 .c3d__strawtop { background: color-mix(in srgb, var(--cup-body) 50%, #000); }
-.c3d__base { background: #16161A; box-shadow: inset 0 0 0 2px rgba(255,255,255,.05); }
+/* The base is the rubber foot in the photographs, not a shadow: near-black,
+   very slightly domed, with a rim catching a little light. */
+.c3d__base {
+  background: radial-gradient(circle at 50% 42%, #24242A, #131317 72%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), inset 0 -3px 7px rgba(0,0,0,.55);
+}
 
 /* The Sadu band, built to the palette in the reference: maroon ground, off-white
    motif, camel bridging, black as hairline only.
@@ -164,13 +182,25 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
    off-white first, then camel, and the black hairline sits on the light ground
    where it reads as a line rather than disappearing. Inset shadows paint first
    one on top, so they are listed outermost first. */
-/* Rounded edges. The body is a ring of flat panels, so the curve at the foot is
-   made two ways at once: a small radius on each panel's bottom corners, and a
-   dark inset along the same edge. The radius alone scallops at this panel width
-   and the shadow alone reads flat; together they pass for a fillet. */
+/* Rounded edges, top and bottom. The body is a ring of flat panels, so a curve
+   is real geometry, not a corner radius.
+
+   A radius on each panel was the first attempt and it scalloped: at roughly
+   17px per panel a 6px corner turns the rim into a row of notches. So the curve
+   is a short chamfer ring at the foot, built in cup3d.js, and these shadows only
+   deepen where it turns under. */
 .c3d__body .c3d__panel {
-  border-end-start-radius: 3px; border-end-end-radius: 3px;
-  box-shadow: inset 0 -7px 9px -7px rgba(0,0,0,.6);
+  box-shadow:
+    inset 0 -11px 13px -9px rgba(0,0,0,.5),
+    inset 0 6px 8px -7px rgba(0,0,0,.28);
+}
+.c3d__lid .c3d__panel { box-shadow: inset 0 8px 10px -8px rgba(0,0,0,.3); }
+
+/* The chamfer at the foot: the last centimetre of body, drawn as its own ring
+   pulled in to 86% so the silhouette curves into the base instead of stopping
+   on a hard right angle. */
+.c3d__foot .c3d__panel {
+  box-shadow: inset 0 -8px 10px -6px rgba(0,0,0,.6);
 }
 
 /* Hidden by default and revealed by the class.
@@ -814,3 +844,42 @@ html[lang="ar"] .tray__count { text-transform: none; letter-spacing: 0; }
   .tray { inset-block-end: calc(4.5rem + .6rem); }
   .tray__in { inline-size: 100%; justify-content: space-between; }
 }
+
+/* ---- the proof table ----
+   The heat test renders a real <table> and nothing was styling it, so it came
+   out as raw browser default: cramped, unaligned, and with the numbers in a
+   proportional face. Numbers are the point of this table, so they are tabular,
+   right-aligned and given the room to be compared down the column. */
+.tablewrap { inline-size: 100%; overflow-x: auto; }
+.tablewrap table {
+  inline-size: 100%; border-collapse: collapse;
+  font-size: var(--small); min-inline-size: 34rem;
+}
+.tablewrap th, .tablewrap td {
+  padding: .75rem .9rem; text-align: start;
+  border-block-end: 1px solid var(--line); vertical-align: baseline;
+}
+.tablewrap th {
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .16em;
+  color: var(--fg-dim); font-weight: 500; white-space: nowrap;
+  border-block-end: 2px solid var(--accent);
+}
+html[lang="ar"] .tablewrap th { text-transform: none; letter-spacing: 0; }
+.tablewrap td.num, .tablewrap th.num {
+  text-align: end; font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum"; white-space: nowrap;
+}
+/* The contents column is the one being proved, so it carries the weight. */
+.tablewrap tr td:nth-child(3) { color: var(--accent); font-weight: 600; }
+.tablewrap tr:last-child td { border-block-end: 0; }
+.tablewrap tr td:first-child { color: var(--fg-dim); font-variant-numeric: tabular-nums; }
+.tablewrap tr td:last-child { color: var(--fg-dim); font-size: var(--micro); }
+
+/* The cup-holder list. One car per line, with the verdict carrying the colour
+   so a no is visible without reading the sentence. */
+.claims { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.claims li {
+  padding-block: .7rem; border-block-end: 1px solid var(--line);
+  font-size: var(--small);
+}
+.claims li:last-child { border-block-end: 0; }
