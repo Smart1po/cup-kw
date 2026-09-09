@@ -191,10 +191,21 @@ window.CUP3D = (function () {
     };
 
     api.setEngraving = function (text, script) {
-      eng.textContent = text || '';
-      eng.setAttribute('dir', script === 'arabic' ? 'rtl' : 'ltr');
-      eng.style.fontFamily = script === 'arabic' ? 'var(--face-arabic)' : 'var(--face-latin)';
-      eng.style.fontSize = script === 'arabic' ? '15px' : '13px';
+      var isArabic = script === 'arabic';
+      var value = text || '';
+      eng.textContent = value;
+      eng.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+      eng.style.fontFamily = isArabic ? 'var(--face-arabic)' : 'var(--face-latin)';
+
+      /* Set the engraving down in size as it gets longer, so a name inside the
+         limit is always shown whole. Clipping it would be the preview telling a
+         lie about the thing that cannot be undone — somebody would approve a cup
+         on the strength of text the machine was never going to fit. Anything
+         past the limit is the counter's job to flag, not this one's. */
+      var n = Array.from(value).length;
+      var base = isArabic ? 16 : 14;
+      var size = n <= 7 ? base : Math.max(isArabic ? 9 : 8, base - (n - 7) * 0.7);
+      eng.style.fontSize = size.toFixed(1) + 'px';
       return api;
     };
 

@@ -393,9 +393,13 @@ html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
 .c3d__word { font-size: 10px; letter-spacing: .12em; opacity: .95; }
 .c3d__eng {
   min-block-size: 18px; font-weight: 600; text-align: center;
-  max-inline-size: 84px; overflow: hidden; white-space: nowrap;
+  inline-size: 86px; white-space: nowrap;
   border-block-start: 1px solid currentColor; padding-block-start: 5px;
   opacity: .95;
+  /* cup3d.js scales the type down as the text lengthens, so a name inside the
+     limit always fits. This only catches the overflow case, which the counter
+     has already flagged in words. */
+  overflow: hidden;
 }
 .c3d__eng:empty { border-block-start: 0; }
 
