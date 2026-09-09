@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="auth.title">Sign in — cup.kw</title>
+<meta name="description" content="Sign in to cup.kw, or create an account, to save your engraving and reserve a cup.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="mark" href="index.html">cup<b>.kw</b></a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html" data-t="nav.home">Home</a>
+      <a href="engrave.html" data-t="nav.engrave">Engraving</a>
+      <a href="reserve.html" data-t="nav.reserve">Your cup</a>
+      <a href="login.html" data-t="nav.login">Sign in</a>
+    </nav>
+    <div class="switches">
+      <button type="button" class="chip" data-lang-btn>العربية</button>
+      <button type="button" class="chip" data-motion-btn aria-pressed="true">Motion on</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="band" style="border-block-start:0">
+  <div class="wrap">
+    <h1 data-t="auth.h1">Sign in, or make an account.</h1>
+    <p class="lede" data-t="auth.lede">Two boxes, two buttons. Your reservation and your engraving live behind them.</p>
+
+    <p class="notice" id="msg" hidden></p>
+
+    <form id="authform" novalidate>
+      <div class="field">
+        <label for="email" data-t="auth.email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label for="pw" data-t="auth.password">Password</label>
+        <input id="pw" name="password" type="password" autocomplete="current-password" required>
+        <p class="hint" data-t="auth.pwHint">Use a password you do not use anywhere else. It goes straight to our authentication provider, which keeps only a hash of it. This site never stores it and never logs it.</p>
+      </div>
+
+      <!-- Two distinct actions, not one button that guesses. Guessing is how a
+           typo in an email address silently becomes a second account. -->
+      <div class="cta-row" style="margin-block-start:0">
+        <button type="submit" class="btn" id="signin" data-t="auth.signin">Sign in</button>
+        <button type="button" class="btn btn--ghost" id="signup" data-t="auth.signup">Create account</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p data-t="foot.note">cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.</p>
+    <p data-contact></p>
+    <p><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/backend.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.CUP_BACKEND;
+  var form = document.getElementById('authform');
+  var msg = document.getElementById('msg');
+  var signin = document.getElementById('signin');
+  var signup = document.getElementById('signup');
+
+  function say(key, ok) {
+    msg.hidden = false;
+    msg.textContent = window.cupT(key);
+    msg.className = 'notice' + (ok ? ' notice--ok' : '');
+  }
+
+  function next() {
+    var q = new URLSearchParams(location.search).get('next');
+    /* Only ever a same-directory page name, so a crafted ?next= cannot send
+       somebody off this site after they sign in. */
+    return /^[a-z0-9_-]+\.html$/i.test(q || '') ? q : 'reserve.html';
+  }
+
+  function busy(on) {
+    signin.disabled = on;
+    signup.disabled = on;
+    if (on) say('auth.working', true);
+  }
+
+  function go(fn) {
+    var email = form.email.value.trim();
+    if (!email || !form.password.value) { say('auth.err.email'); return; }
+    busy(true);
+    /* The password is read straight out of the field into the call and is never
+       held in a variable of ours. */
+    fn(email, form.password.value).then(function (r) {
+      if (r && r.signedIn) { location.replace(next()); return; }
+      busy(false);
+      say(r && r.key ? r.key : 'auth.signedup', true);
+    }).catch(function (err) {
+      busy(false);
+      say(err && err.key ? err.key : 'auth.err.network');
+    });
+  }
+
+  form.addEventListener('submit', function (e) { e.preventDefault(); go(B.signIn); });
+  signup.addEventListener('click', function () { go(B.signUp); });
+
+  if (!B.available) say('auth.err.nobackend');
+  if (B.signedIn()) location.replace(next());
+})();
+</script>
+</body>
+</html>

@@ -1,1 +1,220 @@
-<!doctype html><meta charset="utf-8"><title>cup.kw</title><p>Building.
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="home.title">cup.kw — one cup, with your name on it</title>
+<meta name="description" content="An insulated stainless steel cup, made for Kuwait, engraved with your name. One cup, one link.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="mark" href="index.html">cup<b>.kw</b></a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html" data-t="nav.home">Home</a>
+      <a href="engrave.html" data-t="nav.engrave">Engraving</a>
+      <a href="reserve.html" data-t="nav.reserve">Your cup</a>
+      <a href="login.html" data-t="nav.login">Sign in</a>
+    </nav>
+    <div class="switches">
+      <button type="button" class="chip" data-lang-btn>العربية</button>
+      <button type="button" class="chip" data-motion-btn aria-pressed="true">Motion on</button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="eyebrow" data-t="home.eyebrow">One cup, one link</p>
+        <h1 data-t="home.h1">Yours, not everyone&rsquo;s.</h1>
+        <p class="lede" data-t="home.lede">A double-walled steel cup with your name cut into it. The same cup everyone gets. Not the same cup.</p>
+        <div class="cta-row">
+          <a class="btn" href="engrave.html" data-t="home.cta">Engrave yours</a>
+          <a class="btn btn--ghost" href="#proof" data-t="home.cta2">See the proof</a>
+        </div>
+      </div>
+
+      <!-- The cup is drawn, not photographed. There is no image file in this
+           repository, so this is inline SVG taking its colours from the same
+           custom properties as the rest of the page, and therefore working in
+           both light and dark without a second asset. -->
+      <figure class="cupfig">
+        <svg viewBox="0 0 200 320" role="img" aria-labelledby="cuptitle">
+          <title id="cuptitle">An insulated steel travel cup, shown in cutaway with the vacuum gap between its two walls</title>
+          <defs>
+            <linearGradient id="steelface" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0"   stop-color="var(--steel)" stop-opacity=".45"/>
+              <stop offset=".38" stop-color="var(--steel)" stop-opacity=".95"/>
+              <stop offset=".62" stop-color="var(--steel)" stop-opacity=".70"/>
+              <stop offset="1"   stop-color="var(--steel)" stop-opacity=".38"/>
+            </linearGradient>
+            <clipPath id="bodyclip">
+              <path d="M42,58 L158,58 L146,286 Q145,298 133,298 L67,298 Q55,298 54,286 Z"/>
+            </clipPath>
+          </defs>
+
+          <!-- lid -->
+          <rect x="38" y="18" width="124" height="30" rx="13" fill="var(--ink)" opacity=".82"/>
+          <rect x="52" y="26" width="96" height="7" rx="3.5" fill="var(--sand)" opacity=".30"/>
+          <rect x="44" y="44" width="112" height="12" rx="5" fill="var(--ink)" opacity=".55"/>
+
+          <!-- body -->
+          <path d="M42,58 L158,58 L146,286 Q145,298 133,298 L67,298 Q55,298 54,286 Z" fill="url(#steelface)"/>
+          <path d="M42,58 L158,58 L146,286 Q145,298 133,298 L67,298 Q55,298 54,286 Z"
+                fill="none" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1.5"/>
+
+          <!-- The cutaway: a wedge taken out of the left edge so the two walls
+               and the gap between them are shown rather than described. -->
+          <g clip-path="url(#bodyclip)">
+            <path d="M42,58 L78,58 L70,298 L54,298 Z" fill="var(--sand)" opacity=".93"/>
+            <path d="M62,58 L58,298" stroke="var(--ink)" stroke-opacity=".45" stroke-width="2" fill="none"/>
+            <path d="M74,58 L68,298" stroke="var(--ink)" stroke-opacity=".45" stroke-width="2" fill="none"/>
+          </g>
+
+          <!-- Where the engraving goes. Curved, because the body is round. -->
+          <path id="engline" d="M70,200 Q100,210 132,200" fill="none"/>
+          <text font-size="14" font-weight="600" fill="var(--ink)" opacity=".85"
+                style="font-family:var(--face-latin)">
+            <textPath href="#engline" startOffset="50%" text-anchor="middle">your name</textPath>
+          </text>
+
+          <ellipse cx="100" cy="58" rx="58" ry="7" fill="var(--ink)" opacity=".22"/>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <!-- The advert. It is muted and looping, and the motion switch stops it —
+       an autoplaying video is exactly the kind of thing a visitor who asked for
+       reduced motion is asking to be spared. Controls stay, so it can always be
+       played deliberately. -->
+  <section class="band band--raised">
+    <div class="wrap">
+      <video id="adv" class="advert" controls muted loop playsinline preload="metadata"
+             width="1280" height="720">
+        <source src="assets/video/cupadv.mp4" type="video/mp4">
+      </video>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 data-t="home.why.h">A colour is not yours. A name is.</h2>
+      <div data-t="home.why.p" data-t-prose>
+        <p>Anyone can buy the same colour as you. That is what a colour is for.</p>
+        <p>An engraving is the one thing about a cup that cannot be bought twice. It is also the reason a cup comes home, instead of getting left on a desk, in a car, at a diwaniya.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--raised">
+    <div class="wrap">
+      <h2 data-t="home.claims.h">What that gets you</h2>
+      <ul class="claims">
+        <li data-t="home.claim1">No leaks in the tote.</li>
+        <li data-t="home.claim2">No sweat ring on the desk.</li>
+        <li data-t="home.claim3">No lid that smells like yesterday&rsquo;s coffee.</li>
+        <li data-t="home.claim4">No arguing over whose cup this is.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 data-t="home.steel.h">Steel does not remember.</h2>
+      <div data-t="home.steel.p" data-t-prose>
+        <p>The wall your drink touches is stainless steel. It does not hold on to what you drank yesterday, and it does not soften the way plastic does when something hot goes into it every day.</p>
+        <p>Between the two walls there is a vacuum. Nothing in there to carry heat in, nothing to carry cold out. That is not a claim about our cup — that is what a vacuum wall is.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--raised" id="proof">
+    <div class="wrap">
+      <h2 data-t="home.proof.h">The Kuwait Heat Test</h2>
+      <div data-t="home.proof.p" data-t-prose>
+        <p>Ice in the cup at seven in the morning. Cup in a car in Shuwaikh, windows up. A reading every hour until it fails.</p>
+        <p>We publish the hour it fails, too. A test you only half publish is an advert.</p>
+      </div>
+      <!-- Filled from content.js the day the test is run. Until then this
+           renders the honest sentence, never an empty table. -->
+      <div data-heattest>
+        <div class="pending">The test has not been run yet, so there are no numbers on this page. When it is run, the whole log goes here — the hours it held, and the hour it stopped.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 data-t="home.fit.h">Does it fit your car?</h2>
+      <div data-t="home.fit.p" data-t-prose>
+        <p>A cup that will not sit in the holder is a cup you stop carrying. We are testing cars one at a time and publishing what we find, including the ones it does not fit.</p>
+      </div>
+      <div data-fit>
+        <div class="pending">No cars tested yet. This list will only ever hold cars we have physically put the cup into — never a guess off a spec sheet.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--raised">
+    <div class="wrap">
+      <h2 data-t="home.notfor.h">What it is not good for</h2>
+      <div data-notfor></div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <h2 data-t="home.honest.h">What we have not decided yet</h2>
+      <div data-t="home.honest.p" data-t-prose>
+        <p>We would rather leave a gap than fill it with something we made up. Not settled today: the price, the capacity, how long it holds, when the first batch exists, and how it reaches you.</p>
+        <p>There are no reviews here because nobody has used the cup yet. No logos, because nobody has partnered with us. No customer count, because there are no customers. Each of those appears the day it is real.</p>
+      </div>
+      <div data-price>
+        <div class="pending">The price is not published yet. Reserving costs nothing and takes no card either way.</div>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="engrave.html" data-t="home.cta">Engrave yours</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p data-t="foot.note">cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.</p>
+    <p data-contact></p>
+    <p><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+/* The video honours the motion switch in both directions, the same as every
+   other moving thing on the site. It never autoplays with sound. */
+(function () {
+  var v = document.getElementById('adv');
+  if (!v) return;
+  function wants() {
+    var root = document.documentElement.getAttribute('data-motion');
+    if (root === 'off') return false;
+    if (root === 'on') return true;
+    return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+  function apply() { if (wants()) { var p = v.play(); if (p) p.catch(function () {}); } else { v.pause(); } }
+  new MutationObserver(apply).observe(document.documentElement, { attributes: true, attributeFilter: ['data-motion'] });
+  apply();
+})();
+</script>
+</body>
+</html>

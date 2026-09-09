@@ -1,0 +1,306 @@
+/* cup.kw — one stylesheet.
+   Written mobile-first at 375px. Every colour is a custom property in the block
+   below, and every box uses CSS logical properties, so the Arabic RTL layout
+   mirrors because it was built to rather than because a second sheet undoes it. */
+
+:root {
+  /* Light. Warm paper, not white — steel reads better against sand than glare. */
+  --sand:        #F4EFE6;
+  --sand-raised: #FBF8F3;
+  --ink:         #1A1714;
+  --ink-soft:    #574E45;
+  --rule:        #D9CFC0;
+  --steel:       #8A8178;
+  --accent:      #0C555D;
+  --accent-ink:  #FFFFFF;
+  --warn:        #7A3B12;
+
+  --shadow: 0 1px 2px rgba(26, 23, 20, .06), 0 8px 24px rgba(26, 23, 20, .06);
+
+  /* System stacks only — no font file is fetched. The Arabic families are named
+     first for Arabic so Windows does not fall back to a Latin face that has to
+     synthesise the script. */
+  --face-latin: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                "Helvetica Neue", Arial, sans-serif;
+  --face-arabic: "Segoe UI", "Dubai", "Geeza Pro", "Noto Naskh Arabic",
+                 "Noto Sans Arabic", "Arabic Typesetting", system-ui, sans-serif;
+
+  --step--1: clamp(.82rem, .8rem + .1vw, .9rem);
+  --step-0:  clamp(1rem, .96rem + .2vw, 1.12rem);
+  --step-1:  clamp(1.2rem, 1.1rem + .5vw, 1.5rem);
+  --step-2:  clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem);
+  --step-3:  clamp(2.2rem, 1.5rem + 3.2vw, 4.2rem);
+
+  --gap: 1rem;
+  --bleed: 1.25rem;
+  --measure: 34rem;
+  --radius: 14px;
+
+  --motion: 1;  /* flipped to 0 by the switch or by the OS preference */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; color-scheme: light; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-scheme="light"]) {
+    --sand:        #14120F;
+    --sand-raised: #1E1B17;
+    --ink:         #F3EDE3;
+    --ink-soft:    #BCB1A2;
+    --rule:        #35302A;
+    --steel:       #7E766D;
+    --accent:      #6FD3CC;
+    --accent-ink:  #0B2B2E;
+    --warn:        #F0B183;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+
+:root[data-scheme="dark"] {
+  --sand:        #14120F;
+  --sand-raised: #1E1B17;
+  --ink:         #F3EDE3;
+  --ink-soft:    #BCB1A2;
+  --rule:        #35302A;
+  --steel:       #7E766D;
+  --accent:      #6FD3CC;
+  --accent-ink:  #0B2B2E;
+  --warn:        #F0B183;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--face-latin);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* Arabic needs more leading than Latin at the same size, and a slightly larger
+   optical size, or the joins close up and the text turns into a grey band. */
+html[lang="ar"] body {
+  font-family: var(--face-arabic);
+  line-height: 1.85;
+  font-size: calc(var(--step-0) * 1.05);
+}
+
+h1, h2, h3 { line-height: 1.15; text-wrap: balance; margin: 0 0 .5em; letter-spacing: -.02em; }
+html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3 { line-height: 1.4; letter-spacing: 0; }
+h1 { font-size: var(--step-3); }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+p  { margin: 0 0 1em; max-inline-size: var(--measure); }
+
+a { color: var(--accent); text-underline-offset: .2em; }
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.wrap { inline-size: min(100% - (var(--bleed) * 2), 68rem); margin-inline: auto; }
+
+.skip {
+  position: absolute; inset-block-start: -100vh; inset-inline-start: 0;
+  background: var(--accent); color: var(--accent-ink);
+  padding: .7rem 1rem; z-index: 50;
+}
+.skip:focus { inset-block-start: 0; }
+
+/* ---- header ---- */
+
+.top {
+  position: sticky; inset-block-start: 0; z-index: 20;
+  background: var(--sand);
+  border-block-end: 1px solid var(--rule);
+}
+.top__in { display: flex; align-items: center; gap: var(--gap); padding-block: .7rem; flex-wrap: wrap; }
+
+.mark {
+  font-weight: 700; letter-spacing: -.04em; font-size: var(--step-1);
+  color: var(--ink); text-decoration: none; margin-inline-end: auto;
+  /* The brand is the domain. It stays Latin and left-to-right in both
+     languages, so it is pinned out of the RTL flow. */
+  font-family: var(--face-latin);
+  direction: ltr; unicode-bidi: isolate;
+}
+.mark b { color: var(--accent); font-weight: 700; }
+
+.nav { display: flex; gap: .25rem; flex-wrap: wrap; }
+.nav a {
+  color: var(--ink-soft); text-decoration: none; padding: .4rem .6rem;
+  border-radius: 8px; font-size: var(--step--1);
+}
+.nav a:hover { background: var(--sand-raised); color: var(--ink); }
+.nav a[aria-current="page"] { color: var(--ink); background: var(--sand-raised); font-weight: 600; }
+
+.switches { display: flex; gap: .4rem; }
+
+.chip {
+  font: inherit; font-size: var(--step--1);
+  background: var(--sand-raised); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 999px;
+  padding: .35rem .75rem; cursor: pointer; white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent); }
+
+/* ---- buttons ---- */
+
+.btn {
+  font: inherit; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .8rem 1.4rem; border-radius: 999px; border: 1px solid transparent;
+  background: var(--accent); color: var(--accent-ink);
+  cursor: pointer; text-decoration: none; min-block-size: 48px;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn--ghost:hover { border-color: var(--accent); filter: none; }
+.btn[disabled] { opacity: .5; cursor: not-allowed; filter: none; }
+
+/* ---- hero ---- */
+
+.hero { padding-block: clamp(2rem, 8vw, 5rem) clamp(2rem, 6vw, 4rem); }
+.hero__grid { display: grid; gap: clamp(1.5rem, 5vw, 3rem); }
+.lede { font-size: var(--step-1); color: var(--ink-soft); max-inline-size: 28rem; }
+
+.eyebrow {
+  font-size: var(--step--1); text-transform: uppercase; letter-spacing: .14em;
+  color: var(--ink-soft); margin-block-end: 1rem; font-weight: 600;
+}
+html[lang="ar"] .eyebrow { text-transform: none; letter-spacing: 0; }
+
+.cta-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-block-start: 1.5rem; }
+
+/* ---- the cup drawing ---- */
+
+.cupfig { display: grid; place-items: center; margin: 0; }
+.cupfig svg { inline-size: min(100%, 19rem); block-size: auto; }
+
+/* ---- sections ---- */
+
+.band { padding-block: clamp(2.5rem, 8vw, 4.5rem); border-block-start: 1px solid var(--rule); }
+.band--raised { background: var(--sand-raised); }
+
+.grid { display: grid; gap: 1.25rem; }
+@media (min-width: 40rem) { .grid--2 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 52rem) {
+  .grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .hero__grid { grid-template-columns: 1.1fr .9fr; align-items: center; }
+}
+
+.card {
+  background: var(--sand-raised); border: 1px solid var(--rule);
+  border-radius: var(--radius); padding: 1.25rem;
+}
+.band--raised .card { background: var(--sand); }
+.card h3 { margin-block-end: .35rem; }
+.card p:last-child { margin-block-end: 0; }
+
+.claims { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+.claims li {
+  padding-inline-start: 1.6rem; position: relative; color: var(--ink);
+  max-inline-size: var(--measure);
+}
+.claims li::before {
+  content: ""; position: absolute; inset-inline-start: 0; inset-block-start: .62em;
+  inline-size: .7rem; block-size: 2px; background: var(--accent);
+}
+
+/* ---- the honest empty state ----
+   A fact nobody has given us yet renders as a deliberate sentence, never as an
+   empty box or a dangling unit. This class is what makes that legible as a
+   choice rather than as a bug. */
+.pending {
+  border: 1px dashed var(--rule); border-radius: var(--radius);
+  padding: 1rem 1.15rem; color: var(--ink-soft); background: transparent;
+  max-inline-size: var(--measure);
+}
+.pending strong { color: var(--ink); font-weight: 600; }
+
+/* ---- tables ---- */
+
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; inline-size: 100%; font-size: var(--step--1); }
+th, td { text-align: start; padding: .6rem .75rem; border-block-end: 1px solid var(--rule); }
+th { font-weight: 600; color: var(--ink-soft); }
+/* Readings are numbers in a column. They stay left-to-right and line up on the
+   decimal whichever direction the page reads. */
+td.num, th.num { font-variant-numeric: tabular-nums; direction: ltr; text-align: end; }
+
+/* ---- forms ---- */
+
+.field { display: grid; gap: .35rem; margin-block-end: 1rem; max-inline-size: 26rem; }
+.field label { font-weight: 600; font-size: var(--step--1); }
+.field input, .field select, .field textarea {
+  font: inherit; padding: .75rem .9rem; min-block-size: 48px;
+  background: var(--sand-raised); color: var(--ink);
+  border: 1px solid var(--rule); border-radius: 10px;
+  inline-size: 100%;
+}
+.field .hint { font-size: var(--step--1); color: var(--ink-soft); }
+
+.notice {
+  border-inline-start: 4px solid var(--warn); background: var(--sand-raised);
+  padding: .8rem 1rem; border-radius: 8px; margin-block-end: 1rem;
+  max-inline-size: 26rem; color: var(--ink);
+}
+.notice--ok { border-inline-start-color: var(--accent); }
+.notice[hidden] { display: none; }
+
+/* ---- engraving preview ---- */
+
+.engrave-lay { display: grid; gap: 2rem; }
+@media (min-width: 52rem) { .engrave-lay { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+.counter { font-variant-numeric: tabular-nums; font-weight: 600; }
+.counter[data-state="over"] { color: var(--warn); }
+
+.swatches { display: flex; gap: .5rem; flex-wrap: wrap; padding: 0; margin: 0 0 1rem; border: 0; }
+.swatch { position: relative; }
+.swatch input { position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
+.swatch span {
+  display: block; padding: .45rem .8rem; border-radius: 999px;
+  border: 2px solid var(--rule); font-size: var(--step--1); cursor: pointer;
+}
+.swatch input:checked + span { border-color: var(--accent); font-weight: 600; }
+.swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---- footer ---- */
+
+.foot { border-block-start: 1px solid var(--rule); padding-block: 2rem 3rem; color: var(--ink-soft); font-size: var(--step--1); }
+.foot a { color: var(--ink-soft); }
+.foot .wrap > p { max-inline-size: var(--measure); }
+
+/* ---- motion ----
+   Two gates, not one. The OS preference sets the default; the visible switch
+   overrides it in BOTH directions — which is why the rules key off --motion and
+   off data-motion, never off the media query alone. Nothing here is ever the
+   only reason content is visible: these transitions move things already painted. */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) { --motion: 0; }
+}
+:root[data-motion="off"] { --motion: 0; }
+
+.rise { transition: transform calc(.45s * var(--motion)) ease, opacity calc(.45s * var(--motion)) ease; }
+:root[data-motion="off"] .rise { transition: none; }
+
+.sr {
+  position: absolute; inline-size: 1px; block-size: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---- the advert ---- */
+.advert {
+  inline-size: 100%; block-size: auto; display: block;
+  border-radius: var(--radius); border: 1px solid var(--rule);
+  background: var(--ink);
+}

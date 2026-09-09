@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="eng.title">Engraving — cup.kw</title>
+<meta name="description" content="Type your name in Arabic or English and see it on the cup before you commit.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <div class="wrap top__in">
+    <a class="mark" href="index.html">cup<b>.kw</b></a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html" data-t="nav.home">Home</a>
+      <a href="engrave.html" data-t="nav.engrave">Engraving</a>
+      <a href="reserve.html" data-t="nav.reserve">Your cup</a>
+      <a href="login.html" data-t="nav.login">Sign in</a>
+    </nav>
+    <div class="switches">
+      <button type="button" class="chip" data-lang-btn>العربية</button>
+      <button type="button" class="chip" data-motion-btn aria-pressed="true">Motion on</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="band" style="border-block-start:0">
+  <div class="wrap">
+    <h1 data-t="eng.h1">Put your name on it.</h1>
+    <p class="lede" data-t="eng.lede">Type below. The cup keeps up with you. Nothing is saved until you say so.</p>
+
+    <div class="engrave-lay">
+
+      <!-- The preview. The text element is the only thing that changes as the
+           person types; the cup around it is static markup, so the drawing is
+           still there if the script never runs. -->
+      <figure class="cupfig">
+        <svg viewBox="0 0 200 320" role="img" aria-labelledby="etitle">
+          <title id="etitle">Live preview of the engraving on the cup</title>
+          <defs>
+            <linearGradient id="face2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0"   stop-color="var(--steel)" stop-opacity=".45"/>
+              <stop offset=".38" stop-color="var(--steel)" stop-opacity=".95"/>
+              <stop offset=".62" stop-color="var(--steel)" stop-opacity=".70"/>
+              <stop offset="1"   stop-color="var(--steel)" stop-opacity=".38"/>
+            </linearGradient>
+          </defs>
+
+          <rect x="38" y="18" width="124" height="30" rx="13" fill="var(--ink)" opacity=".82"/>
+          <rect x="52" y="26" width="96" height="7" rx="3.5" fill="var(--sand)" opacity=".30"/>
+          <rect x="44" y="44" width="112" height="12" rx="5" fill="var(--ink)" opacity=".55"/>
+
+          <path id="cupbody" d="M42,58 L158,58 L146,286 Q145,298 133,298 L67,298 Q55,298 54,286 Z"
+                fill="url(#face2)"/>
+          <path d="M42,58 L158,58 L146,286 Q145,298 133,298 L67,298 Q55,298 54,286 Z"
+                fill="none" stroke="var(--ink)" stroke-opacity=".35" stroke-width="1.5"/>
+          <ellipse cx="100" cy="58" rx="58" ry="7" fill="var(--ink)" opacity=".22"/>
+
+          <!-- The engraving sits on a shallow arc, because the body is a
+               cylinder and text cut into it does not run flat. -->
+          <path id="arc" d="M64,196 Q100,208 136,196" fill="none"/>
+          <text id="engtext" font-size="16" font-weight="600"
+                fill="var(--sand)" stroke="var(--ink)" stroke-width=".4" stroke-opacity=".5">
+            <textPath href="#arc" startOffset="50%" text-anchor="middle">your name</textPath>
+          </text>
+        </svg>
+      </figure>
+
+      <form id="engform" novalidate>
+        <div class="field">
+          <label for="engin" data-t="eng.label">What it should say</label>
+          <input id="engin" type="text" maxlength="40" autocomplete="off"
+                 placeholder="Your name" data-t-attr="placeholder:eng.placeholder">
+          <p class="hint"><span class="counter" id="count">16</span>
+             <span data-t="eng.left">characters left</span></p>
+        </div>
+
+        <fieldset class="field" style="border:0;padding:0;margin-inline:0">
+          <legend data-t="eng.script" style="font-weight:600;font-size:var(--step--1);padding:0">Script</legend>
+          <div class="swatches">
+            <label class="swatch">
+              <input type="radio" name="script" value="latin" checked>
+              <span data-t="eng.latin">Latin</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="script" value="arabic">
+              <span data-t="eng.arabic">Arabic</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field" style="border:0;padding:0;margin-inline:0">
+          <legend data-t="eng.colour" style="font-weight:600;font-size:var(--step--1);padding:0">Colour</legend>
+          <div class="swatches" data-swatches="colour"></div>
+        </fieldset>
+
+        <!-- Warnings a person needs BEFORE they commit to something permanent. -->
+        <p class="notice" id="arwarn" hidden data-t="eng.warn.ar">Arabic joins as it is cut. Short is better — long phrases close up at engraving size and stop being readable.</p>
+        <p class="notice" data-t="eng.warn.perm">An engraving is permanent. Check the spelling now, because we cannot undo it later.</p>
+
+        <a class="btn" href="reserve.html" id="savebtn" data-t="eng.save">Save this to my cup</a>
+        <p class="hint" style="margin-block-start:.6rem" data-t="eng.saveHint">You will need an account. It takes an email and a password.</p>
+      </form>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p data-t="foot.note">cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.</p>
+    <p data-contact></p>
+    <p><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/engrave.js"></script>
+</body>
+</html>
