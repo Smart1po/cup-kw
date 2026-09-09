@@ -359,7 +359,35 @@
     });
   }
 
+  /* The photographs. Lazy, sized, and captioned — a gallery of five product
+     shots is the one place on this site where a real photo says more than
+     anything we could draw. */
+  function renderGallery() {
+    var host = document.querySelector('[data-gallery]');
+    if (!host) return;
+    var items = (window.CUP_EXPERIENCE && window.CUP_EXPERIENCE.gallery) || [];
+    if (!items.length) { host.innerHTML = ''; return; }
+
+    host.innerHTML = '';
+    items.forEach(function (item, i) {
+      var fig = document.createElement('figure');
+      fig.className = 'shot';
+      var img = document.createElement('img');
+      img.src = item.src;
+      img.alt = (lang === 'ar' ? item.altAr : item.altEn) || '';
+      /* The first is above the fold on a phone; the rest can wait. */
+      img.loading = i === 0 ? 'eager' : 'lazy';
+      img.decoding = 'async';
+      var cap = document.createElement('figcaption');
+      cap.textContent = (lang === 'ar' ? item.capAr : item.capEn) || '';
+      fig.appendChild(img);
+      fig.appendChild(cap);
+      host.appendChild(fig);
+    });
+  }
+
   function render() {
+    renderGallery();
     renderPrice();
     renderHeatTest();
     renderFit();

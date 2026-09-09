@@ -130,10 +130,104 @@ data. The `service_role` key must never enter this repository.
 
 ---
 
+## The cup has a face, and rules about where it may not go
+
+The character is a stoic little survivor, not a mascot. It endures a Kuwaiti
+afternoon without complaining and is quietly pleased to be picked up. Two eyes, a
+blink, no mouth. Wide-set and small reads adult; close-set and large reads like a
+children's toy, and this is a real product being sold to adults for money.
+
+**Where the face is forbidden**, and this matters more than where it appears: it
+must never sit beside a section where the site is admitting it does not know
+something. No face next to the unpublished Heat Test. No face next to the price
+disclosure or the empty cup-holder list. The credibility of this site rests on
+those sections being straight-faced, and a winking cup next to *"we have not
+measured this yet"* would undo all of it.
+
+Mechanically the face is opt-in per page: a cup only has one if its element
+carries `data-face`. The default is no face at all.
+
+---
+
+## The waiting screen is a cost, and it is priced accordingly
+
+A deliberate pause between pages is time taken from somebody. So it is capped at
+about three quarters of a second, a click or Escape skips it instantly, and
+reduced motion **removes the delay entirely** rather than merely removing the
+animation. A hard timeout always releases the navigation, so a failure in that
+file can never strand a visitor on a brand mark.
+
+It is inserted by script. If `loader.js` fails to load, the site navigates the way
+it always did — nothing depends on it.
+
+The nineteen lines are Kuwaiti, written in Arabic first, with the English rebuilt
+around each joke rather than translated. A twentieth was cut: it claimed four
+colours, and the collection has fourteen. The count *was* the joke, so it could
+not be reworded — it had to go.
+
+---
+
+## The show is not the only place the words live
+
+Every scene's copy is written into the page at load, not when its turn arrives.
+The animation only decides which scene is *foregrounded*. With motion off, all
+seven are shown at full strength and one Kuwaiti day simply reads as a list.
+
+That is the rule the whole site is built on — an animation is never the only
+reason content is visible — and the show is the place it was most tempting to
+break.
+
+Props are drawn in CSS: steam is three rising strokes, the car is a cup-holder
+ring and a dashboard sweep, the bag is a dark mouth in front of the cup. The bag
+uses fixed colours rather than tokens, because `--ink` inverts between day and
+night and a bag that turns cream at night reads as a cardboard box.
+
+---
+
+## The assistant is not an AI, and says so
+
+It matches what you type against a written keyword table and returns an answer
+somebody wrote. There is no model behind it. Its own panel says this before it
+says anything else, and its greeting repeats it.
+
+That is not modesty, it is the only honest option available: a real language model
+needs a server-side API key, and a key shipped in a static site's JavaScript is a
+key you have given away. If you want a real one later, the route is a Supabase
+Edge Function holding the key, with the page calling that — not a key in this
+repository, ever.
+
+Arabic matching folds alef forms, ta marbuta, alef maqsura and diacritics
+together. Without that, correctly-typed Arabic gets a shrug.
+
+---
+
+## Two bugs worth remembering
+
+**The translation loop.** `applyLang()` ends by dispatching `cup:lang`. `chat.js`
+listened for `cup:lang` and re-translated itself by calling `applyLang()` — which
+dispatched `cup:lang` again. Stack overflow on every page load, which silently
+killed everything that booted after it. There is now a re-entrancy guard in
+`applyLang`; leave it there. Anything that listens for `cup:lang` must not ask for
+a full re-translation pass.
+
+**Double-centring.** `cup3d.js` centres its planes with `translateX(-50%)`. Adding
+a negative margin in CSS as well pushed the decal, and later the face, clean off
+the side of the cup. It has happened twice. Centre it in one place.
+
+---
+
 ## Things that were considered and rejected
 
 - **A video.** An advert clip was on the home page for one commit and was replaced by the 3D
-  model. A model you can turn beats a clip you can only watch, and it costs no file.
+  model. A model you can turn beats a clip you can only watch.
+- **Drawing everything.** The site ran for several commits with no image files at all, which
+  was a good discipline and the wrong final answer. Five real product photographs went in
+  once they existed: a photo of the cup in an actual cup holder beats a cup holder drawn in
+  CSS, and the scenes with no photograph still use the model, so neither is doing the other's
+  job. Three of the seven show scenes are still drawn.
+- **Maximum contrast.** Both themes were first built near the top of the contrast range —
+  13.7:1 in day, 15.2:1 at night. Correct by the guidelines and tiring to read. They now sit
+  at about 10.7:1 and 11.4:1, which is still well past AAA and much easier on the eye.
 - **`mizu` branding on the base.** It appears on the physical product's underside, but
   putting a third-party mark on the site would read as a partnership claim we have not made.
 - **More panels on the cylinder.** 34 looked no better than 24 and cost frames.

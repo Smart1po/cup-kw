@@ -8,22 +8,24 @@
    shows through the near half. Spin the ring and you are rotating geometry.
 
    THE TAPER
-   The real cup is 10 cm across the top and 7.5 cm across the base, so the body
-   is a cone frustum, not a cylinder. Two things make that out of flat panels:
-   each panel is tilted inward by atan((Rtop − Rbase) / height), and each is
-   clipped to a trapezoid so the ring closes without gaps at the narrow end.
+   The real cup is 10 cm across the mouth and 7.5 cm across the base, so the
+   body is a cone frustum. Two things make one out of flat panels: each is
+   tilted inward by atan((Rtop − Rbase) / height), and each is clipped to a
+   trapezoid so the ring closes without gaps at the narrow end.
+
+   TURNING AND ZOOMING
+   Both axes. Drag sideways to spin it, drag up and down to tip it, wheel or
+   pinch to zoom, and every one of those has a keyboard equivalent. Pitch is
+   clamped: past about fifty degrees you are looking into a lid that has no
+   inside modelled, and the illusion is cheaper to protect than to build.
 
    WHY THE LIGHTING IS A FLAT OVERLAY
-   A body of revolution turning about its own axis has a silhouette that never
-   changes. So the shading can sit in a fixed layer in front of everything
-   rather than on the panels: the light stays put while the printing rotates
-   past it, which is what happens to a real cup on a real table. It is also
-   nearly free, which matters — an earlier version put a blend mode there and
-   locked the renderer solid.
-
-   THE FACE
-   Optional, and off by default. See setExpression, and the rules in
-   DECISIONS.md about where the character is not allowed to appear. */
+   A body of revolution spun about its own axis keeps the same silhouette, so
+   the light can sit in a fixed layer in front rather than on the panels — it
+   stays put while the printing rotates past, which is what happens to a real
+   cup on a real table. It costs nothing per frame, which matters: an earlier
+   version used a blend mode here and locked the renderer solid. Tipping the cup
+   does change the silhouette, which is the other reason pitch is clamped. */
 
 window.CUP3D = (function () {
   'use strict';
@@ -32,12 +34,17 @@ window.CUP3D = (function () {
   var STRAW_PANELS = 8;
   var DEG = 180 / Math.PI;
 
+  var PITCH_MIN = -52, PITCH_MAX = 26;
+  var ZOOM_MIN = 0.65, ZOOM_MAX = 2.4;
+
   function el(cls, parent) {
     var d = document.createElement('div');
     if (cls) d.className = cls;
     if (parent) parent.appendChild(d);
     return d;
   }
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
   /* Relative luminance, so a cream cup gets dark printing and a navy cup light
      printing, instead of one guess that fails half the collection. */
@@ -60,9 +67,6 @@ window.CUP3D = (function () {
     var rMid = (rTop + rBot) / 2;
     var lean = Math.atan((rTop - rBot) / height) * DEG;
     var step = 360 / count;
-
-    /* Widest edge sets the panel width; the narrow end is clipped back to it.
-       The whisker of overlap stops the seams reading as hairlines. */
     var wTop = (2 * Math.PI * rTop) / count + 1.4;
     var inset = rTop === rBot ? 0 : ((1 - (rBot / rTop)) / 2) * 100;
 
@@ -97,13 +101,11 @@ window.CUP3D = (function () {
     var C = window.CUP_CONTENT || {};
     var prod = C.product || {};
 
-    /* Proportions are the spec, not an impression of it. Correct the numbers in
-       content.js and the model changes shape. */
     var hCm = prod.heightCm || 27;
     var topCm = prod.topDiameterCm || 10;
     var baseCm = prod.baseDiameterCm || 7.5;
 
-    var totalH = opts.height || 340;
+    var totalH = opts.height || 400;
     var scale = totalH / hCm;
     var R_TOP = (topCm * scale) / 2;
     var R_BASE = (baseCm * scale) / 2;
@@ -119,34 +121,29 @@ window.CUP3D = (function () {
     var LID_TOP = TOP + STRAW_H - 10;
     var BODY_TOP = LID_TOP + LID_H - 8;
     var BODY_BOT = BODY_TOP + BODY_H;
-    var SCENE_H = BODY_BOT + 26;
-
-    /* The body narrows over its own height, but the lid sits on the widest part,
-       so the taper has to be worked out for the body span alone. */
-    var R_BODY_TOP = R_TOP;
-    var R_BODY_BOT = R_BASE;
+    var SCENE_H = BODY_BOT + 30;
 
     host.classList.add('c3d');
     host.innerHTML = '';
     host.style.setProperty('--scene-h', SCENE_H + 'px');
     host.style.setProperty('--cup-r', R_TOP + 'px');
-    host.style.setProperty('--cup-r-base', R_BASE + 'px');
     host.style.setProperty('--body-top', BODY_TOP + 'px');
     host.style.setProperty('--body-h', BODY_H + 'px');
     host.style.setProperty('--lid-top', LID_TOP + 'px');
+    host.style.setProperty('--zoom', '1');
 
     var scene = el('c3d__scene', host);
     var obj = el('c3d__obj', scene);
 
-    ring(obj, 'c3d__body', R_BODY_TOP, R_BODY_BOT, BODY_H, BODY_TOP, PANELS);
+    ring(obj, 'c3d__body', R_TOP, R_BASE, BODY_H, BODY_TOP, PANELS);
 
     var hasBand = prod.saduBand === true;
     var bandH = Math.round(BODY_H * 0.16);
     var bandTop = BODY_TOP + Math.round(BODY_H * 0.32);
     if (hasBand) {
-      var f = 1 - (1 - R_BODY_BOT / R_BODY_TOP) * ((bandTop - BODY_TOP) / BODY_H);
-      var f2 = 1 - (1 - R_BODY_BOT / R_BODY_TOP) * ((bandTop + bandH - BODY_TOP) / BODY_H);
-      ring(obj, 'c3d__band', R_BODY_TOP * f + 1.5, R_BODY_TOP * f2 + 1.5, bandH, bandTop, PANELS);
+      var t1 = 1 - (1 - R_BASE / R_TOP) * ((bandTop - BODY_TOP) / BODY_H);
+      var t2 = 1 - (1 - R_BASE / R_TOP) * ((bandTop + bandH - BODY_TOP) / BODY_H);
+      ring(obj, 'c3d__band', R_TOP * t1 + 1.5, R_TOP * t2 + 1.5, bandH, bandTop, PANELS);
     }
 
     ring(obj, 'c3d__lid', LID_R, LID_R, LID_H, LID_TOP, PANELS);
@@ -162,22 +159,18 @@ window.CUP3D = (function () {
 
     disc(obj, 'c3d__base', R_BASE, BODY_BOT);
 
-    /* ---- the foldable handle ----
-       A plane whose normal is tangential, so it contains the cup's axis and
-       sticks straight out from the side: go to the surface at the chosen angle,
-       then turn the plane a quarter turn. Folded, it lies flat against the body,
-       which is the whole point of it. */
+    /* The foldable handle. A plane whose normal is tangential, so it contains
+       the cup's axis and stands out from the side: go to the surface at the
+       chosen angle, then turn the plane a quarter turn. */
     var handle = el('c3d__handle', obj);
-    var handleAngle = 96;
     handle.style.top = (BODY_TOP + BODY_H * 0.10) + 'px';
     handle.style.height = (BODY_H * 0.42) + 'px';
     handle.style.transform =
-      'rotateY(' + handleAngle + 'deg) translateZ(' + (R_TOP * 0.92) + 'px) rotateY(90deg)';
+      'rotateY(96deg) translateZ(' + (R_TOP * 0.92) + 'px) rotateY(90deg)';
 
-    /* ---- printing ----
-       Two planes on the front of the cup, so the marks turn out of view as it
-       spins. Each is narrow relative to the radius, keeping the flat-versus-
-       curved error below the threshold anyone notices. */
+    /* Printing rides on planes at the front, so it turns out of view as the cup
+       spins. Each is narrow relative to the radius, which keeps the
+       flat-versus-curved error below the threshold anyone notices. */
     function plane(cls, y) {
       var p = el('c3d__decal ' + cls, obj);
       p.style.transform = 'translateX(-50%) translateZ(' + (R_TOP + 2.2) + 'px)';
@@ -187,22 +180,17 @@ window.CUP3D = (function () {
 
     var above = plane('c3d__decal--top', BODY_TOP + BODY_H * (hasBand ? 0.08 : 0.06));
     var logo = el('c3d__logo', above);
-    logo.textContent = 'CUP';
-
-    /* The blueprint column — the architectural line drawing from the product
-       artwork, reduced to what survives at this size. */
+    logo.textContent = opts.logo || 'CUP';
     if (prod.blueprint !== false && !hasBand) el('c3d__blueprint', above);
 
     var below = plane('c3d__decal--bot',
       hasBand ? (bandTop + bandH + BODY_H * 0.06) : (BODY_TOP + BODY_H * 0.60));
     var word = el('c3d__word', below);
     word.textContent = opts.wordmark || 'IDEAS FLOW FURTHER';
-
     var eng = el('c3d__eng', below);
 
-    /* ---- the face ----
-       Built and left empty. It only appears once setExpression is called, so a
-       page that never asks for a character never gets one. */
+    /* The face. Built and left empty — it only appears once setExpression is
+       called, so a page that never asks for a character never gets one. */
     var face = el('c3d__face', obj);
     face.style.transform = 'translateX(-50%) translateZ(' + (R_TOP + 2.6) + 'px)';
     face.style.top = (BODY_TOP + BODY_H * 0.30) + 'px';
@@ -211,14 +199,26 @@ window.CUP3D = (function () {
     el('c3d__pupil', eyeL);
     el('c3d__pupil', eyeR);
 
-    el('c3d__shade', scene);
-    el('c3d__shadow', scene);
+    /* Shade and shadow live outside the 3D context so they stay flat, and are
+       scaled about the same origin the model scales about — otherwise zooming
+       slides the lighting off the cup. */
+    var shade = el('c3d__shade', host);
+    var shadow = el('c3d__shadow', host);
 
     /* ---- state ---- */
-    var angle = opts.angle == null ? -18 : opts.angle;
+    var yaw = opts.angle == null ? -18 : opts.angle;
+    var pitch = opts.pitch == null ? -7 : opts.pitch;
+    var zoom = opts.zoom || 1;
     var api = {};
 
-    function paint() { obj.style.transform = 'rotateX(-7deg) rotateY(' + angle + 'deg)'; }
+    function paint() {
+      obj.style.transform =
+        'scale(' + zoom.toFixed(3) + ') rotateX(' + pitch.toFixed(1) + 'deg) rotateY(' + yaw.toFixed(1) + 'deg)';
+      host.style.setProperty('--zoom', zoom.toFixed(3));
+      /* The overlay only describes a cylinder seen side-on. Tipped hard, it
+         stops describing anything, so it fades out rather than lying. */
+      shade.style.opacity = String(clamp(1 - Math.abs(pitch) / 70, 0.15, 1));
+    }
 
     api.el = host;
 
@@ -234,10 +234,6 @@ window.CUP3D = (function () {
       eng.textContent = value;
       eng.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
       eng.style.fontFamily = isArabic ? 'var(--face-arabic)' : 'var(--face-latin)';
-
-      /* Set the type down as the text lengthens so a name inside the limit is
-         always shown whole. Clipping would be the preview lying about the one
-         thing that cannot be undone. */
       var n = Array.from(value).length;
       var base = isArabic ? 16 : 14;
       eng.style.fontSize =
@@ -245,46 +241,47 @@ window.CUP3D = (function () {
       return api;
     };
 
-    api.setHandle = function (on) {
-      host.classList.toggle('has-handle', !!on);
-      return api;
-    };
+    api.setHandle = function (on) { host.classList.toggle('has-handle', !!on); return api; };
 
-    /* Expressions are data attributes; the CSS owns what each one looks like,
-       so a designer can retune the character without touching this file. */
     api.setExpression = function (id) {
-      if (!id) { host.removeAttribute('data-face'); return api; }
-      host.setAttribute('data-face', id);
+      if (!id) host.removeAttribute('data-face');
+      else host.setAttribute('data-face', id);
       return api;
     };
 
     api.lookAt = function (dx, dy) {
-      face.style.setProperty('--look-x', Math.max(-1, Math.min(1, dx)).toFixed(2));
-      face.style.setProperty('--look-y', Math.max(-1, Math.min(1, dy)).toFixed(2));
+      face.style.setProperty('--look-x', clamp(dx, -1, 1).toFixed(2));
+      face.style.setProperty('--look-y', clamp(dy, -1, 1).toFixed(2));
       return api;
     };
 
-    api.setAngle = function (a) { angle = a; paint(); return api; };
-    api.getAngle = function () { return angle; };
-    api.spinTo = function (a) { return api.setAngle(a); };
+    api.setAngle = function (a) { yaw = a; paint(); return api; };
+    api.getAngle = function () { return yaw; };
+    api.setPitch = function (p) { pitch = clamp(p, PITCH_MIN, PITCH_MAX); paint(); return api; };
+    api.setZoom = function (z) { zoom = clamp(z, ZOOM_MIN, ZOOM_MAX); paint(); return api; };
+    api.getZoom = function () { return zoom; };
+    api.reset = function () {
+      yaw = -18; pitch = -7; zoom = opts.zoom || 1; paint(); return api;
+    };
 
-    /* ---- turning it ----
-       Pointer drag and arrow keys, because a control that only works with a
-       mouse is not a control. */
-    var dragging = false, lastX = 0, moved = 0;
+    /* ---- turning it ---- */
+    var dragging = false, lastX = 0, lastY = 0;
 
     scene.addEventListener('pointerdown', function (e) {
-      dragging = true; moved = 0; lastX = e.clientX;
+      dragging = true;
+      lastX = e.clientX; lastY = e.clientY;
+      /* Without this, dragging the cup drags a text selection across the
+         headline behind it and the page lights up blue. */
+      e.preventDefault();
       try { scene.setPointerCapture(e.pointerId); } catch (err) {}
       host.classList.add('is-dragging');
     });
 
     scene.addEventListener('pointermove', function (e) {
       if (!dragging) return;
-      var d = e.clientX - lastX;
-      moved += Math.abs(d);
-      angle += d * 0.6;
-      lastX = e.clientX;
+      yaw += (e.clientX - lastX) * 0.6;
+      pitch = clamp(pitch - (e.clientY - lastY) * 0.4, PITCH_MIN, PITCH_MAX);
+      lastX = e.clientX; lastY = e.clientY;
       paint();
     });
 
@@ -301,14 +298,59 @@ window.CUP3D = (function () {
     scene.addEventListener('pointerup', stop);
     scene.addEventListener('pointercancel', stop);
 
+    /* Wheel zoom, but only once the cup has focus or the pointer is over it AND
+       the gesture is a deliberate zoom. Hijacking plain page scroll because the
+       cursor happened to pass over a product shot is a hostile pattern, so a
+       bare wheel scrolls the page and ctrl/⌘+wheel — the browser's own zoom
+       gesture, and what a trackpad pinch sends — zooms the cup. */
+    scene.addEventListener('wheel', function (e) {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      api.setZoom(zoom * (e.deltaY > 0 ? 0.92 : 1.08));
+    }, { passive: false });
+
     host.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowLeft') { angle -= 12; paint(); e.preventDefault(); }
-      if (e.key === 'ArrowRight') { angle += 12; paint(); e.preventDefault(); }
+      var k = e.key;
+      if (k === 'ArrowLeft')  { yaw -= 12; paint(); e.preventDefault(); }
+      if (k === 'ArrowRight') { yaw += 12; paint(); e.preventDefault(); }
+      if (k === 'ArrowUp')    { api.setPitch(pitch + 8); e.preventDefault(); }
+      if (k === 'ArrowDown')  { api.setPitch(pitch - 8); e.preventDefault(); }
+      if (k === '+' || k === '=') { api.setZoom(zoom * 1.12); e.preventDefault(); }
+      if (k === '-' || k === '_') { api.setZoom(zoom * 0.89); e.preventDefault(); }
+      if (k === '0') { api.reset(); e.preventDefault(); }
     });
 
-    /* ---- the slow turn ----
-       Same motion switch as everything else, and it yields the moment somebody
-       takes hold of the cup themselves. */
+    /* Visible zoom controls, because a gesture nobody can see is a feature
+       nobody uses — and on a touch screen there is no wheel at all. */
+    if (opts.controls !== false) {
+      var bar = el('c3d__zoombar', host);
+      /* Tilt has buttons as well as drag, because on a touch screen a vertical
+         swipe has to keep scrolling the page — taking that over would trap
+         somebody inside a product shot. So touch gets yaw by swiping and pitch
+         by tapping, and nobody loses the ability to scroll past. */
+      var ACTS = [
+        ['tilt-up',   'ui.cup.tiltup',  '⌃', function () { api.setPitch(pitch + 10); }],
+        ['out',       'ui.cup.out',     '−', function () { api.setZoom(zoom * 0.85); }],
+        ['reset',     'ui.cup.reset',   '↺', function () { api.reset(); }],
+        ['in',        'ui.cup.in',      '+', function () { api.setZoom(zoom * 1.18); }],
+        ['tilt-down', 'ui.cup.tiltdown','⌄', function () { api.setPitch(pitch - 10); }]
+      ];
+      ACTS.forEach(function (row) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'c3d__zoombtn';
+        b.setAttribute('data-act', row[0]);
+        b.setAttribute('data-t-attr', 'aria-label:' + row[1]);
+        b.setAttribute('aria-label', row[0]);
+        b.textContent = row[2];
+        b.addEventListener('click', row[3]);
+        bar.appendChild(b);
+      });
+      api.zoombar = bar;
+      if (window.cupApplyLang) window.cupApplyLang();
+    }
+
+    /* ---- the slow turn ---- */
     var raf = null;
     function motionWanted() {
       var set = document.documentElement.getAttribute('data-motion');
@@ -316,12 +358,10 @@ window.CUP3D = (function () {
       if (set === 'on') return true;
       return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     }
-
     function tick() {
-      if (!dragging) { angle += (opts.spinSpeed || 0.16); paint(); }
+      if (!dragging) { yaw += (opts.spinSpeed || 0.16); paint(); }
       raf = requestAnimationFrame(tick);
     }
-
     function syncMotion() {
       var want = motionWanted() && opts.spin !== false;
       if (want && raf === null) raf = requestAnimationFrame(tick);

@@ -110,7 +110,12 @@ window.CUP_EXPERIENCE = {
         "bodyAr": "قاعدته ٧٫٥ سم. تحطه بحاضن الكوب ويثبت، وما يترنّح لا عند المطب ولا بالدائري الخامس.",
         "prop": "car",
         "expression": "car",
-        "angle": 26
+        "angle": 26,
+        "photo": {
+          "src": "assets/img/in-car.jpg",
+          "altEn": "The cup standing in a car cup holder, a hand resting on it",
+          "altAr": "الكوب واقف بحامل أكواب السيارة، ويد ماسكته"
+        }
       },
       {
         "id": "heat",
@@ -121,7 +126,12 @@ window.CUP_EXPERIENCE = {
         "bodyAr": "دخّل المصّاصة وسكّر الغطا — هذا وجه البارد. كم ساعة؟ ما نقول، لأننا ما قسناها وما نبيع أرقام.",
         "prop": "heat",
         "expression": "heat",
-        "angle": -6
+        "angle": -6,
+        "photo": {
+          "src": "assets/img/poolside.jpg",
+          "altEn": "A hand lifting the cup off a concrete table beside a pool in full sun",
+          "altAr": "يد ترفع الكوب من طاولة خرسانية جنب المسبح والشمس طالعة"
+        }
       },
       {
         "id": "bag",
@@ -143,7 +153,12 @@ window.CUP_EXPERIENCE = {
         "bodyAr": "المسكة مطويّة والكف على الكوب. نفس الكوب، يد وحدة، ومشية على شارع الخليج والشمس تسلّم وتروح.",
         "prop": "held",
         "expression": "held",
-        "angle": 10
+        "angle": 10,
+        "photo": {
+          "src": "assets/img/in-hand.jpg",
+          "altEn": "The cup held in one hand against a plain background, showing its size",
+          "altAr": "الكوب بيد وحدة على خلفية بيضاء، وباين حجمه"
+        }
       },
       {
         "id": "diwaniya",
@@ -165,7 +180,12 @@ window.CUP_EXPERIENCE = {
         "bodyAr": "شيل الغطا، طلّع المصّاصة، غسلة، ويوقف على الرخامة ينتظر قهوة باجر. يحفظ القهوة. وهذي كل قائمة المزايا.",
         "prop": "idle",
         "expression": "idle",
-        "angle": -20
+        "angle": -20,
+        "photo": {
+          "src": "assets/img/cold-drink.jpg",
+          "altEn": "The cup with its lid off beside it, filled with an iced drink and a steel straw",
+          "altAr": "الكوب وغطاه مشلوع جنبه، ومعبّى شراب بارد وفيه مصاصة ستيل"
+        }
       }
     ]
   },
@@ -994,5 +1014,42 @@ window.CUP_EXPERIENCE = {
         "answerAr": "لا. أنا سكربت صغير، عندي قائمة أجوبة مكتوبة باليد، وأقارنها بالكلمات اللي تكتبها. ما وراي أي نموذج، وما أتعلم منك شي، وما يترسل شي تكتبه لأي مكان. وإذا سؤالك مب بالقائمة بقول لك، لأن جواب مخترع من شي مثلي أسوأ من لا جواب أصلاً."
       }
     ]
-  }
+  },
+  "gallery": [
+    {
+      "src": "assets/img/in-hand.jpg",
+      "altEn": "The cup held in one hand against a plain background, showing its size",
+      "altAr": "الكوب بيد وحدة على خلفية بيضاء، وباين حجمه",
+      "capEn": "887 ml, in one hand.",
+      "capAr": "٨٨٧ مل، بيد وحدة."
+    },
+    {
+      "src": "assets/img/in-car.jpg",
+      "altEn": "The cup standing in a car cup holder, a hand resting on it",
+      "altAr": "الكوب واقف بحامل أكواب السيارة، ويد ماسكته",
+      "capEn": "Base is 7.5 cm. It sits.",
+      "capAr": "القاعدة ٧٫٥ سم. يستقر."
+    },
+    {
+      "src": "assets/img/at-desk.jpg",
+      "altEn": "The cup held at a desk in front of two screens showing code",
+      "altAr": "الكوب بيد قدام شاشتين عليهم كود، على مكتب",
+      "capEn": "Where most of them actually live.",
+      "capAr": "المكان اللي يعيش فيه أغلبها فعلاً."
+    },
+    {
+      "src": "assets/img/poolside.jpg",
+      "altEn": "A hand lifting the cup off a concrete table beside a pool in full sun",
+      "altAr": "يد ترفع الكوب من طاولة خرسانية جنب المسبح والشمس طالعة",
+      "capEn": "Outside, in the sun, unbothered.",
+      "capAr": "برا، بالشمس، وما همه."
+    },
+    {
+      "src": "assets/img/cold-drink.jpg",
+      "altEn": "The cup with its lid off beside it, filled with an iced drink and a steel straw",
+      "altAr": "الكوب وغطاه مشلوع جنبه، ومعبّى شراب بارد وفيه مصاصة ستيل",
+      "capEn": "Lid off. Straw in. Cold side of the 2-in-1.",
+      "capAr": "الغطا مشلوع، والمصاصة داخل. الوجه البارد للغطا."
+    }
+  ]
 };

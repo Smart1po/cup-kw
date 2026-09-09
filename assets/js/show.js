@@ -42,6 +42,11 @@
            bag mouth, a hand. Keeping them anonymous here means a new prop is a
            CSS change, not a JavaScript one. */
         '<div class="show__props" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' +
+        /* Scenes with a real photograph use it; the rest are drawn around the
+           3D model. A photograph of the cup actually sitting in a car holder
+           beats any cup-holder I can draw, and the model earns its place on the
+           scenes where turning it is the point. */
+        '<img class="show__photo" alt="" hidden>' +
         '<div class="show__cup" data-show-cup></div>' +
       '</div>' +
       '<div class="show__script"></div>' +
@@ -152,9 +157,25 @@
     /* One prop attribute drives everything the stage draws. CSS owns the look,
        so the scene list stays pure content. */
     stage.setAttribute('data-prop', s.prop || 'idle');
-    if (cup) {
-      cup.setExpression(s.expression || 'idle');
-      cup.setAngle(s.angle == null ? -12 : s.angle);
+
+    var img = host.querySelector('.show__photo');
+    var cupBox = host.querySelector('.show__cup');
+    var l = lang();
+    if (s.photo) {
+      img.src = s.photo.src;
+      img.alt = (l === 'ar' ? s.photo.altAr : s.photo.altEn) || '';
+      img.hidden = false;
+      cupBox.hidden = true;
+      stage.classList.add('has-photo');
+    } else {
+      img.hidden = true;
+      img.removeAttribute('src');
+      cupBox.hidden = false;
+      stage.classList.remove('has-photo');
+      if (cup) {
+        cup.setExpression(s.expression || 'idle');
+        cup.setAngle(s.angle == null ? -12 : s.angle);
+      }
     }
 
     if (byHand) pause();

@@ -10,12 +10,16 @@
    mirrors because it was built to, not because a second sheet undoes it. */
 
 :root {
-  /* Light — cream ground, the colour of the collection's own packaging. */
-  --paper:        #F3EADB;
-  --paper-raised: #FBF6EC;
-  --ink:          #241F1B;
-  --ink-soft:     #5B5047;
-  --rule:         #DCCDB4;
+  /* Light — cream ground, the colour of the collection's own packaging.
+     Deliberately softened: the ink is a warm dark brown rather than near-black
+     and the paper is not paper-white, which takes body text from about 13.7:1
+     down to 10.7:1. Still far past AAA, and considerably easier to sit in front
+     of for the length of time it takes to read a product page. */
+  --paper:        #F5EFE4;
+  --paper-raised: #FCF8F1;
+  --ink:          #3A342D;
+  --ink-soft:     #6B6157;
+  --rule:         #DFD3BE;
   --accent:       #6B2028;   /* Sadu burgundy */
   --accent-ink:   #F7F0E4;
   --warn:         #8A4A1E;
@@ -50,12 +54,15 @@ html { -webkit-text-size-adjust: 100%; color-scheme: light; }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-scheme="light"]) {
-    --paper:        #17140F;
-    --paper-raised: #201C16;
-    --ink:          #F2E9D9;
-    --ink-soft:     #BFB09A;
-    --rule:         #3A322A;
-    --accent:       #E0A0A4;   /* rosewood, so the accent still passes on black */
+    /* Night, softened. The ground is lifted off near-black to a warm charcoal
+       and the ink pulled back from cream-white, which is what stops a dark
+       theme glaring. Body text lands at about 11.4:1 rather than 15.2:1. */
+    --paper:        #201C18;
+    --paper-raised: #2A2521;
+    --ink:          #DDD3C4;
+    --ink-soft:     #A99D8D;
+    --rule:         #3E372F;
+    --accent:       #E0A0A4;   /* rosewood, so the accent still passes on dark */
     --accent-ink:   #241014;
     --warn:         #E8A972;
     --weave-thread: #E9DCC6;
@@ -63,12 +70,14 @@ html { -webkit-text-size-adjust: 100%; color-scheme: light; }
   }
 }
 
+/* Must stay identical to the media-query block above, or choosing "night"
+   explicitly would give a different night from letting the device decide. */
 :root[data-scheme="dark"] {
-  --paper:        #17140F;
-  --paper-raised: #201C16;
-  --ink:          #F2E9D9;
-  --ink-soft:     #BFB09A;
-  --rule:         #3A322A;
+  --paper:        #201C18;
+  --paper-raised: #2A2521;
+  --ink:          #DDD3C4;
+  --ink-soft:     #A99D8D;
+  --rule:         #3E372F;
   --accent:       #E0A0A4;
   --accent-ink:   #241014;
   --warn:         #E8A972;
@@ -290,6 +299,9 @@ html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
   perspective-origin: 50% 42%;
   touch-action: pan-y;      /* vertical scroll still works over the cup */
   cursor: grab;
+  position: relative;
+  /* Dragging the cup must not drag a text selection across the page behind it. */
+  user-select: none; -webkit-user-select: none;
   /* The cup is a physical object, so it must NOT mirror in Arabic — a lid is
      on the same side of the cup in every language. Forcing LTR inside makes
      every logical property below resolve the same way in both directions.
@@ -410,6 +422,10 @@ html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
    richer, but it forces the browser to flatten the whole preserve-3d subtree
    into a texture on every single frame, which locks up the renderer once the
    cup is turning. Cheap and always smooth beats handsome and stuttering. */
+/* Shade and shadow sit outside the 3D context so they stay flat, and are
+   scaled about the exact point the model scales about — the model's own origin,
+   which is the horizontal centre of the scene at its very top. Get this origin
+   wrong and zooming slides the lighting off the side of the cup. */
 .c3d__shade {
   position: absolute; z-index: 4; pointer-events: none;
   left: 50%;
@@ -418,6 +434,8 @@ html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
   inset-block-start: var(--lid-top);
   block-size: calc(var(--body-top) + var(--body-h) - var(--lid-top));
   border-end-start-radius: 14px; border-end-end-radius: 14px;
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) + 3px) calc(var(--lid-top) * -1);
   background: linear-gradient(90deg,
     rgba(0,0,0,.40) 0%,
     rgba(0,0,0,.22) 11%,
@@ -437,6 +455,9 @@ html[dir="rtl"] .swatch span { padding: .4rem .4rem .4rem .85rem; }
   inset-block-start: calc(var(--body-top) + var(--body-h) - 10px);
   block-size: 30px;
   background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.30), rgba(0,0,0,0) 68%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) * 1.55)
+                    calc((var(--body-top) + var(--body-h) - 10px) * -1);
 }
 
 .cupstage { display: grid; place-items: center; margin: 0; }

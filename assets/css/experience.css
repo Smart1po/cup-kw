@@ -461,6 +461,48 @@ html[dir="rtl"] .show__time { text-align: start; }
   .totop { inline-size: 42px; block-size: 42px; }
 }
 
+/* ---- zoom controls ----
+   A gesture nobody can see is a feature nobody uses, and on a touch screen
+   there is no wheel at all. */
+.c3d__zoombar {
+  position: absolute; z-index: 6;
+  inset-block-end: .25rem; left: 50%; transform: translateX(-50%);
+  display: flex; gap: .35rem;
+  opacity: .45; transition: opacity calc(.2s * var(--motion)) ease;
+}
+.c3d:hover .c3d__zoombar, .c3d:focus-within .c3d__zoombar { opacity: 1; }
+.c3d__zoombtn {
+  inline-size: 32px; block-size: 32px; border-radius: 50%;
+  border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink);
+  font: inherit; font-size: 1rem; line-height: 1; cursor: pointer; padding: 0;
+  display: grid; place-items: center;
+}
+.c3d__zoombtn:hover { border-color: var(--accent); }
+
+/* ---- the photographs ---- */
+
+.gallery {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+.shot { margin: 0; display: grid; gap: .55rem; }
+.shot img {
+  inline-size: 100%; block-size: auto; display: block;
+  aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: var(--radius); border: 1px solid var(--rule);
+  background: var(--paper-raised);
+}
+.shot figcaption { font-size: var(--step--1); color: var(--ink-soft); }
+
+/* A photograph inside the show fills the stage, and the model steps aside. */
+.show__photo {
+  position: absolute; inset: 0; z-index: 2;
+  inline-size: 100%; block-size: 100%; object-fit: cover;
+}
+.show__photo[hidden] { display: none; }
+.show__cup[hidden] { display: none; }
+.show__stage.has-photo { padding: 0; }
+
 /* =========================================================================
    PAGE LAYOUTS
    ========================================================================= */

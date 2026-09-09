@@ -83,11 +83,19 @@ language, so the model is pinned left-to-right while the page around it flips.
 
 ---
 
-## No image files
+## Photographs, and everything else drawn
 
-There isn't a single `.png`, `.jpg` or `.mp4` in this repository, and there is no web font.
-The cup, the engraving, the icons and the marks are CSS and inline SVG. Nothing is fetched
-at runtime except the calls to our own Supabase project.
+There are five product photographs in `assets/img/`, about half a megabyte in total. They
+earn their place: a photograph of the cup actually standing in a car cup holder is worth more
+than any cup holder that can be drawn in CSS, and the engraved names differing between shots
+demonstrates the whole positioning without a word of copy.
+
+Everything else is still drawn — the 3D cup, the engraving preview, the icons, the marks, the
+stage props for the scenes that have no photograph. There is no web font, and nothing is
+fetched at runtime except the images, which are served from this repository, and the calls to
+our own Supabase project.
+
+Images are lazy-loaded below the fold and carry real alt text in both languages.
 
 ---
 

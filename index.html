@@ -46,8 +46,9 @@
 
       <figure class="cupstage">
         <!-- Real geometry, built by cup3d.js. No image file and no 3D library. -->
-        <div data-cup3d data-face="idle" aria-label="A three-dimensional model of the cup. Drag it to turn it."></div>
-        <figcaption class="cuphint" data-t="home.cup.hint">Drag the cup to turn it. Arrow keys work too.</figcaption>
+        <div data-cup3d data-face="idle" data-height="440"
+             aria-label="A three-dimensional model of the cup. Drag to turn it in any direction, and zoom with the buttons below."></div>
+        <figcaption class="cuphint" data-t="home.cup.hint">Drag to turn it any direction. Arrow keys turn it, + and − zoom.</figcaption>
       </figure>
     </div>
   </section>
@@ -63,8 +64,17 @@
     </div>
   </section>
 
-  <!-- 3. The collection -->
-  <section class="band band--rule" id="collection">
+  <!-- 3. The photographs. The one place a real photo beats anything drawn. -->
+  <section class="band band--rule">
+    <div class="wrap">
+      <h2 data-t="gal.h">The cup, actually</h2>
+      <p class="lede" data-t="gal.p">Not renders. The cup as it is, in the places it ends up.</p>
+      <div class="gallery" data-gallery></div>
+    </div>
+  </section>
+
+  <!-- 4. The collection -->
+  <section class="band band--raised" id="collection">
     <div class="wrap">
       <h2 data-t="home.collection.h">The Kuwait Collection</h2>
       <div class="narrow" data-t="home.collection.p" data-t-prose>

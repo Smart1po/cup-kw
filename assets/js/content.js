@@ -231,8 +231,12 @@ window.CUP_STRINGS = {
   'home.honest.p': { en: 'We would rather leave a gap than fill it with something we made up. Not settled today: the price, the capacity, how long it holds, when the first batch exists, and how it reaches you.\nThere are no reviews here because nobody has used the cup yet. No logos, because nobody has partnered with us. No customer count, because there are no customers. Each of those appears the day it is real.',
                   ar: 'نفضّل نترك الفراغ على أن نعبيه بشي مألفينه. اللي ما استقرينا عليه اليوم: السعر، الحجم، كم ساعة يصمد، متى تنزل أول دفعة، وكيف توصلك.\nما في تقييمات هني لأن ما في أحد استخدم الكوب. وما في شعارات لأن ما في أحد شاركنا. وما في عدد زباين لأن ما في زباين. كل وحدة منها بتطلع يوم ما تصير حقيقة.' },
 
-  'home.cup.hint': { en: 'Drag the cup to turn it. Arrow keys work too.',
-                  ar: 'اسحب الكوب عشان تلفه. وأسهم الكيبورد تشتغل بعد.' },
+  'home.cup.hint': { en: 'Drag to turn it any direction. Arrow keys turn it, + and − zoom.',
+                  ar: 'اسحب عشان تلفه بأي اتجاه. أسهم الكيبورد تلفه، و + و − يقربون ويبعدون.' },
+
+  'gal.h': { en: 'The cup, actually', ar: 'الكوب، على حقيقته' },
+  'gal.p': { en: 'Not renders. The cup as it is, in the places it ends up.',
+                  ar: 'مو رندرات. الكوب مثل ما هو، بالأماكن اللي يوصلها.' },
 
   'home.collection.h': { en: 'The Kuwait Collection', ar: 'مجموعة الكويت' },
   'home.collection.p': { en: 'Fourteen colours, taken from Sadu rather than from a paint chart. Pick one and the cup above changes to it.\nA colour name should tell you something you can already picture.',
@@ -360,6 +364,12 @@ window.CUP_STRINGS = {
                        ar: 'القاعدة ٧٫٥ سم. والسيارات اللي جربناها فعلاً موجودة تحت بهالصفحة، وصريحة إنها قائمة قصيرة.' },
 
   /* ---- furniture ---- */
+
+  'ui.cup.tiltup':   { en: 'Tilt the cup up',   ar: 'ميّل الكوب فوق' },
+  'ui.cup.tiltdown': { en: 'Tilt the cup down', ar: 'ميّل الكوب تحت' },
+  'ui.cup.in':       { en: 'Zoom in',           ar: 'قرّب' },
+  'ui.cup.out':      { en: 'Zoom out',          ar: 'بعّد' },
+  'ui.cup.reset':    { en: 'Reset the view',    ar: 'رجّع العرض' },
 
   'ui.totop': { en: 'Back to top', ar: 'ارجع فوق' },
   'ui.skip':  { en: 'Tap anywhere to skip', ar: 'دوس بأي مكان عشان تتخطى' },
