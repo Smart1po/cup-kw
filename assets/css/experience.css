@@ -754,6 +754,19 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
 .chip--btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
 .chip--btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* The band toggle sits in a .field on the engraving page, and a grid item with
+   width auto stretches — which turned a chip into a full-width pill. Sizing it
+   to its content lets whatever contains it do the aligning: start inside the
+   form, centred under the cup on the home page. */
+[data-band-toggle] { inline-size: fit-content; margin-block-start: .35rem; }
+
+/* The turn-and-zoom hint belongs under the cup, not stretched across the whole
+   column with the page gutter for a margin. */
+.cuphint {
+  text-align: center; margin-block-start: .9rem;
+  max-inline-size: 34ch; margin-inline: auto;
+}
+
 .card__add {
   margin-block-start: .1rem; inline-size: 100%;
   border: 1px solid var(--line); background: none; color: var(--fg-dim);
