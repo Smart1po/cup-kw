@@ -182,8 +182,11 @@ html[dir="rtl"] .btn:hover .arrow { transform: scaleX(-1) translateX(4px); }
 }
 .top.is-stuck { background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(14px); }
 
+/* Placement belongs to the header's three-column grid, not to the mark itself.
+   .stack is also a grid, so a bare grid-column: 2 on .mark put the footer's
+   wordmark into an implicit second column and pushed it off centre. */
+.top .mark { grid-column: 2; justify-self: center; }
 .mark {
-  grid-column: 2; justify-self: center;
   font-weight: 700; font-size: 1.15rem; letter-spacing: -.04em;
   text-decoration: none; color: var(--fg);
   direction: ltr; unicode-bidi: isolate;
@@ -262,15 +265,34 @@ html[dir="rtl"] .stack { justify-items: start; }
   list-style: none; padding: 0; margin: 0;
   display: grid; gap: 0 2.5rem;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  max-inline-size: 62rem;
+  max-inline-size: 62rem; margin-inline: auto;
+  text-align: center; justify-items: center;
 }
+/* Each fact gets its own rule colour. Six of them, cycled with nth-child, every
+   one measured against the navy ground: camel 6.99, brass 5.06, off-white
+   13.07, sage 7.35, slate 6.44, mustard 6.63. The Sadu maroon is not among them
+   on purpose — it is 1.73 here and would read as a dark smudge. */
 .facts li {
-  display: grid; gap: .35rem; align-content: start;
-  padding-block: .9rem; border-block-start: 1px solid var(--line);
+  display: grid; gap: .4rem; align-content: start; justify-items: center;
+  padding-block: 1.1rem; border-block-start: 2px solid var(--rule, var(--line));
+  inline-size: 100%;
 }
+.facts li:nth-child(6n+1) { --rule: #C9A87C; }
+.facts li:nth-child(6n+2) { --rule: #A9B69C; }
+.facts li:nth-child(6n+3) { --rule: #90A9C2; }
+.facts li:nth-child(6n+4) { --rule: #D5A02E; }
+.facts li:nth-child(6n+5) { --rule: #B08D57; }
+.facts li:nth-child(6n+6) { --rule: #F2EAD8; }
 .facts dt, .facts .k { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); }
 html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }
-.facts .v { font-size: var(--lede); font-variant-numeric: tabular-nums; }
+/* The number is the point of the row, so it is set at display weight and takes
+   its row's colour rather than sitting in body text. */
+.facts .v {
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem);
+  font-weight: 600; line-height: 1.05; letter-spacing: -.01em;
+  color: var(--rule, var(--fg));
+  font-variant-numeric: tabular-nums;
+}
 
 /* ---- the honest empty state ----
    Kept, because it is the most important component on the site. Quieter now,
@@ -306,8 +328,13 @@ fieldset.field { border: 0; margin-inline: 0; padding: 0; }
 /* ---- footer ---- */
 
 .foot { padding: 4rem var(--bleed) 3rem; border-block-start: 1px solid var(--line); }
-.foot__in { display: grid; gap: 2rem; inline-size: min(100%, 82rem); margin-inline: auto; }
-@media (min-width: 50rem) { .foot__in { grid-template-columns: 1fr auto; align-items: end; } }
+/* The mark closes the page, so it sits in the middle at every width rather than
+   being pushed into a corner by a two-column footer. */
+.foot__in {
+  display: grid; gap: 1.4rem; inline-size: min(100%, 82rem); margin-inline: auto;
+  justify-items: center; text-align: center;
+}
+.foot__in .stack { justify-items: center; }
 .foot a { color: var(--fg-dim); text-decoration: none; }
 .foot a:hover { color: var(--accent); }
 

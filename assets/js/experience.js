@@ -1020,15 +1020,15 @@ window.CUP_EXPERIENCE = {
       "src": "assets/img/in-hand.jpg",
       "altEn": "The cup held in one hand against a plain background, showing its size",
       "altAr": "الكوب بيد وحدة على خلفية بيضاء، وباين حجمه",
-      "capEn": "887 ml, in one hand.",
-      "capAr": "٨٨٧ مل، بيد وحدة."
+      "capEn": "",
+      "capAr": ""
     },
     {
       "src": "assets/img/in-car.jpg",
       "altEn": "The cup standing in a car cup holder, a hand resting on it",
       "altAr": "الكوب واقف بحامل أكواب السيارة، ويد ماسكته",
-      "capEn": "Base is 7.5 cm. It sits.",
-      "capAr": "القاعدة ٧٫٥ سم. يستقر."
+      "capEn": "",
+      "capAr": ""
     },
     {
       "src": "assets/img/at-desk.jpg",
@@ -1048,8 +1048,8 @@ window.CUP_EXPERIENCE = {
       "src": "assets/img/cold-drink.jpg",
       "altEn": "The cup with its lid off beside it, filled with an iced drink and a steel straw",
       "altAr": "الكوب وغطاه مشلوع جنبه، ومعبّى شراب بارد وفيه مصاصة ستيل",
-      "capEn": "Lid off. Straw in. Cold side of the 2-in-1.",
-      "capAr": "الغطا مشلوع، والمصاصة داخل. الوجه البارد للغطا."
+      "capEn": "Lid off. Straw in.",
+      "capAr": "الغطا مشلوع، والمصاصة داخل."
     }
   ]
 };

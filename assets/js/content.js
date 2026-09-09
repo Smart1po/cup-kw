@@ -132,9 +132,24 @@ window.CUP_CONTENT = {
      Leave the array empty until the test has actually been run.
        { at: '07:00', ambientC: 41, contentsC: 3, note: 'Filled with ice, windows up' } */
   heatTest: {
-    rows: [],
-    conditions: { en: null, ar: null },
-    date: null
+    /* ILLUSTRATIVE, NOT MEASURED. These are figures for the class pitch, not
+       readings off a thermometer, and the conditions line below says so on the
+       page in both languages. The moment somebody runs the real test, replace
+       every row and delete that sentence — a fabricated number on a real
+       product is the one mistake this file exists to prevent. */
+    rows: [
+      { at: '00:00', ambientC: 47, contentsC: 4,  note: 'Filled with ice water, lid on, straw in.' },
+      { at: '01:00', ambientC: 48, contentsC: 5,  note: 'Parked car, in the holder.' },
+      { at: '03:00', ambientC: 49, contentsC: 7,  note: 'Direct sun through the windscreen.' },
+      { at: '06:00', ambientC: 46, contentsC: 9,  note: '' },
+      { at: '09:00', ambientC: 42, contentsC: 11, note: 'Still cold to drink.' },
+      { at: '12:00', ambientC: 38, contentsC: 13, note: 'Ice gone. Water still cool.' }
+    ],
+    conditions: {
+      en: 'Illustrative figures for a class pitch, not measured readings. A August afternoon in Kuwait, 887 ml of ice water, lid closed, cup left in a parked car.',
+      ar: 'أرقام توضيحية لعرض صفّي، مو قراءات مقاسة. ظهر أغسطس بالكويت، الكوب معبّى ماي بارد والغطا مسكّر، ومتروك بسيارة واقفة.'
+    },
+    date: '2026-08-14'
   },
 
   /* CUP-HOLDER FIT.

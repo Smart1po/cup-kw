@@ -173,9 +173,18 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
   box-shadow: inset 0 -7px 9px -7px rgba(0,0,0,.6);
 }
 
-/* Hidden by default and revealed by the class, exactly like the handle. */
-.c3d__band { opacity: 0; transition: opacity calc(.25s * var(--motion)) ease; }
-.c3d.has-band .c3d__band { opacity: 1; }
+/* Hidden by default and revealed by the class.
+
+   display, not opacity. The band is a ring of panels inside a preserve-3d
+   subtree, and opacity on such an element is where engines disagree — it forces
+   flattening, and whether the group is actually painted at 0 varies. Chrome
+   removed the class and still reported the band at opacity 1. display: none
+   takes the element out entirely and means the same thing everywhere. The cost
+   is the quarter-second fade, which is worth losing to have the control work. */
+.c3d__band { display: none; }
+.c3d.has-band .c3d__band { display: block; }
+
+
 
 .c3d__band .c3d__panel {
   background-color: #8C1D24;
@@ -232,6 +241,13 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
 .c3d[data-face] .c3d__face { opacity: 1; }
 /* A face and a technical texture on the same panel compete. The face wins. */
 .c3d[data-face] .c3d__blueprint { opacity: 0; }
+
+/* The face and the band do not share the cup: a band on means this is the
+   Limited Edition, which is a product shot rather than a character. Written
+   with both classes so it out-specifies .c3d[data-face] .c3d__face above, which
+   is the same weight and would otherwise win on order alone. */
+.c3d.has-band[data-face] .c3d__face { opacity: 0; }
+.c3d.has-band .c3d__blueprint { opacity: 0; }
 
 .c3d__eye {
   inline-size: 16px; block-size: 18px; border-radius: 50%;
