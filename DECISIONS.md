@@ -77,8 +77,20 @@ make the shading prettier, check it still runs.
 **The cup does not mirror in Arabic.** `.c3d` is pinned `direction: ltr` on purpose. A lid is
 on the same side of a physical object in every language. Only the layout around it flips.
 
-Proportions come from `product.heightCm` and `product.diameterCm` — 22 × 7 cm off the product
-sheet. Correct the spec and the model changes shape rather than being re-drawn by hand.
+Proportions come from `product.heightCm`, `topDiameterCm` and `baseDiameterCm` — 27 cm tall,
+10 cm at the mouth, 7.5 cm at the base, off the product sheet. The body is a cone frustum
+because the real cup is. Correct the spec and the model changes shape rather than being
+re-drawn by hand.
+
+It turns on **both** axes now, and zooms. Pitch is clamped to roughly −52°…+26° for two
+reasons: past that you are looking into a lid with no inside modelled, and the fixed lighting
+overlay only describes a cylinder seen side-on — which is also why it fades as the cup tips,
+rather than lying about where the light is.
+
+Wheel zoom requires ctrl or ⌘. A bare wheel scrolls the page, because hijacking the scroll
+whenever a cursor crosses a product shot is a hostile pattern. On touch, a vertical swipe
+still scrolls too — which is why tilt has buttons as well as drag. Nobody should be able to
+get trapped inside a 3D model.
 
 ---
 
