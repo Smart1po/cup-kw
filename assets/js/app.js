@@ -39,7 +39,19 @@
     });
   }
 
+  /* Re-entrancy guard. applyLang ends by dispatching cup:lang, and anything
+     listening for that may quite reasonably want to re-translate itself by
+     calling applyLang again — which would dispatch cup:lang again, forever.
+     One flag turns an infinite loop into a no-op. */
+  var translating = false;
+
   function applyLang() {
+    if (translating) return;
+    translating = true;
+    try { doApplyLang(); } finally { translating = false; }
+  }
+
+  function doApplyLang() {
     root.setAttribute('lang', lang);
     root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
 
@@ -75,6 +87,10 @@
 
   window.cupLang = function () { return lang; };
   window.cupT = t;
+  /* Exposed so the files that mount later — the switches, the waiting screen,
+     the assistant — can re-translate what they inserted without duplicating
+     any of the logic above. */
+  window.cupApplyLang = applyLang;
 
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-lang-btn]');
@@ -296,12 +312,46 @@
     return input ? input.value : (window.cupColours()[0] || {}).slug;
   }
 
+  /* Cards built from the spec-sheet booleans in content.js, so switching a
+     feature off removes its card rather than leaving a claim behind. */
+  function renderSpecs() {
+    var host = document.querySelector('[data-specs]');
+    if (!host) return;
+    var p = C.product || {};
+    var rows = [];
+    if (p.capacityMl) rows.push(['spec.capacity', p.capacityMl + ' ml' + (p.capacityOz ? ' · ' + p.capacityOz + ' oz' : '')]);
+    if (p.material) rows.push(['spec.material', label(p.material)]);
+    if (p.twoInOneLid) rows.push(['spec.lid', '']);
+    if (p.foldableHandle) rows.push(['spec.handle', '']);
+    if (p.leakResistant) rows.push(['spec.leak', '']);
+    if (p.carHolderFriendly) rows.push(['spec.car', '']);
+
+    host.innerHTML = '';
+    rows.forEach(function (row) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      var h = document.createElement('h3');
+      h.textContent = t(row[0] + '.h');
+      var body = document.createElement('p');
+      body.textContent = row[1] || t(row[0] + '.p');
+      card.appendChild(h);
+      card.appendChild(body);
+      host.appendChild(card);
+    });
+  }
+
   function mountCup() {
     var host = document.querySelector('[data-cup3d]');
     if (!host || !window.CUP3D) return;
     /* Built once. Re-rendering the whole cylinder on every language switch
        would throw away the angle the visitor turned it to. */
-    window.cupModel = window.CUP3D.build(host, { colour: hexFor(chosenColour()) });
+    window.cupModel = window.CUP3D.build(host, {
+      colour: hexFor(chosenColour()),
+      /* The face is opt-in per page, and deliberately absent from anywhere the
+         site is being honest about what it does not know. See DECISIONS.md. */
+      expression: host.getAttribute('data-face') || null,
+      height: parseInt(host.getAttribute('data-height'), 10) || 340
+    });
 
     document.addEventListener('change', function (e) {
       if (!e.target.closest || !e.target.closest('[data-drives-cup]')) return;
@@ -316,6 +366,7 @@
     renderNotFor();
     renderContact();
     renderSwatches();
+    renderSpecs();
   }
 
   /* ---- nav ------------------------------------------------------------ */
@@ -337,4 +388,8 @@
   render();
   mountCup();
   markCurrent();
+
+  /* Everything that mounts itself later waits on this rather than on load
+     order, so a script tag moving in the HTML cannot silently break a feature. */
+  document.dispatchEvent(new CustomEvent('cup:ready'));
 })();

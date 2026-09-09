@@ -7,6 +7,7 @@
 <meta name="description" content="Type your name in Arabic or English and watch it land on the cup, in any of the fourteen Sadu colours, before you commit.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
 </head>
 <body>
 
@@ -30,13 +31,17 @@
 
 <main id="main" class="band">
   <div class="wrap">
+    <p class="eyebrow" data-t="home.eyebrow">One cup, one link</p>
     <h1 data-t="eng.h1">Put your name on it.</h1>
     <p class="lede" data-t="eng.lede">Type below. The cup keeps up with you. Nothing is saved until you say so.</p>
 
     <div class="engrave-lay">
 
-      <figure class="cupstage">
-        <div data-cup3d aria-label="A three-dimensional model of the cup showing your engraving. Drag it to turn it."></div>
+      <!-- The cup, larger here than anywhere else on the site, because on this
+           page it is the thing being bought rather than a picture of it. -->
+      <figure class="cupstage cupstage--big">
+        <div data-cup3d data-face="idle" data-height="400"
+             aria-label="A three-dimensional model of the cup showing your engraving. Drag it to turn it."></div>
         <figcaption class="cuphint" data-t="home.cup.hint">Drag the cup to turn it. Arrow keys work too.</figcaption>
       </figure>
 
@@ -51,21 +56,21 @@
 
         <fieldset class="field">
           <legend data-t="eng.script">Script</legend>
-          <div class="swatches">
+          <div class="scripttoggle">
             <label class="swatch">
               <input type="radio" name="script" value="latin" checked>
-              <span data-t="eng.latin" style="--sw:transparent">Latin</span>
+              <span data-t="eng.latin">Latin</span>
             </label>
             <label class="swatch">
               <input type="radio" name="script" value="arabic">
-              <span data-t="eng.arabic" style="--sw:transparent">Arabic</span>
+              <span data-t="eng.arabic">Arabic</span>
             </label>
           </div>
         </fieldset>
 
         <fieldset class="field" style="max-inline-size:none">
           <legend data-t="eng.colour">Colour</legend>
-          <div class="swatches" data-swatches="colour" data-drives-cup></div>
+          <div class="palette" data-swatches="colour" data-drives-cup></div>
         </fieldset>
 
         <!-- Warnings a person needs BEFORE committing to something permanent. -->
@@ -88,8 +93,12 @@
 </footer>
 
 <script src="assets/js/content.js"></script>
+<script src="assets/js/experience.js"></script>
 <script src="assets/js/cup3d.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/loader.js"></script>
+<script src="assets/js/chat.js"></script>
 <script src="assets/js/engrave.js"></script>
 </body>
 </html>

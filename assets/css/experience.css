@@ -1,0 +1,519 @@
+/* The experience layer: waiting screen, the show, the character, the assistant
+   and the furniture.
+
+   Everything here is additive. None of it mounts without JavaScript, and the
+   pages underneath are complete without any of it. Load it after cup.css. */
+
+/* ---- day / night switch ---- */
+
+.chip--icon { display: inline-flex; align-items: center; gap: .45rem; }
+
+.schemeicon {
+  inline-size: 1rem; block-size: 1rem; border-radius: 50%; flex: none;
+  display: block; background: var(--ink);
+}
+/* The moon is the sun with a bite taken out of it — one element rather than two
+   icons, and it swaps instantly. */
+.schemeicon[data-shows="dark"] {
+  background: transparent;
+  box-shadow: inset -4px -1px 0 0 var(--ink);
+}
+.schemetext { font-size: var(--step--1); }
+
+/* ---- back to top ---- */
+
+.totop {
+  position: fixed; inset-block-end: 1.1rem; inset-inline-start: 1.1rem;
+  inline-size: 46px; block-size: 46px; border-radius: 50%;
+  display: grid; place-items: center; z-index: 40;
+  background: var(--accent); color: var(--accent-ink);
+  border: 0; cursor: pointer; padding: 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .28);
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity calc(.25s * var(--motion)) ease,
+              transform calc(.25s * var(--motion)) ease;
+}
+.totop.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.totop svg { inline-size: 22px; block-size: 22px; }
+.totop:hover { filter: brightness(1.12); }
+
+/* ---- the waiting screen ---- */
+
+.wait {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; place-items: center;
+  background: var(--paper);
+  opacity: 0; pointer-events: none;
+  transition: opacity .28s ease;
+}
+.wait.is-on { opacity: 1; pointer-events: auto; }
+
+.wait__in { display: grid; justify-items: center; gap: 1.2rem; padding: 2rem; text-align: center; }
+.wait__mark svg { inline-size: clamp(84px, 22vw, 120px); block-size: auto; }
+
+.wait__lid, .wait__straw { fill: var(--ink); }
+.wait__outline { fill: none; stroke: var(--ink); stroke-width: 3; }
+.wait__glass { fill: var(--paper-raised); }
+
+/* The cup filling is the whole animation: one rectangle rising behind a clip
+   path shaped like the cup. */
+.wait__fill { fill: var(--accent); }
+.wait.is-on .wait__fill { animation: pour calc(1.5s * var(--motion)) ease-in-out infinite; }
+@keyframes pour {
+  0%   { transform: translateY(112px); }
+  55%  { transform: translateY(26px); }
+  100% { transform: translateY(112px); }
+}
+:root[data-motion="off"] .wait__fill { transform: translateY(50px); animation: none; }
+
+.wait__line {
+  font-size: var(--step-1); max-inline-size: 24rem; margin: 0;
+  color: var(--ink); font-weight: 600;
+}
+.wait__skip { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
+
+/* ---- the collection, properly ----
+   Colour is the thing being chosen, so the colour is the control. The old pills
+   put a small dot beside a word; these are swatches you can actually judge. */
+
+.palette {
+  display: grid; gap: .8rem; padding: 0; margin: 0; border: 0;
+  grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+}
+.palette .swatch { position: relative; }
+.palette .swatch input {
+  position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer;
+}
+.palette .swatch span {
+  display: grid; justify-items: center; gap: .45rem;
+  padding: .55rem .35rem; border-radius: 12px; cursor: pointer;
+  border: 2px solid transparent; background: transparent;
+  font-size: var(--step--1); line-height: 1.25; text-align: center;
+}
+/* A flat disc reads as a paint chip. The inset shadows give it a shoulder, so
+   it reads as an object the colour of the cup. */
+.palette .swatch span::before {
+  content: ""; inline-size: 100%; aspect-ratio: 1; border-radius: 50%;
+  background: var(--sw); border: 1px solid rgba(0, 0, 0, .18);
+  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, .30),
+              inset 5px 6px 12px rgba(255, 255, 255, .16);
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+.palette .swatch span:hover::before { transform: scale(1.07); }
+.palette .swatch input:checked + span { border-color: var(--accent); font-weight: 700; }
+.palette .swatch input:checked + span::before {
+  box-shadow: inset -6px -8px 14px rgba(0, 0, 0, .30),
+              inset 5px 6px 12px rgba(255, 255, 255, .16),
+              0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
+}
+.palette .swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---- the face ----
+   Sclera and pupil are fixed colours, not tokens, because they have to read as
+   eyes on all fourteen collection colours — cream through matte black. */
+
+/* No margin offset here: cup3d.js already centres this with translateX(-50%)
+   in its transform, and doing it twice pushes the face off the side of the cup. */
+.c3d__face {
+  position: absolute; left: 50%; inline-size: 78px;
+  display: flex; justify-content: center; gap: 14px;
+  backface-visibility: hidden; pointer-events: none;
+  opacity: 0; transition: opacity calc(.3s * var(--motion)) ease;
+  --look-x: 0; --look-y: 0;
+}
+.c3d[data-face] .c3d__face { opacity: 1; }
+
+/* A face and a technical line drawing on the same panel compete, and the
+   drawing wins on visual weight while the face wins on meaning. When the cup
+   has a face, the artwork stands down. */
+.c3d[data-face] .c3d__blueprint { opacity: 0; }
+
+.c3d__eye {
+  inline-size: 17px; block-size: 19px; border-radius: 50%;
+  background: #F6F1E7; position: relative; flex: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  transition: block-size calc(.18s * var(--motion)) ease;
+}
+.c3d__pupil {
+  position: absolute; inline-size: 8px; block-size: 8px; border-radius: 50%;
+  background: #241F1B; inset-block-start: 50%; inset-inline-start: 50%;
+  transform: translate(calc(-50% + (var(--look-x) * 4px)), calc(-50% + (var(--look-y) * 3px)));
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+
+.c3d[data-face="idle"] .c3d__eye { animation: blink 5s infinite; }
+:root[data-motion="off"] .c3d__eye { animation: none !important; }
+@keyframes blink {
+  0%, 92%, 100% { block-size: 19px; }
+  95%, 97%      { block-size: 3px; }
+}
+
+/* Squinting against the afternoon. */
+.c3d[data-face="heat"] .c3d__eye { block-size: 7px; }
+.c3d[data-face="heat"] .c3d__pupil { block-size: 5px; }
+
+/* Wide, and very slightly shivering. */
+.c3d[data-face="cold"] .c3d__eye { block-size: 21px; }
+
+/* Looking out of the window. */
+.c3d[data-face="car"] .c3d__face { --look-x: .9; }
+
+/* Asleep in the bag. */
+.c3d[data-face="bag"] .c3d__eye { block-size: 3px; border-radius: 3px; }
+.c3d[data-face="bag"] .c3d__pupil { opacity: 0; }
+
+/* Held, and pleased about it. Arc eyes are the whole trick for a happy face. */
+.c3d[data-face="held"] .c3d__eye,
+.c3d[data-face="proud"] .c3d__eye {
+  block-size: 10px; background: transparent; box-shadow: none;
+  border-block-start: 3px solid #F6F1E7;
+  border-radius: 50% 50% 0 0;
+}
+.c3d[data-face="held"] .c3d__pupil,
+.c3d[data-face="proud"] .c3d__pupil { opacity: 0; }
+
+/* ---- handle and blueprint ---- */
+
+.c3d__handle {
+  position: absolute; left: 0; inline-size: 26px;
+  border: 5px solid color-mix(in srgb, var(--cup-body) 86%, #000);
+  border-inline-start: 0;
+  border-start-end-radius: 26px; border-end-end-radius: 26px;
+  background: transparent; backface-visibility: hidden;
+  opacity: 0; transition: opacity calc(.25s * var(--motion)) ease;
+}
+.c3d.has-handle .c3d__handle { opacity: 1; }
+
+/* The architectural line artwork, reduced to what survives at model size. */
+.c3d__blueprint {
+  inline-size: 52px; block-size: 74px; opacity: .5;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 1px 100%, 1px 72%, 1px 86%, 22px 1px, 32px 1px;
+  background-position: 12px 100%, 25px 100%, 38px 100%, 8px 34%, 6px 62%;
+}
+
+/* =========================================================================
+   THE SHOW
+   ========================================================================= */
+
+.show { display: grid; gap: 1.5rem; }
+@media (min-width: 56rem) {
+  .show { grid-template-columns: 1fr 1fr; align-items: center; }
+  .show__controls { grid-column: 1 / -1; }
+}
+
+.show__stage {
+  position: relative; display: grid; place-items: center;
+  min-block-size: 340px; border-radius: 20px; overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+    var(--paper-raised);
+  border: 1px solid var(--rule);
+  transition: background calc(.6s * var(--motion)) ease;
+}
+.show__cup { position: relative; z-index: 2; inline-size: 100%; }
+
+.show__props { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.show__props i { position: absolute; display: block; opacity: 0;
+  transition: opacity calc(.5s * var(--motion)) ease; }
+
+/* --- morning: warm light --- */
+.show__stage[data-prop="hot"] { background:
+  radial-gradient(120% 80% at 50% 10%, rgba(214, 138, 60, .30), transparent 68%), var(--paper-raised); }
+/* Steam: three rising strokes. */
+.show__stage[data-prop="hot"] i:nth-child(-n+3) {
+  opacity: .7; inline-size: 3px; block-size: 46px; border-radius: 3px;
+  background: linear-gradient(to top, transparent, var(--ink-soft));
+  inset-block-start: 14%; animation: steam calc(2.6s * var(--motion)) ease-in-out infinite;
+}
+.show__stage[data-prop="hot"] i:nth-child(1) { inset-inline-start: 44%; }
+.show__stage[data-prop="hot"] i:nth-child(2) { inset-inline-start: 50%; animation-delay: .5s; }
+.show__stage[data-prop="hot"] i:nth-child(3) { inset-inline-start: 56%; animation-delay: 1s; }
+@keyframes steam {
+  0%   { transform: translateY(10px) scaleY(.6); opacity: 0; }
+  40%  { opacity: .75; }
+  100% { transform: translateY(-30px) scaleY(1.15); opacity: 0; }
+}
+
+/* --- noon: the heat --- */
+.show__stage[data-prop="heat"] { background:
+  radial-gradient(120% 90% at 50% 0%, rgba(200, 90, 40, .34), transparent 70%), var(--paper-raised); }
+/* Shimmer: horizontal bars that wobble, the way hot air over asphalt reads. */
+.show__stage[data-prop="heat"] i {
+  opacity: .5; inline-size: 62%; block-size: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--warn), transparent);
+  inset-inline-start: 19%;
+  animation: shimmer calc(2s * var(--motion)) ease-in-out infinite;
+}
+.show__stage[data-prop="heat"] i:nth-child(1) { inset-block-start: 22%; }
+.show__stage[data-prop="heat"] i:nth-child(2) { inset-block-start: 40%; animation-delay: .3s; }
+.show__stage[data-prop="heat"] i:nth-child(3) { inset-block-start: 62%; animation-delay: .6s; }
+.show__stage[data-prop="heat"] i:nth-child(4) { inset-block-start: 80%; animation-delay: .9s; }
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-6px) scaleX(.96); }
+  50%      { transform: translateX(6px) scaleX(1.04); }
+}
+
+/* --- cold --- */
+.show__stage[data-prop="cold"] { background:
+  radial-gradient(120% 90% at 50% 0%, rgba(90, 150, 190, .30), transparent 70%), var(--paper-raised); }
+/* Condensation: four beads running down. */
+.show__stage[data-prop="cold"] i {
+  opacity: .8; inline-size: 7px; block-size: 7px; border-radius: 50%;
+  background: rgba(255, 255, 255, .75); box-shadow: 0 0 6px rgba(255, 255, 255, .5);
+  animation: bead calc(3.4s * var(--motion)) linear infinite;
+}
+.show__stage[data-prop="cold"] i:nth-child(1) { inset-inline-start: 40%; inset-block-start: 30%; }
+.show__stage[data-prop="cold"] i:nth-child(2) { inset-inline-start: 58%; inset-block-start: 26%; animation-delay: .8s; }
+.show__stage[data-prop="cold"] i:nth-child(3) { inset-inline-start: 46%; inset-block-start: 40%; animation-delay: 1.6s; }
+.show__stage[data-prop="cold"] i:nth-child(4) { inset-inline-start: 54%; inset-block-start: 36%; animation-delay: 2.4s; }
+@keyframes bead {
+  0%   { transform: translateY(0); opacity: 0; }
+  15%  { opacity: .85; }
+  100% { transform: translateY(90px); opacity: 0; }
+}
+
+/* --- the car --- */
+.show__stage[data-prop="car"] { background:
+  radial-gradient(120% 90% at 50% 100%, rgba(40, 50, 70, .28), transparent 70%), var(--paper-raised); }
+/* A cup-holder ring under the cup, and a dashboard sweep behind it. */
+.show__stage[data-prop="car"] i:nth-child(1) {
+  opacity: 1; inline-size: 132px; block-size: 34px; border-radius: 50%;
+  border: 3px solid var(--ink-soft); inset-block-end: 16%; inset-inline-start: 50%;
+  margin-inline-start: -66px;
+}
+.show__stage[data-prop="car"] i:nth-child(2) {
+  opacity: .5; inline-size: 150%; block-size: 150px;
+  border-start-start-radius: 60%; border-start-end-radius: 60%;
+  border-block-start: 3px solid var(--ink-soft);
+  inset-block-end: -60px; inset-inline-start: -25%;
+}
+
+/* --- the bag --- */
+.show__stage[data-prop="bag"] { background:
+  radial-gradient(120% 90% at 50% 100%, rgba(30, 30, 34, .32), transparent 68%), var(--paper-raised); }
+/* A bag mouth in front of the cup, so the cup is genuinely inside it.
+   Fixed colours, not tokens: --ink inverts between day and night, and a bag
+   that turns cream at night reads as a cardboard box. A bag is dark in both. */
+.show__stage[data-prop="bag"] i:nth-child(1) {
+  opacity: 1; inline-size: 74%; block-size: 40%; inset-block-end: 0; inset-inline-start: 13%;
+  background: #2B2724;
+  border-start-start-radius: 26px; border-start-end-radius: 26px;
+  z-index: 3;
+}
+.show__stage[data-prop="bag"] i:nth-child(2) {
+  opacity: 1; inline-size: 78%; block-size: 14px; inset-block-end: 39%; inset-inline-start: 11%;
+  background: #4A433C; border-radius: 10px; z-index: 3;
+}
+.show__stage[data-prop="bag"] { align-items: start; padding-block-start: 1rem; }
+
+/* --- held --- */
+.show__stage[data-prop="held"] { background:
+  radial-gradient(120% 80% at 50% 30%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%), var(--paper-raised); }
+/* A hand: a palm and a thumb, in front of the cup. */
+.show__stage[data-prop="held"] i:nth-child(1) {
+  opacity: 1; inline-size: 120px; block-size: 86px;
+  inset-block-end: 22%; inset-inline-start: 50%; margin-inline-start: -60px;
+  background: color-mix(in srgb, var(--warn) 55%, var(--paper));
+  border-radius: 40px 40px 30px 30px; z-index: 3;
+}
+.show__stage[data-prop="held"] i:nth-child(2) {
+  opacity: 1; inline-size: 34px; block-size: 54px;
+  inset-block-end: 42%; inset-inline-start: 50%; margin-inline-start: 42px;
+  background: color-mix(in srgb, var(--warn) 48%, var(--paper));
+  border-radius: 20px; transform: rotate(-18deg); z-index: 4;
+}
+
+/* --- night --- */
+.show__stage[data-prop="night"] { background:
+  radial-gradient(120% 90% at 50% 0%, rgba(60, 70, 110, .38), transparent 70%),
+  color-mix(in srgb, var(--paper-raised) 80%, #0B0A14); }
+.show__stage[data-prop="night"] i {
+  opacity: .8; inline-size: 3px; block-size: 3px; border-radius: 50%;
+  background: var(--ink); animation: twinkle calc(3s * var(--motion)) ease-in-out infinite;
+}
+.show__stage[data-prop="night"] i:nth-child(1) { inset-inline-start: 24%; inset-block-start: 18%; }
+.show__stage[data-prop="night"] i:nth-child(2) { inset-inline-start: 72%; inset-block-start: 24%; animation-delay: .7s; }
+.show__stage[data-prop="night"] i:nth-child(3) { inset-inline-start: 62%; inset-block-start: 12%; animation-delay: 1.4s; }
+.show__stage[data-prop="night"] i:nth-child(4) { inset-inline-start: 34%; inset-block-start: 30%; animation-delay: 2.1s; }
+@keyframes twinkle { 0%, 100% { opacity: .25; } 50% { opacity: .9; } }
+
+/* --- the script --- */
+
+.show__script { position: relative; }
+.show__scene {
+  /* Every scene is in the DOM and readable. The animation only decides which
+     one is foregrounded — it never decides whether the words exist. */
+  padding-block: .5rem;
+  opacity: .38;
+  transition: opacity calc(.4s * var(--motion)) ease;
+  border-inline-start: 3px solid transparent;
+  padding-inline-start: 1rem;
+}
+.show__scene.is-on { opacity: 1; border-inline-start-color: var(--accent); }
+.show__time {
+  font-variant-numeric: tabular-nums; direction: ltr;
+  font-size: var(--step--1); color: var(--accent); font-weight: 700;
+  letter-spacing: .1em; margin: 0 0 .15em;
+}
+html[dir="rtl"] .show__time { text-align: start; }
+.show__h { font-size: var(--step-1); margin: 0 0 .2em; }
+.show__b { margin: 0; color: var(--ink-soft); }
+
+/* With motion off there is no foregrounding to do, so every scene is shown at
+   full strength and the day simply reads as a list. */
+:root[data-motion="off"] .show__scene { opacity: 1; }
+:root[data-motion="off"] .show__props i { animation: none; }
+
+.show__controls { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.show__dots { display: flex; gap: .35rem; margin-inline: .3rem; }
+.show__dot {
+  inline-size: 10px; block-size: 10px; border-radius: 50%; padding: 0;
+  border: 1px solid var(--rule); background: transparent; cursor: pointer;
+}
+.show__dot.is-on { background: var(--accent); border-color: var(--accent); }
+
+/* =========================================================================
+   THE ASSISTANT
+   ========================================================================= */
+
+.assist { position: fixed; inset-block-end: 1.1rem; inset-inline-end: 1.1rem; z-index: 45; }
+
+.assist__fab {
+  inline-size: 56px; block-size: 56px; border-radius: 50%;
+  border: 0; cursor: pointer; padding: 0;
+  background: var(--accent); color: var(--accent-ink);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+  display: grid; place-items: center;
+}
+.assist__fab:hover { filter: brightness(1.12); }
+/* The mark is the cup, reduced until only the lid and the taper are left. */
+.assist__fabmark {
+  inline-size: 20px; block-size: 26px; display: block; position: relative;
+  border: 2.5px solid currentColor;
+  border-start-start-radius: 3px; border-start-end-radius: 3px;
+  border-end-start-radius: 7px; border-end-end-radius: 7px;
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
+}
+.assist__fabmark::after {
+  content: ""; position: absolute; inset-block-start: -7px; inset-inline-start: 45%;
+  inline-size: 3px; block-size: 8px; background: currentColor; border-radius: 2px;
+}
+
+/* display:grid below would otherwise beat the hidden attribute, and the panel
+   would open itself on every page load. */
+.assist__panel[hidden] { display: none; }
+
+.assist__panel {
+  position: absolute; inset-block-end: 68px; inset-inline-end: 0;
+  inline-size: min(92vw, 22rem);
+  background: var(--paper-raised); border: 1px solid var(--rule);
+  border-radius: 16px; box-shadow: 0 14px 44px rgba(0, 0, 0, .3);
+  display: grid; gap: .6rem; padding: .9rem;
+}
+.assist__head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.assist__x {
+  border: 0; background: transparent; color: var(--ink-soft);
+  font-size: 1.4rem; line-height: 1; cursor: pointer; padding: .1rem .4rem;
+}
+.assist__note { font-size: var(--step--1); color: var(--ink-soft); margin: 0; }
+
+.assist__log {
+  display: grid; gap: .5rem; max-block-size: 44vh; overflow-y: auto;
+  padding-inline-end: .2rem;
+}
+.assist__msg {
+  margin: 0; padding: .55rem .75rem; border-radius: 12px;
+  font-size: var(--step--1); max-inline-size: 90%;
+}
+.assist__msg--bot { background: var(--paper); border: 1px solid var(--rule); justify-self: start; }
+.assist__msg--me { background: var(--accent); color: var(--accent-ink); justify-self: end; }
+
+.assist__chips { display: flex; gap: .35rem; flex-wrap: wrap; }
+.assist__chip {
+  font: inherit; font-size: var(--step--1);
+  background: transparent; color: var(--accent);
+  border: 1px solid var(--rule); border-radius: 999px;
+  padding: .3rem .7rem; cursor: pointer; text-align: start;
+}
+.assist__chip:hover { border-color: var(--accent); }
+
+.assist__form { display: flex; gap: .4rem; }
+.assist__input {
+  font: inherit; flex: 1; min-inline-size: 0;
+  padding: .6rem .8rem; border-radius: 10px;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+}
+.assist__send {
+  font: inherit; font-weight: 600; cursor: pointer;
+  padding: .6rem .9rem; border-radius: 10px; border: 0;
+  background: var(--accent); color: var(--accent-ink);
+}
+
+@media (max-width: 30rem) {
+  .assist__panel { inline-size: calc(100vw - 2.2rem); }
+  .totop { inline-size: 42px; block-size: 42px; }
+}
+
+/* =========================================================================
+   PAGE LAYOUTS
+   ========================================================================= */
+
+/* The sign-in page. A cup on it because a sign-in screen with nothing but two
+   fields is the coldest page on any website. */
+.authlay { display: grid; gap: clamp(1.5rem, 5vw, 3rem); align-items: center; }
+@media (min-width: 54rem) {
+  .authlay { grid-template-columns: .85fr 1fr; }
+  /* Form first in the source so keyboard and screen-reader users reach the
+     thing they came for without walking past a decorative model. */
+  .authlay__art { order: 2; }
+  .authlay__form { order: 1; }
+}
+
+.cupstage--big .c3d { max-inline-size: 460px; margin-inline: auto; }
+
+/* Password reveal. A real accessibility feature on phones, where long
+   passwords are mistyped constantly. */
+.pwwrap { position: relative; display: flex; }
+.pwwrap input { padding-inline-end: 3rem; }
+.pweye {
+  position: absolute; inset-inline-end: .5rem; inset-block-start: 50%;
+  transform: translateY(-50%);
+  inline-size: 2rem; block-size: 2rem; border-radius: 50%;
+  border: 0; background: transparent; cursor: pointer; padding: 0;
+  display: grid; place-items: center;
+}
+/* The eye is a lens outline with a pupil, drawn from two boxes. Pressed, a
+   stroke crosses it. */
+.pweye::before {
+  content: ""; inline-size: 1.1rem; block-size: 1.1rem; border-radius: 50% 0;
+  border: 2px solid var(--ink-soft); transform: rotate(45deg);
+}
+.pweye::after {
+  content: ""; position: absolute; inline-size: 1.3rem; block-size: 2px;
+  background: var(--ink-soft); transform: rotate(-45deg); opacity: 0;
+}
+.pweye[aria-pressed="true"]::after { opacity: 1; }
+.pweye:hover::before, .pweye:hover::after { border-color: var(--accent); background-color: var(--accent); }
+
+/* The Latin / Arabic switch on the engraving page. Bigger than a colour chip,
+   because it changes what the whole preview is doing. */
+.scripttoggle { display: flex; gap: .5rem; }
+.scripttoggle .swatch input {
+  position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer;
+}
+.scripttoggle .swatch span {
+  display: block; padding: .6rem 1.2rem; border-radius: 999px; cursor: pointer;
+  border: 2px solid var(--rule); background: var(--paper-raised);
+  font-size: var(--step-0); font-weight: 600;
+}
+.scripttoggle .swatch input:checked + span {
+  border-color: var(--accent); background: var(--accent); color: var(--accent-ink);
+}
+.scripttoggle .swatch input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }

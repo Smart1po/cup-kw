@@ -18,32 +18,63 @@
 
 window.CUP_CONTENT = {
 
-  /* The price in Kuwaiti dinar, as a number: 11.5 — not the string "11.500 KWD".
-     You are pricing inside the 8.5-13 band but have not picked the figure, so
-     this stays null. The reservation works either way, because reserving costs
-     nothing. */
-  price: null,
+  /* The price in Kuwaiti dinar, as a number: 7.5 — not the string "7.500 KD".
+     Rendered to three decimals, the way KD is quoted.
+
+     ⚠ CONFIRM THIS BEFORE LAUNCH. It was read off your own UI mockup
+     (uicupstyle.jpeg), which prices the classic cups at 7.500 KD, the
+     transparent at 8.000 and the Sadu Burgundy limited edition at 8.500. That
+     is your figure, not one we chose — but a mockup is not a decision, so check
+     it. Set this back to null and the site honestly says the price is not
+     published yet, and the reservation still works. */
+  price: 7.5,
+  priceLimited: 8.5,
 
   product: {
-    capacityMl: null,
-    /* The same capacity in terms a person actually orders in. */
+    /* Everything in this block down to weightG comes off your own product spec
+       sheet, so it is filled in and safe to publish. */
+    capacityMl: 887,
+    capacityOz: 30,
+    material: { en: 'Insulated stainless steel, BPA free',
+                ar: 'ستيل مقاوم للصدأ ومعزول، وخالي من BPA' },
+
+    /* The same capacity in terms a person actually orders in. Not on the spec
+       sheet — measure it with a real pour before publishing. */
     capacityInRealTerms: { en: null, ar: null },
 
-    /* Publish these only once measured, and publish the conditions with them. */
+    /* NOT on the spec sheet. The sheet says it keeps drinks hot and keeps them
+       cold, which the site does say — but it attaches no number of hours to
+       either, so neither do we. Publish these only once measured, with the
+       conditions beside them. */
     hoursCold: null,
     hoursHot: null,
 
     steelGrade: null,
     weightG: null,
 
-    /* These two come off your own 3D model sheet, so they are filled in. They
-       are also what the 3D cup on the site is proportioned from — change them
-       and the model changes shape. */
-    heightCm: 22,
-    diameterCm: 7,
+    /* The proportions the 3D cup is built from. The body is a cone frustum
+       because the real cup is wider at the mouth than at the base — change
+       these and the model changes shape. */
+    heightCm: 27,
+    topDiameterCm: 10,
+    baseDiameterCm: 7.5,
 
-    /* The band around the collection cups. Set to false for a plain cup. */
-    saduBand: true,
+    /* Features off the spec sheet. Each one switches real behaviour on the
+       site, not just a line of copy: foldableHandle draws the handle on the
+       3D model, and twoInOneLid drives the straw-or-lid guide. */
+    foldableHandle: true,
+    twoInOneLid: true,
+    removableStraw: true,
+    leakResistant: true,
+    carHolderFriendly: true,
+    fitsSchoolBags: true,
+
+    /* The architectural line artwork on the classic cups. */
+    blueprint: true,
+
+    /* The woven band belongs to the Sadu limited edition, not to the classic
+       cup, so it is off by default. */
+    saduBand: false,
 
     /* The palette, named for things here rather than for a paint chart.
        `slug` is what gets stored on an order, so never change a slug once you
@@ -255,6 +286,15 @@ window.CUP_STRINGS = {
   'auth.password': { en: 'Password', ar: 'كلمة السر' },
   'auth.pwHint':   { en: 'Use a password you do not use anywhere else. It goes straight to our authentication provider, which keeps only a hash of it. This site never stores it and never logs it.',
                  ar: 'استخدم كلمة سر ما تستخدمها بمكان ثاني. تروح مباشرة لمزود المصادقة وهو يحفظ بصمتها بس. هالموقع ما يخزنها ولا يسجلها أبداً.' },
+  'auth.art':  { en: 'Your engraving and your reservation live behind this.',
+                 ar: 'حفرك وحجزك محفوظين ورا هذي الصفحة.' },
+  'auth.show': { en: 'Show password', ar: 'أظهر كلمة السر' },
+  'auth.hide': { en: 'Hide password', ar: 'أخفِ كلمة السر' },
+  /* Said out loud because their design mockup had both buttons on it. A button
+     that looks like it works and does not is worse than no button. */
+  'auth.nosocial': { en: 'There is no sign in with Apple or Google here. We have not wired either, and a button that looks like it works is worse than no button.',
+                 ar: 'ما في دخول عن طريق Apple ولا Google هني. ما ربطنا ولا وحدة منهم، وزر يبيّن إنه يشتغل وهو ما يشتغل أسوأ من إنه ما يكون موجود أصلاً.' },
+
   'auth.signin':  { en: 'Sign in', ar: 'دخول' },
   'auth.signup':  { en: 'Create account', ar: 'حساب جديد' },
   'auth.working': { en: 'Working…', ar: 'لحظة…' },
@@ -299,6 +339,53 @@ window.CUP_STRINGS = {
   'res.checking':  { en: 'Checking your session…', ar: 'نتأكد من جلستك…' },
 
   /* ---- shared ---- */
+
+  /* ---- the spec cards ----
+     Every one of these is off the client's own product sheet. None attaches a
+     number of hours to hot or cold, because that has not been measured. */
+
+  'spec.capacity.h': { en: 'What it holds', ar: 'كم يشيل' },
+  'spec.material.h': { en: 'What it is made of', ar: 'من شنو مصنوع' },
+  'spec.lid.h':      { en: 'A lid that does both', ar: 'غطا يسوي الشغلتين' },
+  'spec.lid.p':      { en: 'Straw in for cold. Straw out, and it is a sip lid for hot. One lid, no second thing to lose.',
+                       ar: 'المصاصة داخل للبارد. تطلعها ويصير غطا شرب للحار. غطا واحد، وما في قطعة ثانية تضيع منك.' },
+  'spec.handle.h':   { en: 'A handle that gets out of the way', ar: 'يد تنزاح عن طريقك' },
+  'spec.handle.p':   { en: 'Press, and it pops out. Fold it flat and the cup goes into a bag like it never had one.',
+                       ar: 'دوس وتطلع. اطويها ويدخل الشنطة كأنه ما عنده يد أصلاً.' },
+  'spec.leak.h':     { en: 'Leak resistant', ar: 'ما يسرّب' },
+  'spec.leak.p':     { en: 'It can go sideways next to a laptop and stay boring.',
+                       ar: 'يقدر ينقلب على جنبه جنب اللابتوب وما يصير شي.' },
+  'spec.car.h':      { en: 'Car cup holder friendly', ar: 'يدخل حامل السيارة' },
+  'spec.car.p':      { en: 'The base is 7.5 cm. Which cars we have actually tested is further down this page, and it is honest about being short.',
+                       ar: 'القاعدة ٧٫٥ سم. والسيارات اللي جربناها فعلاً موجودة تحت بهالصفحة، وصريحة إنها قائمة قصيرة.' },
+
+  /* ---- furniture ---- */
+
+  'ui.totop': { en: 'Back to top', ar: 'ارجع فوق' },
+  'ui.skip':  { en: 'Tap anywhere to skip', ar: 'دوس بأي مكان عشان تتخطى' },
+
+  'switch.scheme.auto':  { en: 'Theme: follows your device', ar: 'المظهر: حسب جهازك' },
+  'switch.scheme.light': { en: 'Theme: day', ar: 'المظهر: نهار' },
+  'switch.scheme.dark':  { en: 'Theme: night', ar: 'المظهر: ليل' },
+
+  'show.prev':  { en: 'Back',  ar: 'السابق' },
+  'show.next':  { en: 'Next',  ar: 'التالي' },
+  'show.play':  { en: 'Play',  ar: 'تشغيل' },
+  'show.pause': { en: 'Pause', ar: 'إيقاف' },
+
+  'chat.open':  { en: 'Ask for help', ar: 'اسأل عن أي شي' },
+  'chat.title': { en: 'Ask cup.kw',   ar: 'اسأل cup.kw' },
+  /* The assistant says what it is, in its own panel, before it says anything
+     else. It matches keywords against a written list — it is not a model, and
+     letting somebody believe otherwise would be the site's first lie. */
+  'chat.note':  { en: 'A written helper, not an AI. It looks your question up in a list of answers we wrote.',
+                  ar: 'مساعد مكتوب، مو ذكاء اصطناعي. يدوّر سؤالك بقائمة أجوبة كاتبينها بأنفسنا.' },
+  'chat.send':  { en: 'Send', ar: 'أرسل' },
+  'chat.placeholder': { en: 'Ask about the cup…', ar: 'اسأل عن الكوب…' },
+
+  'show.h':  { en: 'One day with it', ar: 'يوم واحد معاه' },
+  'show.p':  { en: 'From the first gahwa to the last karak. Press play, or just read it — every scene is written out below whether it is animating or not.',
+              ar: 'من أول قهوة لين آخر كرك. شغّله، أو اقراه على راحتك — كل مشهد مكتوب تحت سواء يتحرك أو لا.' },
 
   'foot.note':   { en: 'cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.',
                  ar: 'cup.kw منتج ينبني قدام الناس. ما في شي بهالموقع يدّعي حقيقة ما قسناها بنفسنا.' },

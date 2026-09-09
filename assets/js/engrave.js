@@ -36,21 +36,23 @@
     /* Array.from, not .length — an emoji or a combined Arabic letter is one
        character to the person typing and to the engraver, whatever UTF-16 says. */
     var left = max - Array.from(value).length;
+    var over = left < 0;
 
-    /* What is shown is what will be cut. Going over is shown as over rather
-       than silently truncated, because somebody who cannot see the overflow
-       will assume it fit. */
     if (window.cupModel) {
       window.cupModel.setEngraving(value || (isArabic ? 'اسمك' : 'your name'),
                                    isArabic ? 'arabic' : 'latin');
+      /* The cup is pleased to have a name on it, and goes back to neutral when
+         the field is empty. Over the limit it stays neutral rather than pulling
+         a face — the counter is already saying the useful thing, and a sulking
+         cup on top of it would be the interface piling on. */
+      window.cupModel.setExpression(value && !over ? 'proud' : 'idle');
     }
 
     counter.textContent = String(left);
-    counter.setAttribute('data-state', left < 0 ? 'over' : 'ok');
+    counter.setAttribute('data-state', over ? 'over' : 'ok');
 
     if (arwarn) arwarn.hidden = !isArabic;
 
-    var over = left < 0;
     var save = document.getElementById('savebtn');
     if (save) {
       save.setAttribute('aria-disabled', String(over));
@@ -71,7 +73,7 @@
   form.addEventListener('change', draw);
   document.addEventListener('cup:lang', draw);
 
-  /* Anything already chosen on a previous visit comes back. */
+  /* Anything chosen on a previous visit comes back. */
   try {
     var d = JSON.parse(localStorage.getItem('cup.draft') || 'null');
     if (d) {

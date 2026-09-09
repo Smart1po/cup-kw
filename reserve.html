@@ -7,11 +7,12 @@
 <meta name="robots" content="noindex">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
 <style>
   /* The gate is in CSS, not in script, so member content is never painted and
      then hidden. A signed-out visitor is redirected before this matters; a
      visitor whose JavaScript failed sees the waiting line and nothing else,
-     rather than a flash of somebody's reservation. */
+     rather than a flash of somebody else's reservation. */
   html[data-gated] [data-member] { display: none; }
   html[data-gated][data-signed-in] [data-member] { display: block; }
   html[data-gated][data-signed-in] [data-waiting] { display: none; }
@@ -37,7 +38,7 @@
   </div>
 </header>
 
-<main id="main" class="band" style="border-block-start:0">
+<main id="main" class="band">
   <div class="wrap">
 
     <p data-waiting class="pending" data-t="res.checking">Checking your session…</p>
@@ -45,31 +46,42 @@
     <div data-member>
       <h1 data-t="res.h1">Your cup</h1>
       <p class="lede" id="hello"></p>
-      <p data-t="res.intro">Everything here belongs to your account. Nobody else can read it — the database will only ever hand your row to your own session.</p>
 
-      <p class="notice" id="msg" hidden></p>
+      <div class="engrave-lay">
+        <figure class="cupstage">
+          <div data-cup3d data-face="proud" data-height="320"
+               aria-label="A three-dimensional model of your reserved cup"></div>
+          <figcaption class="cuphint" data-t="home.cup.hint">Drag the cup to turn it. Arrow keys work too.</figcaption>
+        </figure>
 
-      <form id="resform" novalidate>
-        <div class="field">
-          <label for="qty" data-t="res.qty">How many</label>
-          <input id="qty" type="number" min="1" max="20" step="1" value="1" inputmode="numeric">
+        <div>
+          <p data-t="res.intro">Everything here belongs to your account. Nobody else can read it — the database will only ever hand your row to your own session.</p>
+
+          <p class="notice" id="msg" hidden></p>
+
+          <form id="resform" novalidate>
+            <div class="field">
+              <label for="qty" data-t="res.qty">How many</label>
+              <input id="qty" type="number" min="1" max="20" step="1" value="1" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="eng" data-t="res.engraving">Engraving</label>
+              <input id="eng" type="text" maxlength="20" autocomplete="off">
+            </div>
+
+            <fieldset class="field" style="max-inline-size:none">
+              <legend data-t="res.colour">Colour</legend>
+              <div class="palette" data-swatches="colour" data-drives-cup></div>
+            </fieldset>
+
+            <div class="cta-row" style="margin-block-start:0">
+              <button type="submit" class="btn" data-t="res.save">Save reservation</button>
+              <button type="button" class="btn btn--ghost" id="cancel" data-t="res.cancel">Cancel reservation</button>
+            </div>
+          </form>
         </div>
-
-        <fieldset class="field" style="border:0;padding:0;margin-inline:0">
-          <legend data-t="res.colour" style="font-weight:600;font-size:var(--step--1);padding:0">Colour</legend>
-          <div class="swatches" data-swatches="colour"></div>
-        </fieldset>
-
-        <div class="field">
-          <label for="eng" data-t="res.engraving">Engraving</label>
-          <input id="eng" type="text" maxlength="20" autocomplete="off">
-        </div>
-
-        <div class="cta-row" style="margin-block-start:0">
-          <button type="submit" class="btn" data-t="res.save">Save reservation</button>
-          <button type="button" class="btn btn--ghost" id="cancel" data-t="res.cancel">Cancel reservation</button>
-        </div>
-      </form>
+      </div>
 
       <p style="margin-block-start:2rem" data-t="res.what">A reservation is a row saying you want one. It is not an order, it holds no money, and it commits you to nothing. When there is a price and a date we write to this account, and you decide then.</p>
     </div>
@@ -85,82 +97,12 @@
 </footer>
 
 <script src="assets/js/content.js"></script>
+<script src="assets/js/experience.js"></script>
 <script src="assets/js/backend.js"></script>
+<script src="assets/js/cup3d.js"></script>
 <script src="assets/js/app.js"></script>
-<script>
-(function () {
-  'use strict';
-  var B = window.CUP_BACKEND;
-  if (!B.signedIn()) return;   /* backend.js has already sent them to login */
-
-  var form = document.getElementById('resform');
-  var msg = document.getElementById('msg');
-  var hello = document.getElementById('hello');
-
-  function say(key, ok) {
-    msg.hidden = false;
-    msg.textContent = window.cupT(key);
-    msg.className = 'notice' + (ok ? ' notice--ok' : '');
-  }
-
-  function greet() {
-    hello.textContent = window.cupT('res.hello').replace('{name}', B.displayName());
-  }
-  greet();
-  document.addEventListener('cup:lang', greet);
-
-  function fill(row) {
-    if (!row) { say('res.none', true); return; }
-    form.qty.value = row.quantity || 1;
-    document.getElementById('eng').value = row.engraving || '';
-    var picked = form.querySelector('input[name="colour"][value="' + row.colour + '"]');
-    if (picked) picked.checked = true;
-  }
-
-  /* Anything typed on the engraving page before signing in is carried over, so
-     nobody has to type their own name twice. */
-  function draft() {
-    try { return JSON.parse(localStorage.getItem('cup.draft') || 'null'); }
-    catch (e) { return null; }
-  }
-
-  B.getReservation().then(function (row) {
-    if (row) { fill(row); return; }
-    var d = draft();
-    if (d) {
-      document.getElementById('eng').value = d.engraving || '';
-      var picked = form.querySelector('input[name="colour"][value="' + d.colour + '"]');
-      if (picked) picked.checked = true;
-    }
-    say('res.none', true);
-  }).catch(function (err) { say(err && err.key ? err.key : 'auth.err.network'); });
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var colour = (form.querySelector('input[name="colour"]:checked') || {}).value || 'sand';
-    var d = draft() || {};
-    B.saveReservation({
-      quantity: Math.max(1, Math.min(20, parseInt(form.qty.value, 10) || 1)),
-      colour: colour,
-      engraving: document.getElementById('eng').value.slice(0, 20),
-      engraving_script: d.engraving_script === 'arabic' ? 'arabic' : 'latin',
-      display_name: B.displayName().slice(0, 60)
-    }).then(function () { say('res.saved', true); })
-      .catch(function (err) { say(err && err.key ? err.key : 'auth.err.network'); });
-  });
-
-  document.getElementById('cancel').addEventListener('click', function () {
-    B.cancelReservation().then(function () {
-      form.reset();
-      say('res.cancelled', true);
-    }).catch(function (err) { say(err && err.key ? err.key : 'auth.err.network'); });
-  });
-
-  document.getElementById('signout').addEventListener('click', function () {
-    B.signOut();
-    location.replace('index.html');
-  });
-})();
-</script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/reserve.js"></script>
 </body>
 </html>
