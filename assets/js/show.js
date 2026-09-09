@@ -35,6 +35,21 @@
     if (!host || !scenes().length) return;
     list = scenes();
 
+    /* Every scene is on the stage at once, in a scroll-snap track, rather than
+       one image being swapped in and out of a single slot. That buys three
+       things: you can drag or swipe through the day yourself, the browser does
+       the easing between slides, and each photograph can be laid out whole at
+       its own size instead of being cropped to fit one fixed frame. */
+    var slides = list.map(function (sc, i) {
+      var l0 = lang();
+      var inner = sc.photo
+        ? '<img src="' + sc.photo.src + '" alt="' +
+            String((l0 === 'ar' ? sc.photo.altAr : sc.photo.altEn) || '').replace(/"/g, '&quot;') +
+          '" loading="lazy" decoding="async">'
+        : '';
+      return '<div class="show__slide" data-i="' + i + '">' + inner + '</div>';
+    }).join('');
+
     host.innerHTML =
       '<div class="show__stage">' +
         /* Four blank shapes the stylesheet repurposes per scene: shimmer lines
@@ -42,11 +57,9 @@
            bag mouth, a hand. Keeping them anonymous here means a new prop is a
            CSS change, not a JavaScript one. */
         '<div class="show__props" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' +
-        /* Photographs only. The 3D model used to stand in on the scenes with
-           no photograph, which meant the day kept swapping a turnable object in
-           and out from under you while it advanced. The model now has its own
-           section further down the page, where nothing takes it away. */
-        '<img class="show__photo" alt="" hidden>' +
+        '<div class="show__track" tabindex="0" aria-label="The day, scene by scene">' +
+          slides +
+        '</div>' +
       '</div>' +
       '<div class="show__script"></div>' +
       '<div class="show__controls">' +
@@ -57,6 +70,20 @@
       '</div>';
 
     stage = host.querySelector('.show__stage');
+
+    /* Scrolling the track is a first-class way to move through the day, so the
+       dots follow it, and touching it stops the timer — nothing should slide
+       out from under a hand that is already on it. */
+    var track = host.querySelector('.show__track');
+    var settle = null;
+    track.addEventListener('scroll', function () {
+      clearTimeout(settle);
+      settle = setTimeout(function () {
+        var i = nearest(track);
+        if (i !== at) mark(i);
+      }, 90);
+    }, { passive: true });
+    track.addEventListener('pointerdown', pause);
 
     /* Every scene's copy is written into the page now, not when its turn comes.
        Turning the animation off leaves a readable account of the whole day. */
@@ -123,7 +150,9 @@
     });
   }
 
-  function go(i, byHand) {
+  /* Paint everything that follows the current scene. Split out from go() because
+     a scroll can change which scene is showing without anybody calling go(). */
+  function mark(i) {
     at = i;
     var s = list[i];
 
@@ -134,27 +163,40 @@
       d.classList.toggle('is-on', j === i);
       d.setAttribute('aria-selected', String(j === i));
     });
+    host.querySelectorAll('.show__slide').forEach(function (n, j) {
+      n.classList.toggle('is-on', j === i);
+    });
 
     /* One prop attribute drives everything the stage draws. CSS owns the look,
        so the scene list stays pure content. */
     stage.setAttribute('data-prop', s.prop || 'idle');
+    stage.classList.toggle('has-photo', !!s.photo);
+  }
 
-    var img = host.querySelector('.show__photo');
-    var l = lang();
-    if (s.photo) {
-      img.src = s.photo.src;
-      img.alt = (l === 'ar' ? s.photo.altAr : s.photo.altEn) || '';
-      img.hidden = false;
-      stage.classList.add('has-photo');
-    } else {
-      /* No photograph for this hour: the stage is the drawn props and the
-         words, which is what the props were always for. */
-      img.hidden = true;
-      img.removeAttribute('src');
-      stage.classList.remove('has-photo');
+  function go(i, byHand) {
+    mark(i);
+    var track = host.querySelector('.show__track');
+    var slide = track && track.children[i];
+    if (track && slide) {
+      /* offsetLeft rather than index x width, so this still lands on the right
+         slide when the page is flipped to right-to-left. */
+      var left = slide.offsetLeft - track.offsetLeft;
+      if (track.scrollTo) track.scrollTo({ left: left, behavior: reduced() ? 'auto' : 'smooth' });
+      else track.scrollLeft = left;
     }
-
     if (byHand) pause();
+  }
+
+  /* Which slide the track has actually come to rest on. Read from geometry
+     rather than kept as a counter, because the visitor can scroll it themselves
+     and the dots have to agree with what is on screen. */
+  function nearest(track) {
+    var best = 0, bestD = Infinity;
+    [].forEach.call(track.children, function (n, i) {
+      var d = Math.abs((n.offsetLeft - track.offsetLeft) - track.scrollLeft);
+      if (d < bestD) { bestD = d; best = i; }
+    });
+    return best;
   }
 
   function play() {

@@ -106,8 +106,8 @@ window.CUP_EXPERIENCE = {
         "timeOfDay": "07:50",
         "headlineEn": "The Cup Holder Test",
         "headlineAr": "يدخل مكانه بالسيارة… وما يطلع",
-        "bodyEn": "Base is 7.5 cm. It drops into the holder, it sits, and it does not rattle its way around the Fifth Ring.",
-        "bodyAr": "قاعدته ٧٫٥ سم. تحطه بحاضن الكوب ويثبت، وما يترنّح لا عند المطب ولا بالدائري الخامس.",
+        "bodyEn": "Base is 7 cm. It drops into the holder, it sits, and it does not rattle its way around the Fifth Ring.",
+        "bodyAr": "قاعدته ٧ سم. تحطه بحاضن الكوب ويثبت، وما يترنّح لا عند المطب ولا بالدائري الخامس.",
         "prop": "car",
         "expression": "car",
         "angle": 26,
@@ -286,8 +286,8 @@ window.CUP_EXPERIENCE = {
         ],
         "questionEn": "How big is it?",
         "questionAr": "شنو مقاسه؟",
-        "answerEn": "About 27 cm tall, about 10 cm across the top, about 7.5 cm at the base. The base figure is the one that matters for a cup holder; the height is the one that matters for a bag.",
-        "answerAr": "طوله تقريب 27 سم، وقطره من فوق تقريب 10 سم، ومن تحت تقريب 7.5 سم. رقم القاعدة هو اللي يهمك لحامل الكوب بالسيارة، ورقم الطول هو اللي يهمك للشنطة."
+        "answerEn": "About 22 cm tall and about 7 cm across, the same width top to bottom. The width is the one that matters for a cup holder; the height is the one that matters for a bag.",
+        "answerAr": "طوله تقريب ٢٢ سم وقطره تقريب ٧ سم، نفس العرض من فوق لتحت. رقم العرض هو اللي يهمك لحامل الكوب بالسيارة، ورقم الطول هو اللي يهمك للشنطة."
       },
       {
         "id": "materials",
@@ -448,8 +448,8 @@ window.CUP_EXPERIENCE = {
         ],
         "questionEn": "Will it fit my car cup holder?",
         "questionAr": "يدخل بحامل الكوب بالسيارة؟",
-        "answerEn": "It is cup holder friendly and the base is about 7.5 cm across. We are not going to tell you it fits your car, because we have not sat in your car and no two holders are the same. Measure yours once and you will know for certain instead of hoping.",
-        "answerAr": "مصمم لحامل الكوب وقاعدته تقريب 7.5 سم. بس ما راح نقول لك إنه يدخل بسيارتك إنت، لأننا ما جربنا سيارتك ولا في حاملين متطابقين. قيس حاملك مرة وحدة وبتعرف أكيد بدال ما تتمنى."
+        "answerEn": "It is cup holder friendly and the base is about 7 cm across. We are not going to tell you it fits your car, because we have not sat in your car and no two holders are the same. Measure yours once and you will know for certain instead of hoping.",
+        "answerAr": "مصمم لحامل الكوب وقاعدته تقريب ٧ سم. بس ما راح نقول لك إنه يدخل بسيارتك إنت، لأننا ما جربنا سيارتك ولا في حاملين متطابقين. قيس حاملك مرة وحدة وبتعرف أكيد بدال ما تتمنى."
       },
       {
         "id": "bag-fit",
