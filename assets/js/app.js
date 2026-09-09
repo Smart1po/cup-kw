@@ -256,8 +256,14 @@
   function renderSwatches() {
     document.querySelectorAll('[data-swatches]').forEach(function (host) {
       var name = host.getAttribute('data-swatches');
-      var current = host.getAttribute('data-selected') ||
+      /* Switching language re-renders these, so the current choice is read back
+         off the DOM first. Losing somebody's colour because they wanted to read
+         the page in Arabic would be its own small insult. */
+      var chosen = host.querySelector('input:checked');
+      var current = (chosen && chosen.value) ||
+        host.getAttribute('data-selected') ||
         (window.cupColours()[0] && window.cupColours()[0].slug);
+
       host.innerHTML = '';
       window.cupColours().forEach(function (col) {
         var l = document.createElement('label');
@@ -269,11 +275,37 @@
         if (col.slug === current) input.checked = true;
         var span = document.createElement('span');
         span.textContent = label(col);
-        span.style.borderColor = col.hex;
+        span.style.setProperty('--sw', col.hex);
         l.appendChild(input);
         l.appendChild(span);
         host.appendChild(l);
       });
+    });
+  }
+
+  /* ---- the 3D cup ------------------------------------------------------ */
+
+  function hexFor(slug) {
+    var found = window.cupColours().filter(function (c) { return c.slug === slug; })[0];
+    return (found && found.hex) || '#2A3A52';
+  }
+
+  function chosenColour() {
+    var input = document.querySelector('[data-drives-cup] input:checked') ||
+                document.querySelector('input[name="colour"]:checked');
+    return input ? input.value : (window.cupColours()[0] || {}).slug;
+  }
+
+  function mountCup() {
+    var host = document.querySelector('[data-cup3d]');
+    if (!host || !window.CUP3D) return;
+    /* Built once. Re-rendering the whole cylinder on every language switch
+       would throw away the angle the visitor turned it to. */
+    window.cupModel = window.CUP3D.build(host, { colour: hexFor(chosenColour()) });
+
+    document.addEventListener('change', function (e) {
+      if (!e.target.closest || !e.target.closest('[data-drives-cup]')) return;
+      window.cupModel.setColour(hexFor(e.target.value));
     });
   }
 
@@ -303,5 +335,6 @@
   applyLang();
   applyMotion();
   render();
+  mountCup();
   markCurrent();
 })();

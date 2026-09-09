@@ -8,15 +8,13 @@ One cup, one link.
 
 ## What this is
 
-A six-screen bilingual website. No framework, no build step, no bundler. Open `index.html`
+A four-screen bilingual website. No framework, no build step, no bundler. Open `index.html`
 from disk and it works; put it on a host and it works the same way.
 
 | Screen | Address | What it does |
 |---|---|---|
-| Home | `/` | The promise, in five seconds. Engraving is the promise. |
-| The cup | `/product` | Capacity in real terms, the colours, grip, and what it is *not* good for. |
-| Proof | `/proof` | The Kuwait Heat Test log and the cup-holder fit list. |
-| Engraving | `/engrave` | Type your name in Arabic or English and watch it appear on the cup. |
+| Home | `/` | The promise in five seconds, the Kuwait Collection, the proof sections, and where the product stops. |
+| Engraving | `/engrave` | Type your name in Arabic or English and watch it land on the cup. |
 | Sign in | `/login` | Email and password. Real accounts, real sessions. |
 | Your cup | `/reserve` | Gated. Your reservation and your saved engraving. |
 
@@ -53,11 +51,43 @@ English, and in several places it says something different in order to mean the 
 
 ---
 
+## The Kuwait Collection
+
+Fourteen colours taken from Sadu rather than from a paint chart, listed in `content.js`.
+Choosing one repaints the 3D cup on the page, and carries through to the engraving preview
+and the reservation form. Delete a colour there and it disappears from all three at once.
+
+The `slug` on each colour is what gets stored against an order, so it must not be changed
+once a reservation exists against it. Change the English and Arabic labels instead.
+
+---
+
+## The cup is real 3D, and it is not a library
+
+Drag the cup on the home page and it turns, because it is actual geometry: the body, the
+woven band, the lid and the straw are each a ring of thin panels, every one rotated to its
+own angle and pushed out to the radius. Panels facing away are dropped, so the far side of
+the cup never shows through the near side.
+
+The lighting is a flat layer in front of the whole thing rather than shading painted onto
+the panels. That sounds like a cheat and is actually the correct physics: a cylinder turning
+about its own axis has a silhouette that never changes, so the light should stay still while
+the printing rotates past it. It also costs nothing per frame — an earlier version put a
+blend mode there and locked the renderer up completely.
+
+Proportions come from `product.heightCm` and `product.diameterCm`. Correct the spec and the
+model changes shape.
+
+The cup does not mirror in Arabic. A lid is on the same side of a physical object in every
+language, so the model is pinned left-to-right while the page around it flips.
+
+---
+
 ## No image files
 
-There isn't a single `.png` or `.jpg` in this repository, and there is no web font. The cup,
-the engraving preview, the icons and the marks are inline SVG and CSS. Nothing is fetched at
-runtime except the calls to our own Supabase project.
+There isn't a single `.png`, `.jpg` or `.mp4` in this repository, and there is no web font.
+The cup, the engraving, the icons and the marks are CSS and inline SVG. Nothing is fetched
+at runtime except the calls to our own Supabase project.
 
 ---
 

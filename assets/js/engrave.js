@@ -1,8 +1,7 @@
-/* The engraving preview.
+/* The engraving preview, wired to the 3D model.
 
-   The cup and a default word are already in the markup, so this file only ever
-   replaces text that is on screen. If it fails to load, the page is still a cup
-   with a form under it rather than a blank panel. */
+   The cup exists before this file runs, so a failure here leaves a turnable
+   cup and a working form rather than a blank panel. */
 
 (function () {
   'use strict';
@@ -11,15 +10,19 @@
   var limits = C.engraving || { maxLatin: 16, maxArabic: 12, available: true };
 
   var input = document.getElementById('engin');
-  var out = document.querySelector('#engtext textPath');
   var counter = document.getElementById('count');
   var arwarn = document.getElementById('arwarn');
   var form = document.getElementById('engform');
-  if (!input || !out || !form) return;
+  if (!input || !form) return;
 
   function script() {
     var checked = form.querySelector('input[name="script"]:checked');
     return checked ? checked.value : 'latin';
+  }
+
+  function colour() {
+    var checked = form.querySelector('input[name="colour"]:checked');
+    return checked ? checked.value : 'navy';
   }
 
   function limit() {
@@ -30,21 +33,17 @@
     var isArabic = script() === 'arabic';
     var max = limit();
     var value = input.value;
+    /* Array.from, not .length — an emoji or a combined Arabic letter is one
+       character to the person typing and to the engraver, whatever UTF-16 says. */
     var left = max - Array.from(value).length;
 
-    /* The preview shows what will actually be cut. Going over the limit is
-       shown as over — not silently truncated — because a person who cannot see
-       the overflow will assume it fits. */
-    out.textContent = value || (isArabic ? 'اسمك' : 'your name');
-
-    var textEl = document.getElementById('engtext');
-    textEl.setAttribute('font-size', isArabic ? '18' : '16');
-    textEl.style.fontFamily = isArabic
-      ? 'var(--face-arabic)'
-      : 'var(--face-latin)';
-    /* Arabic is a connected script: the preview has to run right-to-left or the
-       letters join in the wrong order and the person approves a wrong cup. */
-    textEl.setAttribute('direction', isArabic ? 'rtl' : 'ltr');
+    /* What is shown is what will be cut. Going over is shown as over rather
+       than silently truncated, because somebody who cannot see the overflow
+       will assume it fit. */
+    if (window.cupModel) {
+      window.cupModel.setEngraving(value || (isArabic ? 'اسمك' : 'your name'),
+                                   isArabic ? 'arabic' : 'latin');
+    }
 
     counter.textContent = String(left);
     counter.setAttribute('data-state', left < 0 ? 'over' : 'ok');
@@ -56,16 +55,14 @@
     if (save) {
       save.setAttribute('aria-disabled', String(over));
       save.style.pointerEvents = over ? 'none' : '';
-      save.style.opacity = over ? '.5' : '';
     }
 
-    /* Carry the choice to the reservation page, so a person who typed a name
-       here does not have to type it again after signing in. */
+    /* Carried to the reservation page, so nobody types their own name twice. */
     try {
       localStorage.setItem('cup.draft', JSON.stringify({
         engraving: value,
         engraving_script: script(),
-        colour: (form.querySelector('input[name="colour"]:checked') || {}).value || 'sand'
+        colour: colour()
       }));
     } catch (e) {}
   }
@@ -73,6 +70,18 @@
   input.addEventListener('input', draw);
   form.addEventListener('change', draw);
   document.addEventListener('cup:lang', draw);
+
+  /* Anything already chosen on a previous visit comes back. */
+  try {
+    var d = JSON.parse(localStorage.getItem('cup.draft') || 'null');
+    if (d) {
+      input.value = d.engraving || '';
+      var s = form.querySelector('input[name="script"][value="' + d.engraving_script + '"]');
+      if (s) s.checked = true;
+      var c = form.querySelector('input[name="colour"][value="' + d.colour + '"]');
+      if (c) { c.checked = true; c.dispatchEvent(new Event('change', { bubbles: true })); }
+    }
+  } catch (e) {}
 
   if (limits.available === false) {
     var note = document.createElement('p');

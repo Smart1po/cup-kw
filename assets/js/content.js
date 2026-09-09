@@ -36,16 +36,38 @@ window.CUP_CONTENT = {
     steelGrade: null,
     weightG: null,
 
+    /* These two come off your own 3D model sheet, so they are filled in. They
+       are also what the 3D cup on the site is proportioned from — change them
+       and the model changes shape. */
+    heightCm: 22,
+    diameterCm: 7,
+
+    /* The band around the collection cups. Set to false for a plain cup. */
+    saduBand: true,
+
     /* The palette, named for things here rather than for a paint chart.
        `slug` is what gets stored on an order, so never change a slug once you
        have taken a reservation against it — change the labels instead.
        Delete the ones you are not making. `hex` only draws the swatch. */
+    /* THE KUWAIT COLLECTION — the Sadu-inspired palette.
+       Every one of these drives the 3D cup on the page: pick a colour and the
+       model repaints. Delete the ones you are not making and they disappear
+       from the site, the engraving preview and the reservation form at once. */
     colours: [
-      { slug: 'sand',      hex: '#C8B08A', en: 'Sand',       ar: 'رملي' },
-      { slug: 'gulf-blue', hex: '#2E5F7A', en: 'Gulf blue',  ar: 'أزرق خليجي' },
-      { slug: 'date',      hex: '#5A3B2E', en: 'Date',       ar: 'تمري' },
-      { slug: 'oud',       hex: '#3A2F3B', en: 'Oud',        ar: 'عودي' },
-      { slug: 'majlis',    hex: '#7C2B2B', en: 'Majlis red', ar: 'أحمر المجلس' }
+      { slug: 'navy',           hex: '#2A3A52', en: 'Navy',           ar: 'كحلي' },
+      { slug: 'cream',          hex: '#EFE6D6', en: 'Cream',          ar: 'كريمي' },
+      { slug: 'beige-sand',     hex: '#D8C9AE', en: 'Beige Sand',     ar: 'رملي فاتح' },
+      { slug: 'sand-brown',     hex: '#7B6350', en: 'Sand Brown',     ar: 'بني رملي' },
+      { slug: 'terracotta',     hex: '#B0603A', en: 'Terracotta',     ar: 'طيني' },
+      { slug: 'sadu-burgundy',  hex: '#6B2028', en: 'Sadu Burgundy',  ar: 'عنّابي السدو' },
+      { slug: 'rosewood',       hex: '#9C6A6B', en: 'Rosewood',       ar: 'خشب الورد' },
+      { slug: 'dusty-pink',     hex: '#DFC0BB', en: 'Dusty Pink',     ar: 'وردي هادي' },
+      { slug: 'mustard',        hex: '#D5A02E', en: 'Mustard',        ar: 'خردلي' },
+      { slug: 'olive-khaki',    hex: '#5C6544', en: 'Olive Khaki',    ar: 'زيتي' },
+      { slug: 'sage',           hex: '#A9B69C', en: 'Sage',           ar: 'مريمية' },
+      { slug: 'slate-blue',     hex: '#90A9C2', en: 'Slate Blue',     ar: 'أزرق حجري' },
+      { slug: 'charcoal',       hex: '#3B3A3A', en: 'Charcoal',       ar: 'فحمي' },
+      { slug: 'matte-black',    hex: '#1B1B1D', en: 'Matte Black',    ar: 'أسود مطفي' }
     ],
 
     /* What it is NOT good for. This one ships filled in, because these are true
@@ -177,6 +199,21 @@ window.CUP_STRINGS = {
   'home.honest.h': { en: 'What we have not decided yet', ar: 'الأشياء اللي ما قررناها' },
   'home.honest.p': { en: 'We would rather leave a gap than fill it with something we made up. Not settled today: the price, the capacity, how long it holds, when the first batch exists, and how it reaches you.\nThere are no reviews here because nobody has used the cup yet. No logos, because nobody has partnered with us. No customer count, because there are no customers. Each of those appears the day it is real.',
                   ar: 'نفضّل نترك الفراغ على أن نعبيه بشي مألفينه. اللي ما استقرينا عليه اليوم: السعر، الحجم، كم ساعة يصمد، متى تنزل أول دفعة، وكيف توصلك.\nما في تقييمات هني لأن ما في أحد استخدم الكوب. وما في شعارات لأن ما في أحد شاركنا. وما في عدد زباين لأن ما في زباين. كل وحدة منها بتطلع يوم ما تصير حقيقة.' },
+
+  'home.cup.hint': { en: 'Drag the cup to turn it. Arrow keys work too.',
+                  ar: 'اسحب الكوب عشان تلفه. وأسهم الكيبورد تشتغل بعد.' },
+
+  'home.collection.h': { en: 'The Kuwait Collection', ar: 'مجموعة الكويت' },
+  'home.collection.p': { en: 'Fourteen colours, taken from Sadu rather than from a paint chart. Pick one and the cup above changes to it.\nA colour name should tell you something you can already picture.',
+                  ar: 'أربعة عشر لون، مأخوذة من السدو مو من كتالوج دهانات. اختر وحدة وبيتغير الكوب اللي فوق.\nاسم اللون لازم يقول لك شي تقدر تتخيله من دون ما تشوفه.' },
+
+  'home.sticker.h': { en: 'The name goes in the steel, not on a sticker',
+                  ar: 'الاسم يدخل بالستيل، مو ملصق فوقه' },
+  'home.sticker.p': { en: 'Stickers peel. Vinyl lifts in a car that has been sitting outside since ten in the morning. An engraving is material taken out of the surface, so it lasts exactly as long as the cup does.\nWrite it in Arabic or in Latin letters. A name, a nickname only two people use, a plate number. It is your cup, and we do not have opinions about what goes on it.',
+                  ar: 'الملصقات تنقشر. والفينيل يطلع من سيارة واقفة برا من الساعة عشر الصبح. أما الحفر فهو مادة تنشال من السطح، عشان جي يعيش عمر الكوب نفسه.\nاكتبه بالعربي أو باللاتيني. اسم، أو لقب ما يعرفه إلا شخصين، أو رقم لوحة. هذا كوبك، وما عندنا رأي بالشي اللي ينكتب عليه.' },
+
+  'home.claim5': { en: 'No plastic taste in the third sip.', ar: 'ولا طعم بلاستيك بالمصة الثالثة.' },
+  'home.claim6': { en: 'No sticker to peel off in August.', ar: 'ولا ملصق ينقشر بشهر أغسطس.' },
 
   'home.notfor.h': { en: 'What it is not good for', ar: 'الأشياء اللي ما ينفع لها' },
   'home.price.pending': { en: 'The price is not published yet. Reserving costs nothing and takes no card either way.',
