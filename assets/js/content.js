@@ -33,8 +33,8 @@ window.CUP_CONTENT = {
   product: {
     /* Everything in this block down to weightG comes off your own product spec
        sheet, so it is filled in and safe to publish. */
-    capacityMl: 887,
-    capacityOz: 30,
+    capacityMl: 650,
+    capacityOz: 22,
     material: { en: 'Insulated stainless steel, BPA free',
                 ar: 'ستيل مقاوم للصدأ ومعزول، وخالي من BPA' },
 
@@ -52,17 +52,28 @@ window.CUP_CONTENT = {
     steelGrade: null,
     weightG: null,
 
-    /* The proportions the 3D cup is built from. The body is a cone frustum
-       because the real cup is wider at the mouth than at the base — change
-       these and the model changes shape. */
-    heightCm: 27,
-    topDiameterCm: 10,
-    baseDiameterCm: 7.5,
+    /* The proportions the 3D cup is built from. Change these and the model
+       changes shape.
+
+       This is the Classic body: a straight cylinder, 22 cm tall and 7 cm across
+       top to bottom, with rounded edges and no handle. It is what every
+       photograph in assets/img/ shows and what the 3D model sheets specify, and
+       top and base are equal on purpose — any difference between them renders
+       as a visible V and the real cup does not taper.
+
+       It is deliberately NOT the Advanced body (24 cm, 10 cm at the mouth,
+       7.5 cm at the base, 887 ml, foldable handle, 2-in-1 lid). Those are a
+       different product and live in catalogue.js. Mixing one cup's numbers into
+       the other's is a mistake this file has already made twice: keep height,
+       both diameters, capacity and foldableHandle consistent with each other. */
+    heightCm: 22,
+    topDiameterCm: 7,
+    baseDiameterCm: 7,
 
     /* Features off the spec sheet. Each one switches real behaviour on the
        site, not just a line of copy: foldableHandle draws the handle on the
        3D model, and twoInOneLid drives the straw-or-lid guide. */
-    foldableHandle: true,
+    foldableHandle: false,
     twoInOneLid: true,
     removableStraw: true,
     leakResistant: true,
@@ -74,7 +85,7 @@ window.CUP_CONTENT = {
 
     /* The woven band belongs to the Sadu limited edition, not to the classic
        cup, so it is off by default. */
-    saduBand: false,
+    saduBand: true,
 
     /* The palette, named for things here rather than for a paint chart.
        `slug` is what gets stored on an order, so never change a slug once you
@@ -85,12 +96,12 @@ window.CUP_CONTENT = {
        model repaints. Delete the ones you are not making and they disappear
        from the site, the engraving preview and the reservation form at once. */
     colours: [
-      { slug: 'navy',           hex: '#2A3A52', en: 'Navy',           ar: 'كحلي' },
+      { slug: 'navy',           hex: '#16233D', en: 'Navy',           ar: 'كحلي' },
       { slug: 'cream',          hex: '#EFE6D6', en: 'Cream',          ar: 'كريمي' },
       { slug: 'beige-sand',     hex: '#D8C9AE', en: 'Beige Sand',     ar: 'رملي فاتح' },
       { slug: 'sand-brown',     hex: '#7B6350', en: 'Sand Brown',     ar: 'بني رملي' },
       { slug: 'terracotta',     hex: '#B0603A', en: 'Terracotta',     ar: 'طيني' },
-      { slug: 'sadu-burgundy',  hex: '#6B2028', en: 'Sadu Burgundy',  ar: 'عنّابي السدو' },
+      { slug: 'sadu-burgundy',  hex: '#8C1D24', en: 'Sadu Burgundy',  ar: 'عنّابي السدو' },
       { slug: 'rosewood',       hex: '#9C6A6B', en: 'Rosewood',       ar: 'خشب الورد' },
       { slug: 'dusty-pink',     hex: '#DFC0BB', en: 'Dusty Pink',     ar: 'وردي هادي' },
       { slug: 'mustard',        hex: '#D5A02E', en: 'Mustard',        ar: 'خردلي' },
@@ -373,10 +384,46 @@ window.CUP_STRINGS = {
 
   /* ---- the frames. Deliberately few words: a label, one line, one way out. ---- */
 
+  /* ---- the catalogue page ---- */
+  'nav.menu.page':    { en: 'The cups',  ar: 'الأكواب' },
+  'menucat.title':    { en: 'cup.kw — every cup we make', ar: 'cup.kw — كل الأكواب' },
+  'menucat.label':    { en: 'The menu', ar: 'القائمة' },
+  'menucat.h1':       { en: 'Every cup we make.', ar: 'كل كوب نسويه.' },
+  'menucat.sub':      { en: 'Five lines, two bodies, and a colour for whatever you already own.',
+                        ar: 'خمس مجموعات، وجسمين، ولون يناسب كل شي عندك.' },
+  'menu.items':       { en: 'items', ar: 'قطعة' },
+  'menu.item':        { en: 'item',  ar: 'قطعة' },
+  'menu.finishes':    { en: 'finishes', ar: 'لون' },
+  'menu.finish':      { en: 'finish',   ar: 'لون' },
+  'menu.kwd':         { en: 'KWD', ar: 'د.ك' },
+  'menu.price.unset': { en: 'Price not set yet', ar: 'السعر ما تحدد بعد' },
+  'menu.concept.note': {
+    en: 'Concept editions. Studio concepts made for a class pitch — not affiliated with, endorsed by, or licensed from any rights holder, and not for sale.',
+    ar: 'إصدارات مفهوم. أفكار استوديو لعرض صفّي — غير مرتبطة أو مرخّصة من أي جهة صاحبة حقوق، وغير معروضة للبيع.' },
+  'cup.band.on':  { en: 'Sadu band: on',  ar: 'نقش السدو: شغّال' },
+  'cup.band.off': { en: 'Sadu band: off', ar: 'نقش السدو: مطفي' },
+  'shop.all':      { en: 'All', ar: 'الكل' },
+  'shop.kind':     { en: 'Kind', ar: 'النوع' },
+  'shop.capacity': { en: 'Capacity', ar: 'الحجم' },
+  'shop.features': { en: 'Features', ar: 'المواصفات' },
+  'shop.add':      { en: 'Put aside', ar: 'حطه جنب' },
+  'shop.picked':   { en: 'Put aside ✓', ar: 'محطوط ✓' },
+  'shop.one':      { en: 'cup put aside', ar: 'كوب محطوط' },
+  'shop.many':     { en: 'cups put aside', ar: 'أكواب محطوطة' },
+  'shop.clear':    { en: 'Clear', ar: 'فضّيها' },
+  'shop.none':     { en: 'Nothing matches those filters. Take one off and try again.',
+                     ar: 'ما في شي يطابق. شيل فلتر وجرّب مرة ثانية.' },
+  'feat.straw':     { en: 'Straw', ar: 'شفاطة' },
+  'feat.lid2in1':   { en: '2-in-1 lid', ar: 'غطا ٢×١' },
+  'feat.handle':    { en: 'Foldable handle', ar: 'مقبض ينطوي' },
+  'feat.insulated': { en: 'Insulated', ar: 'حافظ للحرارة' },
+  'feat.bpafree':   { en: 'BPA free', ar: 'خالي BPA' },
+  'feat.limited':   { en: 'Limited edition', ar: 'إصدار محدود' },
+
   'menu.theme':  { en: 'Display',  ar: 'العرض' },
   'menu.accent': { en: 'Accent',   ar: 'اللون' },
 
-  'f.hero.label': { en: 'Kuwait · 887 ml', ar: 'الكويت · ٨٨٧ مل' },
+  'f.hero.label': { en: 'Kuwait · 650 ml', ar: 'الكويت · ٦٥٠ مل' },
   'f.spec.label': { en: 'The object', ar: 'الشي نفسه' },
   'f.spec.h':     { en: 'Steel, and a vacuum.', ar: 'ستيل، وفراغ.' },
   'f.coll.label': { en: 'The collection', ar: 'المجموعة' },

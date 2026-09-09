@@ -1,4 +1,4 @@
-/* THE SHOW — one Kuwaiti day, played out around the cup.
+/* THE SHOW — one Kuwaiti day, in photographs.
 
    The rule this file is built to: an animation is never the only reason
    content is visible. Every scene's words are in the DOM from the start. What
@@ -28,7 +28,7 @@
 
   function lang() { return window.cupLang ? window.cupLang() : 'en'; }
 
-  var host, stage, cup, timer = null, at = 0, list = [];
+  var host, stage, timer = null, at = 0, list = [];
 
   function mount() {
     host = document.querySelector('[data-show]');
@@ -42,12 +42,11 @@
            bag mouth, a hand. Keeping them anonymous here means a new prop is a
            CSS change, not a JavaScript one. */
         '<div class="show__props" aria-hidden="true"><i></i><i></i><i></i><i></i></div>' +
-        /* Scenes with a real photograph use it; the rest are drawn around the
-           3D model. A photograph of the cup actually sitting in a car holder
-           beats any cup-holder I can draw, and the model earns its place on the
-           scenes where turning it is the point. */
+        /* Photographs only. The 3D model used to stand in on the scenes with
+           no photograph, which meant the day kept swapping a turnable object in
+           and out from under you while it advanced. The model now has its own
+           section further down the page, where nothing takes it away. */
         '<img class="show__photo" alt="" hidden>' +
-        '<div class="show__cup" data-show-cup></div>' +
       '</div>' +
       '<div class="show__script"></div>' +
       '<div class="show__controls">' +
@@ -93,15 +92,6 @@
       timer ? pause() : play();
     });
 
-    if (window.CUP3D) {
-      cup = window.CUP3D.build(host.querySelector('[data-show-cup]'), {
-        height: 260,
-        spin: false,
-        angle: -12,
-        colour: currentColour()
-      });
-    }
-
     words();
     go(0, false);
     if (!reduced()) play();
@@ -111,15 +101,6 @@
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-motion'] });
 
     document.addEventListener('cup:lang', words);
-  }
-
-  function currentColour() {
-    var c = (window.CUP_CONTENT && window.CUP_CONTENT.product &&
-             window.CUP_CONTENT.product.colours) || [];
-    var picked = document.querySelector('[data-drives-cup] input:checked');
-    var slug = picked && picked.value;
-    var found = c.filter(function (x) { return x.slug === slug; })[0] || c[0];
-    return (found && found.hex) || '#2A3A52';
   }
 
   function words() {
@@ -159,23 +140,18 @@
     stage.setAttribute('data-prop', s.prop || 'idle');
 
     var img = host.querySelector('.show__photo');
-    var cupBox = host.querySelector('.show__cup');
     var l = lang();
     if (s.photo) {
       img.src = s.photo.src;
       img.alt = (l === 'ar' ? s.photo.altAr : s.photo.altEn) || '';
       img.hidden = false;
-      cupBox.hidden = true;
       stage.classList.add('has-photo');
     } else {
+      /* No photograph for this hour: the stage is the drawn props and the
+         words, which is what the props were always for. */
       img.hidden = true;
       img.removeAttribute('src');
-      cupBox.hidden = false;
       stage.classList.remove('has-photo');
-      if (cup) {
-        cup.setExpression(s.expression || 'idle');
-        cup.setAngle(s.angle == null ? -12 : s.angle);
-      }
     }
 
     if (byHand) pause();
@@ -193,13 +169,6 @@
     host.classList.remove('is-playing');
     if (host) words();
   }
-
-  /* Changing the colour on the collection panel repaints the cup on stage too,
-     so the two never disagree about what the visitor picked. */
-  document.addEventListener('change', function (e) {
-    if (!cup || !e.target.closest || !e.target.closest('[data-drives-cup]')) return;
-    cup.setColour(currentColour());
-  });
 
   if (window.cupT) mount();
   else document.addEventListener('cup:ready', mount, { once: true });

@@ -105,7 +105,7 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
    ========================================================================= */
 
 .c3d {
-  --cup-body: #2A3A52;
+  --cup-body: #16233D;
   --cup-ink: #F4EEE3;
   display: block; inline-size: 100%;
   perspective: 1500px;
@@ -156,12 +156,36 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
 .c3d__strawtop { background: color-mix(in srgb, var(--cup-body) 50%, #000); }
 .c3d__base { background: #16161A; box-shadow: inset 0 0 0 2px rgba(255,255,255,.05); }
 
+/* The Sadu band, built to the palette in the reference: maroon ground, off-white
+   motif, camel bridging, black as hairline only.
+
+   The rule that matters is that maroon never touches the cup body. Against the
+   navy the two are 1.7:1 and collapse into one muddy mass, so the selvedge goes
+   off-white first, then camel, and the black hairline sits on the light ground
+   where it reads as a line rather than disappearing. Inset shadows paint first
+   one on top, so they are listed outermost first. */
+/* Rounded edges. The body is a ring of flat panels, so the curve at the foot is
+   made two ways at once: a small radius on each panel's bottom corners, and a
+   dark inset along the same edge. The radius alone scallops at this panel width
+   and the shadow alone reads flat; together they pass for a fillet. */
+.c3d__body .c3d__panel {
+  border-end-start-radius: 3px; border-end-end-radius: 3px;
+  box-shadow: inset 0 -7px 9px -7px rgba(0,0,0,.6);
+}
+
+/* Hidden by default and revealed by the class, exactly like the handle. */
+.c3d__band { opacity: 0; transition: opacity calc(.25s * var(--motion)) ease; }
+.c3d.has-band .c3d__band { opacity: 1; }
+
 .c3d__band .c3d__panel {
-  background-color: #6B2028;
+  background-color: #8C1D24;
   background-image:
-    repeating-linear-gradient(45deg, transparent 0 6px, #E9DCC6 6px 7.5px),
-    repeating-linear-gradient(-45deg, transparent 0 6px, #E9DCC6 6px 7.5px);
-  box-shadow: inset 0 3px 0 #E9DCC6, inset 0 -3px 0 #E9DCC6;
+    repeating-linear-gradient(45deg, transparent 0 6px, #F2EAD8 6px 7.5px),
+    repeating-linear-gradient(-45deg, transparent 0 6px, #F2EAD8 6px 7.5px);
+  box-shadow:
+    inset 0 3px 0 #F2EAD8, inset 0 -3px 0 #F2EAD8,
+    inset 0 5px 0 #C9A87C, inset 0 -5px 0 #C9A87C,
+    inset 0 6px 0 #1A1A1A, inset 0 -6px 0 #1A1A1A;
 }
 
 .c3d__handle {
@@ -304,6 +328,33 @@ html[lang="ar"] .menu__link { letter-spacing: 0; }
 /* The name is announced, not printed — fourteen labels in a row is a wall. */
 .palette .swatch span::after { content: attr(data-name); position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
 
+/* ---- the collection as a rail ----
+   Fourteen swatches wrapped into three rows push the cup they are meant to be
+   recolouring off the screen. In one line you push through, the cup stays put
+   and the colours stay next to it. fit-content keeps the row centred while it
+   fits and lets it go full-width and scroll once it does not, so there is no
+   breakpoint to maintain. Snap points mean a flick lands on a colour rather
+   than between two. */
+.palette--rail {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  margin-inline: auto;
+  padding-block: .45rem;
+  /* The row reports ~21px of overflow it does not visually have, which on any
+     platform with persistent scrollbars would park a permanent bar under the
+     swatches. The affordance is the half-swatch cut off at the edge, so the bar
+     is hidden rather than left there looking broken. */
+  scrollbar-width: none;
+}
+.palette--rail::-webkit-scrollbar { display: none; }
+.palette--rail .swatch { flex: 0 0 auto; scroll-snap-align: start; }
+/* The hover lift is clipped by the scroll container, so give it room. */
+.palette--rail .swatch span { margin-block: 3px; }
+
 .swatchname { font-size: var(--micro); letter-spacing: .2em; text-transform: uppercase; color: var(--fg-dim); min-block-size: 1.2em; }
 html[lang="ar"] .swatchname { text-transform: none; letter-spacing: 0; }
 
@@ -334,16 +385,50 @@ html[lang="ar"] .scripttoggle .swatch span { text-transform: none; letter-spacin
 }
 html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
 
-/* A full-bleed photographic frame. */
-.photoframe { position: relative; min-block-size: 100svh; display: grid; align-items: end; overflow: hidden; }
-.photoframe img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: cover; z-index: 0; }
-.photoframe__in { position: relative; z-index: 2; padding: var(--bleed); inline-size: min(100%, 82rem); margin-inline: auto; }
-.photoframe::after {
-  content: ""; position: absolute; inset: 0; z-index: 1;
-  background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.25) 45%, transparent 75%);
+/* A photographic band, after the Tubik reference: the picture on one side, the
+   line about it on the other, and the whole thing only as tall as it needs to
+   be.
+
+   Two rewrites got here. It began full-bleed — 100svh with object-fit: cover —
+   which drew a 896px-wide photograph at 1440 (1.61x its own pixels, 2.14x at
+   1920) and threw away 58% of it to the crop. Upscaling a photograph past 1:1
+   is the one thing guaranteed to make it look worse than the file you started
+   with. Showing it whole instead fixed the resolution but left a viewport-tall
+   section with a small picture adrift in the middle of it.
+
+   A band solves both. The picture sits in a landscape box at roughly half the
+   width, which on a 1440 screen works out around 0.7x its own pixels — a
+   reduction, never an enlargement — and the section costs about half the height
+   it used to. The caption moves out from on top of the photograph and sits
+   beside it, so the gradient scrim that used to make white text legible over
+   the image is gone, and with it the hard-coded pale text colours: those were a
+   latent bug, because #F4EEE3 on the day theme's cream is nearly invisible. */
+.photoframe {
+  position: relative;
+  display: grid; align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  inline-size: min(100%, 82rem); margin-inline: auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--bleed);
 }
-.photoframe .display, .photoframe .micro, .photoframe .lede { color: #F4EEE3; }
-.photoframe .micro, .photoframe .lede { color: #CFC7B8; }
+@media (min-width: 60rem) {
+  .photoframe { grid-template-columns: 1fr 1.15fr; }
+  /* Source order is picture then words; on a wide screen the words lead. */
+  .photoframe__in { grid-area: 1 / 1; }
+  .photoframe img { grid-area: 1 / 2; }
+  /* The second band mirrors the first, so two pictures in a row do not read as
+     a column of identical slabs. */
+  .photoframe--flip { grid-template-columns: 1.15fr 1fr; }
+  .photoframe--flip .photoframe__in { grid-area: 1 / 2; }
+  .photoframe--flip img { grid-area: 1 / 1; }
+}
+.photoframe img {
+  display: block; inline-size: 100%; block-size: auto;
+  /* Landscape box out of a 3:4 original: a centre crop, but a downscale — the
+     drawn size stays well under the file's own pixels at every width. */
+  aspect-ratio: 4 / 3; object-fit: cover; object-position: center;
+  max-block-size: 56svh;
+}
+.photoframe__in { inline-size: 100%; max-inline-size: 34rem; padding: 0; }
 
 /* =========================================================================
    THE SHOW
@@ -359,7 +444,9 @@ html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
 }
 .show__cup { position: relative; z-index: 2; inline-size: 100%; }
 .show__cup[hidden] { display: none; }
-.show__photo { position: absolute; inset: 0; z-index: 2; inline-size: 100%; block-size: 100%; object-fit: cover; }
+/* contain, not cover: the stage is smaller than every photograph in it, so
+   fitting the whole frame in costs no resolution and crops nothing. */
+.show__photo { position: absolute; inset: 0; z-index: 2; inline-size: 100%; block-size: 100%; object-fit: contain; }
 .show__photo[hidden] { display: none; }
 
 .show__props { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
@@ -425,6 +512,83 @@ html[lang="ar"] .show__controls .chip { text-transform: none; letter-spacing: 0;
 /* =========================================================================
    FURNITURE
    ========================================================================= */
+
+/* ---- the dock ----
+   The four destinations, pinned to the bottom of every page so that going
+   somewhere never starts with opening something. The burger menu stays for the
+   full-size list and the accent swatches.
+
+   Two corners of the bottom edge are already taken — the back-to-top button on
+   one side, the assistant on the other — so on a wide screen the dock is a
+   centred pill with both corners kept clear, and on a narrow one it becomes a
+   full-width bar and pushes those two buttons up above it instead. */
+.dock {
+  position: fixed; inset-block-end: 1.2rem; inset-inline: 0; z-index: 50;
+  display: flex; justify-content: center;
+  padding-inline: 5rem;
+  pointer-events: none;
+}
+.dock__bar {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: .2rem;
+  max-inline-size: 100%;
+  padding: .3rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-2) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+.dock__list { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: .1rem; }
+.dock__link {
+  display: block; text-decoration: none; white-space: nowrap;
+  padding: .5rem .85rem; border-radius: 999px;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .14em;
+  color: var(--fg-dim);
+  transition: color calc(.2s * var(--motion)) ease, background calc(.2s * var(--motion)) ease;
+}
+html[lang="ar"] .dock__link { text-transform: none; letter-spacing: 0; }
+.dock__link:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+/* The page you are on, said twice: aria-current for a screen reader, the fill
+   for everyone else. */
+.dock__link[aria-current="page"] { background: var(--accent); color: var(--accent-fg); }
+.dock__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dock__tools { display: flex; align-items: center; gap: .1rem; }
+.dock__sep { inline-size: 1px; block-size: 20px; background: var(--line); margin-inline: .35rem; }
+.dock__tool {
+  border: 0; background: none; cursor: pointer;
+  padding: .5rem .7rem; border-radius: 999px;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .12em;
+  color: var(--fg-dim); font-family: inherit; white-space: nowrap;
+}
+html[lang="ar"] .dock__tool { text-transform: none; letter-spacing: 0; }
+.dock__tool:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+/* "Theme: follows your device" is a sentence, and a sentence does not belong in
+   a pill. theme.js already puts the full wording on aria-label and title, so
+   the dock shows the state as a mark and loses nothing a screen reader needs. */
+.dock__tool[data-scheme-btn] .schemetext { display: none; }
+.dock__tool[data-scheme-btn]::before { content: "\25D0"; font-size: .95rem; letter-spacing: 0; }
+.dock__tool[data-scheme-btn][data-state="light"]::before { content: "\2600"; }
+.dock__tool[data-scheme-btn][data-state="dark"]::before { content: "\263E"; }
+.dock__tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Nothing should end up underneath it. */
+body { padding-block-end: 5.5rem; }
+
+@media (max-width: 52rem) {
+  .dock { inset-block-end: 0; padding-inline: 0; }
+  .dock__bar {
+    inline-size: 100%; border-radius: 0;
+    border-inline: 0; border-block-end: 0;
+    padding: .25rem .2rem;
+    padding-block-end: max(.25rem, env(safe-area-inset-bottom));
+  }
+  .dock__list { flex: 1; justify-content: space-around; }
+  .dock__link { padding-inline: .5rem; letter-spacing: .08em; }
+  /* Seven targets do not fit across a phone at a size anyone can hit. The
+     display controls stay one tap away in the menu. */
+  .dock__tools { display: none; }
+  body { padding-block-end: 4.5rem; }
+}
 
 .totop {
   position: fixed; inset-block-end: 1.2rem; inset-inline-start: 1.2rem;
@@ -512,3 +676,112 @@ html[lang="ar"] .assist__send { text-transform: none; letter-spacing: 0; }
 .pweye::before { content: ""; inline-size: 1.05rem; block-size: 1.05rem; border-radius: 50% 0; border: 1.5px solid var(--fg-dim); transform: rotate(45deg); }
 .pweye::after { content: ""; position: absolute; inline-size: 1.3rem; block-size: 1.5px; background: var(--fg-dim); transform: rotate(-45deg); opacity: 0; }
 .pweye[aria-pressed="true"]::after { opacity: 1; }
+
+/* The two corner buttons are declared above with the same specificity as any
+   override, so lifting them clear of the full-width dock has to come after them
+   in source order rather than in the dock's own block. */
+@media (max-width: 52rem) {
+  .totop, .assist { inset-block-end: calc(1.2rem + 52px); }
+}
+
+/* =========================================================================
+   THE MENU
+   A catalogue of drawn cups. The card is deliberately quiet — the only loud
+   thing on it is the cup, because the cup is the only thing that differs.
+   ========================================================================= */
+
+/* .frame__in cannot be used on its own here: it sets inline-size and then
+   width: 100% straight after, so the 82rem cap only holds because the .frame
+   around it supplies the gutter. This wrapper is that gutter. */
+.menuwrap { inline-size: min(100%, 82rem); margin-inline: auto; padding-inline: var(--bleed); }
+
+.lineup { padding-block: clamp(2.5rem, 6vw, 4.5rem); border-block-start: 1px solid var(--line); }
+.lineup:first-child { border-block-start: 0; }
+.lineup__head { display: grid; gap: .7rem; justify-items: start; margin-block-end: 2.2rem; }
+.lineup__head .frame__no { position: static; }
+.lineup__head .lede { max-inline-size: 46ch; }
+
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; margin: .4rem 0 0; }
+.chip {
+  font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--fg-dim); border: 1px solid var(--line); border-radius: 999px;
+  padding: .3rem .7rem;
+}
+html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
+
+.cards {
+  display: grid; gap: .8rem;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+}
+.card {
+  border: 1px solid var(--line); background: var(--bg-2);
+  padding: 1rem .8rem 1.1rem;
+  display: grid; justify-items: center; gap: .5rem;
+  transition: border-color calc(.2s * var(--motion)) ease,
+              transform calc(.2s * var(--motion)) ease;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card__stage { display: grid; place-items: center; block-size: 132px; }
+.card__cup { inline-size: auto; block-size: 132px; display: block; }
+.card__name { font-size: var(--small); font-weight: 500; margin: 0; text-align: center; }
+.card__price {
+  margin: 0; font-size: var(--micro); letter-spacing: .1em;
+  color: var(--fg-dim); font-variant-numeric: tabular-nums;
+}
+.card__price--unset { color: var(--accent); }
+.lineup .pending { margin-block-start: 1.4rem; }
+
+@media (max-width: 40rem) {
+  .cards { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
+  .card__stage, .card__cup { block-size: 108px; }
+}
+/* ---- the shop on the menu ---- */
+
+.filter {
+  display: grid; gap: 1rem;
+  padding-block: 1.6rem 0;
+}
+@media (min-width: 48rem) { .filter { grid-template-columns: auto auto 1fr; gap: 1.4rem 2.4rem; align-items: start; } }
+.filter__group { display: grid; gap: .5rem; justify-items: start; }
+.filter__group .micro { color: var(--fg-dim); }
+
+.chip--btn {
+  cursor: pointer; font-family: inherit; background: none;
+  color: var(--fg-dim); transition: color calc(.15s * var(--motion)) ease,
+                                    border-color calc(.15s * var(--motion)) ease;
+}
+.chip--btn:hover { color: var(--fg); border-color: var(--fg-dim); }
+.chip--btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.chip--btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.card__add {
+  margin-block-start: .1rem; inline-size: 100%;
+  border: 1px solid var(--line); background: none; color: var(--fg-dim);
+  font-family: inherit; font-size: var(--micro); letter-spacing: .1em;
+  text-transform: uppercase; padding: .4rem .5rem; cursor: pointer;
+  transition: border-color calc(.15s * var(--motion)) ease, color calc(.15s * var(--motion)) ease;
+}
+html[lang="ar"] .card__add { text-transform: none; letter-spacing: 0; }
+.card__add:hover { color: var(--fg); border-color: var(--fg-dim); }
+.card.is-picked { border-color: var(--accent); }
+.card.is-picked .card__add { border-color: var(--accent); color: var(--accent); }
+
+/* The tray sits above the dock, and above the two corner buttons with it. */
+.tray {
+  position: fixed; inset-block-end: calc(1.2rem + 58px); inset-inline: 0; z-index: 55;
+  display: flex; justify-content: center; padding-inline: 1rem; pointer-events: none;
+}
+.tray[hidden] { display: none; }
+.tray__in {
+  pointer-events: auto; display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .5rem .5rem 1.1rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-2) 94%, transparent);
+  backdrop-filter: blur(14px);
+}
+.tray__count { margin: 0; font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+html[lang="ar"] .tray__count { text-transform: none; letter-spacing: 0; }
+@media (max-width: 52rem) {
+  .tray { inset-block-end: calc(4.5rem + .6rem); }
+  .tray__in { inline-size: 100%; justify-content: space-between; }
+}

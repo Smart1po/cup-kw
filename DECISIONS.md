@@ -108,9 +108,24 @@ make the shading prettier, check it still runs.
 on the same side of a physical object in every language. Only the layout around it flips.
 
 Proportions come from `product.heightCm`, `topDiameterCm` and `baseDiameterCm` — 27 cm tall,
-10 cm at the mouth, 7.5 cm at the base, off the product sheet. The body is a cone frustum
-because the real cup is. Correct the spec and the model changes shape rather than being
-re-drawn by hand.
+10 cm at the mouth, 9.5 cm at the base. Correct the spec and the model changes shape rather
+than being re-drawn by hand.
+
+**There are two cups, and this block describes the Advanced one.** The design pack has a
+Classic body — a straight 22 x 7 cm cylinder, no handle — and an Advanced body, 24 cm tall,
+10 cm at the mouth, 7.5 cm at the base, 887 ml, foldable handle, 2-in-1 lid. `content.js`
+carries the Advanced numbers, which is consistent with `foldableHandle: true` beside them.
+
+This was got wrong once and it is worth recording how. The product photographs in
+`assets/img/` are of the *Classic* cup: trace the right edge in `at-desk.jpg` and it moves
+6 px across 580 px of height, a straight cylinder. Reasoning from those photographs, the
+base was changed from 7.5 to 9.5 on the grounds that the sheet must be wrong. The sheet was
+not wrong — it was a sheet for the other cup. 7.5 is correct for the Advanced body and has
+been restored; the height, which said 27 and appears on no sheet at all, is now 24.
+
+The lesson is narrow and worth keeping: check which cup a measurement belongs to before
+concluding a spec is wrong. If the site should show the Classic body instead, change height,
+both diameters and `foldableHandle` together rather than mixing the two.
 
 It turns on **both** axes now, and zooms. Pitch is clamped to roughly −52°…+26° for two
 reasons: past that you are looking into a lid with no inside modelled, and the fixed lighting

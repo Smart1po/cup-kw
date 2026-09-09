@@ -15,24 +15,28 @@ window.CUP_THEME = (function () {
 
   var root = document.documentElement;
 
-  /* Day accents are dark enough to carry white button text. */
+  /* Day accents are dark enough to carry white button text, on the off-white
+     ground. The Sadu maroon lives here and only here: against the day ground it
+     is 7.57:1, against the night navy it is 1.73:1 and disappears. */
   var DAY = [
-    { id: 'burgundy',  hex: '#6B2028' },
-    { id: 'navy',      hex: '#2A3A52' },
+    { id: 'maroon',    hex: '#8C1D24' },
+    { id: 'navy',      hex: '#16233D' },
     { id: 'olive',     hex: '#4B5636' },
     { id: 'terracotta',hex: '#93492A' },
     { id: 'teal',      hex: '#1F5560' },
     { id: 'ink',       hex: '#38322B' }
   ];
 
-  /* Night accents are light enough to carry near-black button text. */
+  /* Night accents carry navy button text on the navy ground. Every one is
+     measured against #16233D: camel 6.99, brass 5.06, off-white 13.07,
+     sage 7.35, slate 6.44, mustard 6.63. */
   var NIGHT = [
-    { id: 'sand',      hex: '#C8A46A' },
-    { id: 'rosewood',  hex: '#E0A0A4' },
+    { id: 'camel',     hex: '#C9A87C' },
+    { id: 'brass',     hex: '#B08D57' },
+    { id: 'offwhite',  hex: '#F2EAD8' },
     { id: 'sage',      hex: '#A9B69C' },
     { id: 'slate',     hex: '#90A9C2' },
-    { id: 'mustard',   hex: '#D5A02E' },
-    { id: 'cream',     hex: '#E4D9C4' }
+    { id: 'mustard',   hex: '#D5A02E' }
   ];
 
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }

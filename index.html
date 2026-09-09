@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title data-t-title="home.title">cup.kw — one cup, with your name on it</title>
-<meta name="description" content="An insulated stainless steel cup made for Kuwait, engraved with your name. 887 ml, 2-in-1 lid, foldable handle.">
+<meta name="description" content="An insulated stainless steel cup made for Kuwait, engraved with your name. 650 ml, 2-in-1 lid, straw.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/cup.css">
 <link rel="stylesheet" href="assets/css/experience.css">
@@ -31,14 +31,14 @@
     <p class="frame__no">01</p>
     <div class="frame__in split split--wide">
       <div class="stack" data-rise>
-        <p class="micro" data-t="f.hero.label">Kuwait · 887 ml</p>
+        <p class="micro" data-t="f.hero.label">Kuwait · 650 ml</p>
         <h1 class="display" data-t="home.h1">Yours, not everyone&rsquo;s.</h1>
         <a class="btn" href="engrave.html">
           <span data-t="home.cta">Engrave yours</span><span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
       <div>
-        <div data-cup3d data-face="idle" data-height="460"
+        <div data-cup3d data-face="idle" data-height="560"
              aria-label="A three-dimensional model of the cup. Drag to turn it in any direction; buttons below zoom and tilt."></div>
         <p class="micro" style="text-align:center;margin-block-start:.8rem" data-t="home.cup.hint"></p>
       </div>
@@ -62,19 +62,8 @@
     </div>
   </section>
 
-  <!-- 03 · the collection -->
-  <section class="frame frame--auto">
-    <p class="frame__no">03</p>
-    <div class="frame__in stack" data-rise>
-      <p class="micro" data-t="f.coll.label">The collection</p>
-      <h2 class="display display--2" data-t="f.coll.h">Fourteen, from Sadu.</h2>
-      <div class="palette" data-swatches="colour" data-drives-cup></div>
-      <p class="swatchname" data-swatchname></p>
-    </div>
-  </section>
-
   <!-- fit, shown rather than argued -->
-  <section class="photoframe">
+  <section class="photoframe photoframe--flip">
     <img src="assets/img/in-car.jpg" alt="The cup standing in a car cup holder, a hand resting on it" loading="lazy" decoding="async">
     <div class="photoframe__in stack" data-rise>
       <p class="micro" data-t="f.car.label">Fit</p>
@@ -82,9 +71,9 @@
     </div>
   </section>
 
-  <!-- 04 · the promise itself -->
+  <!-- 03 · the promise itself -->
   <section class="frame glow">
-    <p class="frame__no">04</p>
+    <p class="frame__no">03</p>
     <div class="frame__in stack" data-rise style="justify-items:center;text-align:center">
       <p class="micro" data-t="f.eng.label">Engraving</p>
       <h2 class="display" data-t="f.eng.h">In the steel. Not a sticker.</h2>
@@ -94,12 +83,30 @@
     </div>
   </section>
 
-  <!-- 05 · one day -->
+  <!-- 04 · one day -->
   <section class="frame frame--auto">
-    <p class="frame__no">05</p>
+    <p class="frame__no">04</p>
     <div class="frame__in stack" data-rise>
       <p class="micro" data-t="f.day.label">One day</p>
       <div class="show" data-show style="width:100%"></div>
+    </div>
+  </section>
+
+  <!-- 05 · the collection, against the cup it actually repaints. Its own
+       stage, so choosing a colour is never interrupted by the day advancing
+       to a photograph. -->
+  <section class="frame frame--auto">
+    <p class="frame__no">05</p>
+    <div class="frame__in stack" data-rise style="justify-items:center;text-align:center">
+      <p class="micro" data-t="f.coll.label">The collection</p>
+      <h2 class="display display--2" data-t="f.coll.h">Fourteen, from Sadu.</h2>
+      <div data-cup3d data-height="420" style="width:100%"
+           aria-label="A three-dimensional model of the cup in the colour you have chosen. Drag to turn it in any direction."></div>
+      <p class="swatchname" data-swatchname></p>
+      <button type="button" class="chip chip--btn" data-band-toggle aria-pressed="true"></button>
+      <!-- Leads on Beige Sand, not Navy: the ground is navy, and a navy cup on it is
+           1.00:1. Beige Sand is 10.66:1 and is what the collection sheets lead with. -->
+      <div class="palette palette--rail" data-swatches="colour" data-drives-cup data-selected="beige-sand"></div>
     </div>
   </section>
 

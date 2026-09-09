@@ -18,15 +18,22 @@
 :root {
   /* Night is the default here — the product is a dark object and it sits
      better on a dark ground. Day is the override, not the base. */
-  --bg:        #14120F;
-  --bg-2:      #1C1916;
-  --bg-3:      #262119;
-  --fg:        #EDE6D9;
-  --fg-dim:    #9C9384;
-  --line:      #322C25;
+  /* Sadu on Navy. Navy is the ground, off-white is what sits on it, camel
+     bridges. Measured, not assumed: off-white on this navy is 13.07:1 and camel
+     is 6.99:1, both clear of 4.5. The maroon of the Sadu band is 1.73:1 against
+     it and is deliberately absent here — on navy the two collapse into one
+     muddy mass, so the band carries its own off-white and camel selvedge and
+     maroon only ever appears as an accent on the day ground, where it is
+     7.57:1. */
+  --bg:        #101A2E;
+  --bg-2:      #16233D;
+  --bg-3:      #1E2E4D;
+  --fg:        #F2EAD8;
+  --fg-dim:    #9FAAC0;
+  --line:      #2C3E63;
 
-  --accent:    #C8A46A;          /* replaced by theme.js from the visitor's pick */
-  --accent-fg: #16130F;
+  --accent:    #C9A87C;          /* replaced by theme.js from the visitor's pick */
+  --accent-fg: #16233D;
 
   --face-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
                   "Helvetica Neue", Arial, sans-serif;
@@ -47,12 +54,12 @@
 /* Day. Warm paper rather than white, and ink rather than black — the contrast
    sits near 10:1, which is past AAA and does not glare. */
 :root[data-scheme="light"] {
-  --bg:        #F2EDE3;
-  --bg-2:      #FAF6EE;
-  --bg-3:      #E8E0D1;
-  --fg:        #37312A;
-  --fg-dim:    #6C6357;
-  --line:      #DCD1BD;
+  --bg:        #F2EAD8;
+  --bg-2:      #FBF6EA;
+  --bg-3:      #E7DDC7;
+  --fg:        #16233D;
+  --fg-dim:    #5A6478;
+  --line:      #DCCFB4;
   --accent-fg: #FFFFFF;
 }
 
@@ -227,7 +234,7 @@ html[lang="ar"] .burger { text-transform: none; letter-spacing: 0; }
 
 .split { display: grid; gap: clamp(2rem, 6vw, 5rem); align-items: center; }
 @media (min-width: 60rem) { .split { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 60rem) { .split--wide { grid-template-columns: 1.15fr .85fr; } }
+@media (min-width: 60rem) { .split--wide { grid-template-columns: .9fr 1.1fr; } }
 
 .stack { display: grid; gap: 1.6rem; justify-items: start; }
 html[dir="rtl"] .stack { justify-items: start; }
@@ -246,10 +253,20 @@ html[dir="rtl"] .stack { justify-items: start; }
 
 .rule { block-size: 1px; background: var(--line); border: 0; margin: 0; }
 
-.facts { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+/* Six short facts do not need the full 82rem of the frame. Stretched edge to
+   edge they read as a sparse table with a lot of nothing in the middle; set in
+   columns with the label over the value they read as a spec block, and the
+   section stops claiming a whole screen for six numbers. auto-fit means the
+   column count follows the width with no breakpoints of its own. */
+.facts {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 0 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  max-inline-size: 62rem;
+}
 .facts li {
-  display: flex; justify-content: space-between; gap: 1.5rem; align-items: baseline;
-  padding-block: 1rem; border-block-end: 1px solid var(--line);
+  display: grid; gap: .35rem; align-content: start;
+  padding-block: .9rem; border-block-start: 1px solid var(--line);
 }
 .facts dt, .facts .k { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); }
 html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }

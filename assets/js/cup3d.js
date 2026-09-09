@@ -144,14 +144,15 @@ window.CUP3D = (function () {
 
     ring(obj, 'c3d__body', R_TOP, R_BASE, BODY_H, BODY_TOP, PANELS);
 
-    var hasBand = prod.saduBand === true;
+    /* The band is always built and shown or hidden with a class, the same way
+       the handle is. Rebuilding 24 panels on every toggle would throw away the
+       angle the visitor turned the cup to, which is the one thing they are
+       holding on to. */
     var bandH = Math.round(BODY_H * 0.16);
     var bandTop = BODY_TOP + Math.round(BODY_H * 0.32);
-    if (hasBand) {
-      var t1 = 1 - (1 - R_BASE / R_TOP) * ((bandTop - BODY_TOP) / BODY_H);
-      var t2 = 1 - (1 - R_BASE / R_TOP) * ((bandTop + bandH - BODY_TOP) / BODY_H);
-      ring(obj, 'c3d__band', R_TOP * t1 + 1.5, R_TOP * t2 + 1.5, bandH, bandTop, PANELS);
-    }
+    var t1 = 1 - (1 - R_BASE / R_TOP) * ((bandTop - BODY_TOP) / BODY_H);
+    var t2 = 1 - (1 - R_BASE / R_TOP) * ((bandTop + bandH - BODY_TOP) / BODY_H);
+    ring(obj, 'c3d__band', R_TOP * t1 + 1.5, R_TOP * t2 + 1.5, bandH, bandTop, PANELS);
 
     ring(obj, 'c3d__lid', LID_R, LID_R, LID_H, LID_TOP, PANELS);
     disc(obj, 'c3d__lidtop', LID_R, LID_TOP);
@@ -185,13 +186,15 @@ window.CUP3D = (function () {
       return p;
     }
 
-    var above = plane('c3d__decal--top', BODY_TOP + BODY_H * (hasBand ? 0.08 : 0.06));
+    /* The band can now be switched on and off after build, so the printing sits
+       clear of it either way rather than branching on something that moves. */
+    var above = plane('c3d__decal--top', BODY_TOP + BODY_H * 0.07);
     var logo = el('c3d__logo', above);
     logo.textContent = opts.logo || 'CUP';
-    if (prod.blueprint !== false && !hasBand) el('c3d__blueprint', above);
+    if (prod.blueprint !== false) el('c3d__blueprint', above);
 
     var below = plane('c3d__decal--bot',
-      hasBand ? (bandTop + bandH + BODY_H * 0.06) : (BODY_TOP + BODY_H * 0.60));
+      bandTop + bandH + BODY_H * 0.06);
     var word = el('c3d__word', below);
     word.textContent = opts.wordmark || 'IDEAS FLOW FURTHER';
     var eng = el('c3d__eng', below);
@@ -249,6 +252,8 @@ window.CUP3D = (function () {
     };
 
     api.setHandle = function (on) { host.classList.toggle('has-handle', !!on); return api; };
+    api.setBand = function (on) { host.classList.toggle('has-band', !!on); return api; };
+    api.hasBand = function () { return host.classList.contains('has-band'); };
 
     api.setExpression = function (id) {
       if (!id) host.removeAttribute('data-face');
@@ -383,8 +388,9 @@ window.CUP3D = (function () {
     host.setAttribute('tabindex', '0');
     host.setAttribute('role', 'img');
 
-    api.setColour(opts.colour || '#2A3A52');
+    api.setColour(opts.colour || '#16233D');
     api.setHandle(opts.handle !== false && prod.foldableHandle === true);
+    api.setBand(opts.band != null ? opts.band : prod.saduBand === true);
     if (opts.expression) api.setExpression(opts.expression);
     paint();
     syncMotion();

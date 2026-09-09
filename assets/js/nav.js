@@ -1,17 +1,25 @@
-/* The menu.
+/* The menu, and the dock.
 
-   Not a nav bar. Four destinations set at display size in a single column,
-   with the language, motion, theme and accent controls underneath — the things
-   that used to crowd the header now have room to be labelled properly.
+   Two views of one list. The dock is a bar pinned to the bottom of every page
+   carrying the same four destinations, so the common case — go somewhere — is
+   one tap and never requires opening anything. The menu behind the burger is
+   still there for the full-size version and for the accent picker, which is a
+   row of swatches and wants the room.
 
-   Built here rather than copied into four HTML files, because four hand-copied
-   menus is four places for one to drift out of step. */
+   On a phone the dock carries the destinations only and the display controls
+   stay in the menu: seven targets do not fit across 390px without becoming too
+   small to hit. On anything wider both sit in the dock.
+
+   Both are built from the one LINKS array below, and both live here rather than
+   being copied into four HTML files, because hand-copied navigation is four
+   places for one to drift out of step. */
 
 (function () {
   'use strict';
 
   var LINKS = [
     { href: 'index.html',   key: 'nav.home' },
+    { href: 'menu.html',    key: 'nav.menu.page' },
     { href: 'engrave.html', key: 'nav.engrave' },
     { href: 'reserve.html', key: 'nav.reserve' },
     { href: 'login.html',   key: 'nav.login' }
@@ -78,12 +86,62 @@
       if (e.target.closest('.menu__link')) close();
     });
 
-    /* These three controls are created here, after everything that labels
-       controls has already run once. Each has to be told to label the new
-       button, or the menu opens with a blank one in it. */
-    if (window.cupApplyLang) window.cupApplyLang();
-    if (window.cupApplyMotion) window.cupApplyMotion();
-    if (window.CUP_THEME) window.CUP_THEME.apply();
+  }
+
+  /* Which of the four we are looking at. On file:// and on a server the last
+     path segment is the filename; an empty segment is the index. */
+  function here() {
+    var seg = location.pathname.split('/').pop();
+    return seg === '' ? 'index.html' : seg;
+  }
+
+  function buildDock() {
+    if (document.querySelector('.dock')) return;
+
+    var dock = document.createElement('nav');
+    dock.className = 'dock';
+    dock.setAttribute('aria-label', 'Primary');
+
+    var bar = document.createElement('div');
+    bar.className = 'dock__bar';
+
+    var ul = document.createElement('ul');
+    ul.className = 'dock__list';
+    var at = here();
+    LINKS.forEach(function (l) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.className = 'dock__link';
+      a.href = l.href;
+      a.setAttribute('data-t', l.key);
+      /* aria-current is what tells a screen reader which one is the page you
+         are on; the highlight is only the sighted half of the same fact. */
+      if (l.href === at) a.setAttribute('aria-current', 'page');
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    bar.appendChild(ul);
+
+    /* The same three controls as the menu. Every file that labels them queries
+       with querySelectorAll and delegates its clicks, so a second copy needs no
+       JavaScript anywhere else. */
+    var tools = document.createElement('div');
+    tools.className = 'dock__tools';
+    tools.innerHTML =
+      '<span class="dock__sep" aria-hidden="true"></span>' +
+      '<button type="button" class="dock__tool" data-scheme-btn>' +
+        '<span class="schemetext"></span></button>' +
+      '<button type="button" class="dock__tool" data-lang-btn></button>' +
+      '<button type="button" class="dock__tool" data-motion-btn aria-pressed="true"></button>';
+    bar.appendChild(tools);
+
+    dock.appendChild(bar);
+
+    /* After the header, so tabbing reaches the navigation early rather than
+       after the whole document. */
+    var top = document.querySelector('header.top');
+    if (top && top.parentNode) top.parentNode.insertBefore(dock, top.nextSibling);
+    else document.body.appendChild(dock);
   }
 
   function focusables() {
@@ -127,6 +185,18 @@
     if (lastFocus) lastFocus.focus();
   }
 
-  if (window.cupT) build();
-  else document.addEventListener('cup:ready', build, { once: true });
+  /* Both the menu and the dock insert controls after everything that labels
+     controls has already run once, so the labelling is re-run here — once,
+     after both exist. Without it the menu opens with blank buttons in it and
+     the dock renders four empty links. */
+  function boot() {
+    build();
+    buildDock();
+    if (window.cupApplyLang) window.cupApplyLang();
+    if (window.cupApplyMotion) window.cupApplyMotion();
+    if (window.CUP_THEME) window.CUP_THEME.apply();
+  }
+
+  if (window.cupT) boot();
+  else document.addEventListener('cup:ready', boot, { once: true });
 })();

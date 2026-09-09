@@ -322,7 +322,7 @@
 
   function hexFor(slug) {
     var found = window.cupColours().filter(function (c) { return c.slug === slug; })[0];
-    return (found && found.hex) || '#2A3A52';
+    return (found && found.hex) || '#16233D';
   }
 
   function chosenColour() {
@@ -362,24 +362,56 @@
     });
   }
 
+  /* A page may carry more than one cup — the home page has the one you land on
+     and the one you choose a colour against. Every cup on the page is built and
+     every cup follows the colour, so two cups never disagree about what was
+     picked. */
   function mountCup() {
-    var host = document.querySelector('[data-cup3d]');
-    if (!host || !window.CUP3D) return;
-    /* Built once. Re-rendering the whole cylinder on every language switch
+    if (!window.CUP3D) return;
+    var hosts = document.querySelectorAll('[data-cup3d]');
+    if (!hosts.length) return;
+
+    /* Built once each. Re-rendering the whole cylinder on every language switch
        would throw away the angle the visitor turned it to. */
-    window.cupModel = window.CUP3D.build(host, {
-      colour: hexFor(chosenColour()),
-      /* The face is opt-in per page, and deliberately absent from anywhere the
-         site is being honest about what it does not know. See DECISIONS.md. */
-      expression: host.getAttribute('data-face') || null,
-      height: parseInt(host.getAttribute('data-height'), 10) || 340
+    var models = [];
+    hosts.forEach(function (host) {
+      models.push(window.CUP3D.build(host, {
+        colour: hexFor(chosenColour()),
+        /* The face is opt-in per cup, and deliberately absent from anywhere the
+           site is being honest about what it does not know. See DECISIONS.md. */
+        expression: host.getAttribute('data-face') || null,
+        height: parseInt(host.getAttribute('data-height'), 10) || 340
+      }));
     });
+    /* The first is the page's principal cup. Other files reach for this handle,
+       so it stays a single model rather than becoming a list. */
+    window.cupModel = models[0];
 
     document.addEventListener('change', function (e) {
       if (!e.target.closest || !e.target.closest('[data-drives-cup]')) return;
-      window.cupModel.setColour(hexFor(e.target.value));
+      var hex = hexFor(e.target.value);
+      models.forEach(function (m) { m.setColour(hex); });
       showSwatchName();
     });
+
+    /* The Sadu band, on or off. It is a different product rather than a
+       different colour, so it gets its own control instead of being another
+       swatch in the row. */
+    function paintBandBtn() {
+      var on = models[0] && models[0].hasBand();
+      document.querySelectorAll('[data-band-toggle]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(!!on));
+        b.textContent = t(on ? 'cup.band.on' : 'cup.band.off');
+      });
+    }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest || !e.target.closest('[data-band-toggle]')) return;
+      var next = !(models[0] && models[0].hasBand());
+      models.forEach(function (m) { m.setBand(next); });
+      paintBandBtn();
+    });
+    paintBandBtn();
+    document.addEventListener('cup:lang', paintBandBtn);
   }
 
   /* The photographs. Lazy, sized, and captioned — a gallery of five product
