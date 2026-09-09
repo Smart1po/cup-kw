@@ -95,10 +95,16 @@ at runtime except the calls to our own Supabase project.
 
 The repository is public so people can suggest changes.
 
+**Read `DECISIONS.md` first.** It records why the site is the way it is — the positioning,
+why so much of it is deliberately empty, and the two things about the 3D cup that will break
+if you undo them.
+
 - **Small text fix?** Edit the file on GitHub and open a pull request.
 - **Changing a product fact?** It almost certainly belongs in `assets/js/content.js`, not in
   the HTML.
 - **Adding a claim about the real world?** It needs a source. See the honesty rules above.
+- **Editing an Arabic string?** It was written natively, not translated. Do not correct it
+  toward Modern Standard Arabic.
 
 Run it locally with nothing installed:
 
