@@ -881,22 +881,63 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
 .card__stage { display: grid; place-items: center; block-size: 132px; perspective: 520px; }
 
-/* Five ways to pick a cup up. menu.js stamps data-anim on hover and steps a
-   shared counter, so each cup you touch moves differently from the last one.
-   transform-origin sits at the foot on the ones that lean, because a cup pivots
-   where it meets the table and not through its middle. */
-@keyframes cupTilt  { 0%{transform:none} 40%{transform:rotate(-5deg) translateY(-8px)} 100%{transform:none} }
-@keyframes cupTurn  { 0%{transform:none} 50%{transform:rotateY(38deg)} 100%{transform:none} }
-@keyframes cupBob   { 0%{transform:none} 30%{transform:translateY(-12px)} 55%{transform:translateY(0)} 75%{transform:translateY(-5px)} 100%{transform:none} }
-@keyframes cupSway  { 0%{transform:none} 25%{transform:rotate(4deg)} 60%{transform:rotate(-4deg)} 100%{transform:none} }
-@keyframes cupPop   { 0%{transform:none} 45%{transform:scale(1.09) translateY(-4px)} 100%{transform:none} }
+/* Five ways to pick a cup up, and they are meant to be seen. menu.js stamps
+   data-anim on hover and steps a shared counter, so each cup you touch moves
+   differently from the last one.
+
+   transform-origin sits at the foot for everything that leans or turns, because
+   a cup pivots where it meets the table and not through its middle. The first
+   attempt at these was a set of 4-5 degree nudges, which is the sort of motion
+   you only notice if you already know it is there. */
+
+/* Tips forward like doffing a hat, holds a beat, comes back up. */
+@keyframes cupDoff {
+  0%   { transform: none; }
+  28%  { transform: rotate(-19deg) translateY(-5px); }
+  52%  { transform: rotate(-19deg) translateY(-5px); }
+  78%  { transform: rotate(4deg); }
+  100% { transform: none; }
+}
+/* A full turn on its own axis. */
+@keyframes cupSpin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+/* Comes toward you and stays there while you are on it. */
+@keyframes cupGrow {
+  0%   { transform: scale(1); }
+  60%  { transform: scale(1.24) translateY(-6px); }
+  100% { transform: scale(1.18) translateY(-4px); }
+}
+/* A hop, with the squash and stretch that makes a hop read as weight. */
+@keyframes cupHop {
+  0%   { transform: none; }
+  18%  { transform: scaleY(.9) scaleX(1.06); }
+  45%  { transform: translateY(-26px) scaleY(1.07) scaleX(.96); }
+  72%  { transform: translateY(0) scaleY(.94) scaleX(1.04); }
+  100% { transform: none; }
+}
+/* Swings from the lid, like it was knocked. */
+@keyframes cupSwing {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(13deg); }
+  46%  { transform: rotate(-9deg); }
+  68%  { transform: rotate(5deg); }
+  86%  { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
 
 .card__cup { transform-origin: 50% 92%; }
-.card[data-anim="0"]:hover .card__cup { animation: cupTilt .55s cubic-bezier(.3,.7,.3,1); }
-.card[data-anim="1"]:hover .card__cup { animation: cupTurn .7s cubic-bezier(.4,0,.3,1); }
-.card[data-anim="2"]:hover .card__cup { animation: cupBob  .75s cubic-bezier(.3,.8,.3,1); }
-.card[data-anim="3"]:hover .card__cup { animation: cupSway .65s ease-in-out; }
-.card[data-anim="4"]:hover .card__cup { animation: cupPop  .5s cubic-bezier(.3,.9,.3,1); }
+.card[data-anim="0"]:hover .card__cup { animation: cupDoff  .8s cubic-bezier(.3,.7,.3,1); }
+.card[data-anim="1"]:hover .card__cup { animation: cupSpin  .9s cubic-bezier(.45,0,.25,1); }
+.card[data-anim="2"]:hover .card__cup { animation: cupGrow  .45s cubic-bezier(.25,.9,.3,1) both; }
+.card[data-anim="3"]:hover .card__cup { animation: cupHop   .8s cubic-bezier(.3,.8,.3,1); }
+/* The swing hangs from the lid rather than standing on its foot. */
+.card[data-anim="4"]:hover .card__cup { animation: cupSwing 1s ease-out; transform-origin: 50% 12%; }
+
+/* Whatever it is doing, it does it over its neighbours rather than under them. */
+.card:hover { z-index: 2; }
+.card { position: relative; }
 /* Motion off means off — the cards still highlight, they just do not move. */
 :root[data-motion="off"] .card .card__cup { animation: none !important; }
 @media (prefers-reduced-motion: reduce) {

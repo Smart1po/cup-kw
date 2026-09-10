@@ -120,10 +120,10 @@ window.CUP_CATALOGUE = {
       body: 'classic', priceKwd: 8.000,
       features: ['straw', 'bpafree'],
       items: [
-        /* Only clear. The cup carries no colour of its own — whatever is in it
-           is the only colour on the card, which is why `hex` is the drink and
-           `bare` keeps any printed field off the body. */
-        { slug: 'matcha-clear', en: 'Matcha Clear', ar: 'ماتشا شفاف', hex: '#8FA86B', clear: true, bare: true }
+        /* Clear means clear. This carries no colour at all — no print, no tint,
+           and nothing in it. `hex` is the glass rather than a drink, and `bare`
+           keeps both the printed field and the contents off it. */
+        { slug: 'matcha-clear', en: 'Matcha Clear', ar: 'ماتشا شفاف', hex: '#DCE3E8', clear: true, bare: true }
       ]
     }
   ]

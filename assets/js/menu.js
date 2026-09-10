@@ -60,7 +60,9 @@
 
     if (clear) {
       p.push('<rect x="16" y="32" width="40" height="96" rx="7" fill="' + GLASS + '" opacity=".2"/>');
-      p.push('<rect x="16" y="56" width="40" height="72" rx="7" fill="' + body + '" opacity=".8"/>');
+      /* A bare cup has nothing in it. The others show their contents, which is
+         the whole point of a transparent body; this one is the empty vessel. */
+      if (!bare) p.push('<rect x="16" y="56" width="40" height="72" rx="7" fill="' + body + '" opacity=".8"/>');
       p.push('<rect x="16.6" y="32.6" width="38.8" height="94.8" rx="6.6" fill="none" stroke="' +
              GLASS + '" stroke-opacity=".5" stroke-width="1.2"/>');
       p.push('<rect x="20" y="36" width="5" height="88" rx="2.5" fill="#fff" opacity=".13"/>');

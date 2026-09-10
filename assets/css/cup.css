@@ -29,7 +29,12 @@
   --bg-2:      #16233D;
   --bg-3:      #1E2E4D;
   --fg:        #F2EAD8;
-  --fg-dim:    #9FAAC0;
+  /* Sandy rather than the cool blue-grey it was. Descriptive text sits on a
+     navy ground all over this site, and #9FAAC0 read as a colder navy rather
+     than as a second voice. 7.67:1 on the ground, and 1.89 against --fg, which
+     is the same separation the old value had — so the hierarchy is unchanged
+     and only the temperature moves. */
+  --fg-dim:    #BCAA8E;
   --line:      #2C3E63;
 
   --accent:    #C9A87C;          /* replaced by theme.js from the visitor's pick */
@@ -45,12 +50,11 @@
   --v-fits:  #A9B69C;
   --v-tight: #D5A02E;
   --v-no:    #E0A0A4;
-  --c1: #C9A87C;
-  --c2: #A9B69C;
-  --c3: #90A9C2;
-  --c4: #D5A02E;
-  --c5: #B08D57;
-  --c6: #F2EAD8;
+  /* One colour for the spec block, not six. Six cycling accents read as random
+     rather than as a system. It wants to be the Sadu maroon, and on the day
+     ground it is exactly that; on the night navy #8C1D24 is 1.92:1 and simply
+     disappears, so night gets the same hue lifted until it reads — 5.53:1. */
+  --rule-c: #D9737B;
 
   --face-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
                   "Helvetica Neue", Arial, sans-serif;
@@ -80,16 +84,11 @@
   --accent-fg: #FFFFFF;
 
   /* Same hues, taken dark enough to carry on cream. Against #F2EAD8:
-     7.88 / 5.78 / 7.57 and 5.28 / 7.88 / 6.91 / 5.78 / 7.08 / 13.07. */
+     7.88 / 5.78 / 7.57, and the Sadu maroon itself at 7.57. */
   --v-fits:  #3F4A2B;
   --v-tight: #7A5200;
   --v-no:    #8C1D24;
-  --c1: #7A5A2A;
-  --c2: #3F4A2B;
-  --c3: #2A5270;
-  --c4: #7A5200;
-  --c5: #63481F;
-  --c6: #16233D;
+  --rule-c:  #8C1D24;
 }
 
 @media (prefers-color-scheme: light) {
@@ -306,20 +305,13 @@ html[dir="rtl"] .stack { justify-items: start; }
   max-inline-size: 62rem; margin-inline: auto;
   text-align: center; justify-items: center;
 }
-/* Each fact gets its own rule colour, cycled with nth-child from the --c1..--c6
-   tokens so both schemes are covered. The Sadu maroon is not among them on
-   purpose — it is 1.73 on the night ground and would read as a dark smudge. */
+/* One rule colour across the whole block — the Sadu maroon, which is the site's
+   own red rather than a decorative accent. */
 .facts li {
   display: grid; gap: .4rem; align-content: start; justify-items: center;
-  padding-block: 1.1rem; border-block-start: 2px solid var(--rule, var(--line));
+  padding-block: 1.1rem; border-block-start: 2px solid var(--rule-c);
   inline-size: 100%;
 }
-.facts li:nth-child(6n+1) { --rule: var(--c1); }
-.facts li:nth-child(6n+2) { --rule: var(--c2); }
-.facts li:nth-child(6n+3) { --rule: var(--c3); }
-.facts li:nth-child(6n+4) { --rule: var(--c4); }
-.facts li:nth-child(6n+5) { --rule: var(--c5); }
-.facts li:nth-child(6n+6) { --rule: var(--c6); }
 .facts dt, .facts .k { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); }
 html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }
 /* The number is the point of the row, so it is set at display weight and takes
@@ -327,7 +319,7 @@ html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }
 .facts .v {
   font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem);
   font-weight: 600; line-height: 1.05; letter-spacing: -.01em;
-  color: var(--rule, var(--fg));
+  color: var(--rule-c);
   font-variant-numeric: tabular-nums;
 }
 
