@@ -123,7 +123,7 @@ window.CUP_CATALOGUE = {
         /* Clear means clear. This carries no colour at all — no print, no tint,
            and nothing in it. `hex` is the glass rather than a drink, and `bare`
            keeps both the printed field and the contents off it. */
-        { slug: 'matcha-clear', en: 'Matcha Clear', ar: 'ماتشا شفاف', hex: '#DCE3E8', clear: true, bare: true }
+        { slug: 'matcha-clear', en: 'Clear', ar: 'شفاف', hex: '#DCE3E8', clear: true, bare: true }
       ]
     }
   ]

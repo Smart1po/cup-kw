@@ -94,10 +94,25 @@ language, so the model is pinned left-to-right while the page around it flips.
 
 ## Photographs, and everything else drawn
 
-There are five product photographs in `assets/img/`, about half a megabyte in total. They
-earn their place: a photograph of the cup actually standing in a car cup holder is worth more
-than any cup holder that can be drawn in CSS, and the engraved names differing between shots
-demonstrates the whole positioning without a word of copy.
+The photographs are in `assets/img/`. They earn their place: a photograph of the cup actually
+standing in a car cup holder is worth more than any cup holder that can be drawn in CSS, and
+the engraved names differing between shots demonstrates the whole positioning without a word
+of copy.
+
+**Five of them are placeholders and need replacing with the real files, at the same paths:**
+
+| Path | Should be | Standing in for now |
+|---|---|---|
+| `assets/img/cup-in-hand.jpg` | the cup in a hand, engraved `CUP` | the same shot engraved `CODED / MOUDNI` |
+| `assets/img/quest-majlis.jpg` | the brown cup in a majlis, `AHMAD` | the café shot |
+| `assets/img/quest-balcony.jpg` | the green cup on a Dubai balcony, `MAJED` | the desk shot |
+| `assets/img/quest-poolside.jpg` | the Butter Yellow cup poolside, `WAHAJ` | the same scene in navy |
+| `assets/img/quest-pilates.jpg` | the Baby Pink cup at pilates, `ASMAA` | the same scene in navy |
+
+Overwrite the file and the page picks it up. The alt text for the four quest photographs is
+in `assets/js/experience.js` under `quests`, written for the placeholders that are there
+now — **correct it when you swap the files**, because alt describing a picture the page is
+not showing is worse than no alt at all.
 
 Everything else is still drawn — the 3D cup, the engraving preview, the icons, the marks, the
 stage props for the scenes that have no photograph. There is no web font, and nothing is

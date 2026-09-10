@@ -265,6 +265,12 @@ window.CUP3D = (function () {
 
     api.setHandle = function (on) { host.classList.toggle('has-handle', !!on); return api; };
     api.setBand = function (on) { host.classList.toggle('has-band', !!on); return api; };
+    /* The printed line under the dots is factory print, not engraving. It is
+       switchable for the same reason the band is: it is a different product,
+       and somebody deciding what their cup says should be able to see it
+       without. */
+    api.setWordmark = function (on) { host.classList.toggle('no-word', !on); return api; };
+    api.hasWordmark = function () { return !host.classList.contains('no-word'); };
     api.hasBand = function () { return host.classList.contains('has-band'); };
 
     api.setExpression = function (id) {

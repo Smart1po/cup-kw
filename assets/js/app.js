@@ -530,7 +530,27 @@
       paintBandBtn();
     });
     paintBandBtn();
+
+    /* The printed line under the dots. Factory print, not your engraving — so
+       somebody deciding what their cup should say can take it off and look at
+       the cup with only their own words on it. */
+    function paintWordBtn() {
+      var on = models[0] && models[0].hasWordmark();
+      document.querySelectorAll('[data-word-toggle]').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(!!on));
+        b.textContent = t(on ? 'cup.word.on' : 'cup.word.off');
+      });
+    }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest || !e.target.closest('[data-word-toggle]')) return;
+      var next = !(models[0] && models[0].hasWordmark());
+      models.forEach(function (m) { m.setWordmark(next); });
+      paintWordBtn();
+    });
+    paintWordBtn();
+
     document.addEventListener('cup:lang', paintBandBtn);
+    document.addEventListener('cup:lang', paintWordBtn);
   }
 
   /* The photographs. Lazy, sized, and captioned — a gallery of five product

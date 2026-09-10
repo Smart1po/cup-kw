@@ -1015,6 +1015,52 @@ window.CUP_EXPERIENCE = {
       }
     ]
   },
+  /* THE QUESTS — four places the cup turns up, on the way to the spec.
+
+     The captions are written as messages rather than as marketing, because
+     that is the register the photographs are already in: somebody's hand,
+     somebody's evening, somebody's name on the cup.
+
+     ⚠ TWO OF THESE FOUR FILES ARE PLACEHOLDERS. `quest-poolside.jpg` and
+     `quest-pilates.jpg` are the right scenes in the wrong colourway — navy,
+     where the real shots are Butter Yellow and Baby Pink. `quest-majlis.jpg`
+     and `quest-balcony.jpg` are not the right scenes at all; they are the
+     café and the desk standing in until the majlis and the Dubai balcony
+     shots are dropped in. Overwrite the four files at those exact paths, and
+     correct the alt text below to match what each photograph actually shows.
+     The alt is written for the placeholders that are there NOW, because alt
+     that describes a picture the page is not showing is worse than none. */
+  "quests": [
+    {
+      "src": "assets/img/quest-majlis.jpg",
+      "altEn": "The cup on a café table in the sun, filled with iced coffee, its lid beside it",
+      "altAr": "الكوب على طاولة كافيه بالشمس، وفيه قهوة مثلجة، وغطاه جنبه",
+      "capEn": "the diwaniya starts at nine. brought my own.",
+      "capAr": "الدوانية تبدأ التسعة. جبت كوبي وياي."
+    },
+    {
+      "src": "assets/img/quest-balcony.jpg",
+      "altEn": "The cup held at a desk, two screens of code behind it",
+      "altAr": "الكوب بيد على مكتب، وخلفه شاشتين كود",
+      "capEn": "main quest: finish it before the sun comes up.",
+      "capAr": "المهمة الأساسية: نخلّصه قبل ما تطلع الشمس."
+    },
+    {
+      "src": "assets/img/quest-poolside.jpg",
+      "altEn": "The cup held on a stone table beside a swimming pool",
+      "altAr": "الكوب بيد على طاولة حجر جنب المسبح",
+      "capEn": "side quest: do absolutely nothing, but cold.",
+      "capAr": "مهمة جانبية: ما أسوي ولا شي، بس بارد."
+    },
+    {
+      "src": "assets/img/quest-pilates.jpg",
+      "altEn": "The cup on a table in a pilates studio, full of iced matcha, its lid off",
+      "altAr": "الكوب على طاولة بستوديو بيلاتس، معبّى ماتشا مثلجة، وغطاه مشيول",
+      "capEn": "reformer at seven. the matcha made it.",
+      "capAr": "بيلاتس السابعة. والماتشا نجت."
+    }
+  ],
+
   "gallery": [
     {
       "src": "assets/img/in-hand.jpg",

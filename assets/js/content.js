@@ -438,8 +438,10 @@ window.CUP_STRINGS = {
     ar: 'إصدارات مفهوم. أفكار استوديو لعرض صفّي — غير مرتبطة أو مرخّصة من أي جهة صاحبة حقوق، وغير معروضة للبيع.' },
   'cup.band.on':  { en: 'Sadu band: on',  ar: 'نقش السدو: شغّال' },
   'cup.band.off': { en: 'Sadu band: off', ar: 'نقش السدو: مطفي' },
+  'cup.word.on':  { en: 'Printed line: on',  ar: 'السطر المطبوع: شغّال' },
+  'cup.word.off': { en: 'Printed line: off', ar: 'السطر المطبوع: مطفي' },
   'shop.all':      { en: 'All', ar: 'الكل' },
-  'shop.kind':     { en: 'Kind', ar: 'النوع' },
+  'shop.kind':     { en: 'Categories', ar: 'الفئات' },
   'shop.capacity': { en: 'Capacity', ar: 'الحجم' },
   'shop.features': { en: 'Features', ar: 'المواصفات' },
   'shop.add':      { en: 'Add to cart', ar: 'ضفه للسلة' },
@@ -616,6 +618,13 @@ window.CUP_STRINGS = {
                     ar: 'ما في شي بالسلة عشان ينطلب.' },
   'co.save':      { en: 'Save', ar: 'احفظ' },
   'co.cancel':    { en: 'Cancel', ar: 'ألغِ' },
+
+  'quest.label': { en: 'Out there', ar: 'برّه' },
+  'quest.h':     { en: 'With you on your main and side quests.',
+                   ar: 'وياك بمهماتك الأساسية والجانبية.' },
+  'quest.prev':  { en: 'Previous photograph', ar: 'الصورة السابقة' },
+  'quest.next':  { en: 'Next photograph', ar: 'الصورة التالية' },
+  'quest.go':    { en: 'Go to photograph', ar: 'روح للصورة' },
 
   'eng.group.sadu':    { en: 'Sadu collection', ar: 'مجموعة السدو' },
   'eng.group.classic': { en: 'Classic', ar: 'الأساسي' }
