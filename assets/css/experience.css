@@ -511,10 +511,16 @@ html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
 }
 .photoframe img {
   display: block; inline-size: 100%; block-size: auto;
-  /* Landscape box out of a 3:4 original: a centre crop, but a downscale — the
-     drawn size stays well under the file's own pixels at every width. */
-  aspect-ratio: 4 / 3; object-fit: cover; object-position: center;
-  max-block-size: 56svh;
+  /* The same ratio as the file, so there is no crop at all. This was a 4:3
+     box holding a 3:4 photograph, which is a centre crop of forty-four per
+     cent of the picture — and on a photograph of a cup, what it crops is the
+     cup: the lid off the top and the base off the bottom.
+
+     The height is governed by capping the width rather than by max-block-size.
+     A height cap fights aspect-ratio: the box stops being 3:4, and cover
+     starts cutting again to fill whatever shape is left. */
+  aspect-ratio: 3 / 4; object-fit: cover; object-position: center;
+  max-inline-size: 26rem; margin-inline: auto;
 }
 .photoframe__in { inline-size: 100%; max-inline-size: 34rem; padding: 0; }
 
@@ -1437,15 +1443,22 @@ html[dir="rtl"] .palgroup__h[aria-expanded="false"] .palgroup__caret { transform
 
 .quest__stage {
   position: relative;
-  /* The four photographs are all portrait, so the frame is portrait on a
-     phone and settles wider as there is room — rather than letterboxing a
-     tall picture into a short box and cropping the cup out of it. */
+  /* Portrait at every width, because every one of these photographs is. The
+     first pass went 4:3 above 40rem and cropped the top and bottom off a tall
+     picture — which on a photograph of a cup means cropping the cup.
+
+     Three of the four are exactly 3:4 and fill this with nothing to spare.
+     The majlis shot is taller than that and sits inside it with a margin
+     either side, which is the honest trade: a band of background beside a
+     whole cup beats a tidy edge through the middle of one. */
   aspect-ratio: 3 / 4;
+  inline-size: 100%;
+  max-inline-size: 30rem;
+  margin-inline: auto;
   overflow: hidden;
   border: 1px solid var(--line);
   background: var(--bg-2);
 }
-@media (min-width: 40rem) { .quest__stage { aspect-ratio: 4 / 3; } }
 
 .quest__slides { list-style: none; margin: 0; padding: 0; }
 .quest__slide {
@@ -1455,14 +1468,14 @@ html[dir="rtl"] .palgroup__h[aria-expanded="false"] .palgroup__caret { transform
               visibility calc(.6s * var(--motion)) ease;
 }
 .quest__slide.is-on { opacity: 1; visibility: visible; }
-.quest__slide img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+/* contain, not cover: the whole cup, every time. */
+.quest__slide img { inline-size: 100%; block-size: 100%; object-fit: contain; display: block; }
 
-/* The message sits on the photograph, so it carries its own ground rather
-   than trusting whatever happens to be under it. */
+/* Under the photograph, not on it. On it, the bubble covered the bottom of
+   the cup and the gradient behind it had to be dark whatever the theme was. */
 .quest__msg {
-  position: absolute; inset-inline: 0; inset-block-end: 0;
-  margin: 0; padding: 3.5rem 1.1rem 1.1rem;
-  background: linear-gradient(to top, rgba(8, 13, 24, .82), rgba(8, 13, 24, 0));
+  margin: .7rem 0 0; min-block-size: 3.2em;
+  max-inline-size: 30rem; margin-inline: auto;
 }
 .quest__msg span {
   display: inline-block;

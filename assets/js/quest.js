@@ -40,6 +40,8 @@
     var list = items();
     if (!list.length) { host.hidden = true; return; }
 
+    /* The message is below the photograph rather than on it. On it, it covered
+       the bottom of the cup — and the cup is the thing the photograph is of. */
     host.innerHTML =
       '<div class="quest__stage">' +
         '<ul class="quest__slides"></ul>' +
@@ -48,6 +50,7 @@
         '<button type="button" class="quest__arw quest__arw--next" data-q-next>' +
           '<span aria-hidden="true">›</span></button>' +
       '</div>' +
+      '<p class="quest__msg"><span data-q-msg></span></p>' +
       '<ol class="quest__dots"></ol>';
 
     var ul = host.querySelector('.quest__slides');
@@ -62,8 +65,7 @@
       if (i !== 0) li.setAttribute('aria-hidden', 'true');
       li.innerHTML =
         '<img src="' + item.src + '" alt="" loading="' + (i === 0 ? 'eager' : 'lazy') +
-          '" decoding="async">' +
-        '<p class="quest__msg"><span></span></p>';
+          '" decoding="async">';
       ul.appendChild(li);
       slides.push(li);
 
@@ -115,9 +117,8 @@
     slides.forEach(function (li, i) {
       var item = list[i] || {};
       li.querySelector('img').alt = (l === 'ar' ? item.altAr : item.altEn) || '';
-      li.querySelector('.quest__msg span').textContent =
-        (l === 'ar' ? item.capAr : item.capEn) || '';
     });
+    say();
     dots.forEach(function (b, i) {
       b.setAttribute('aria-label', t('quest.go') + ' ' + (i + 1));
     });
@@ -127,9 +128,19 @@
     if (n) n.setAttribute('aria-label', t('quest.next'));
   }
 
+  /* One caption element under the stage, rewritten as the photograph changes,
+     rather than one per slide riding on top of it. */
+  function say() {
+    var out = host.querySelector('[data-q-msg]');
+    if (!out) return;
+    var item = items()[at] || {};
+    out.textContent = (lang() === 'ar' ? item.capAr : item.capEn) || '';
+  }
+
   function go(i) {
     var n = slides.length;
     at = ((i % n) + n) % n;
+    say();
     slides.forEach(function (li, k) {
       var on = k === at;
       li.classList.toggle('is-on', on);
