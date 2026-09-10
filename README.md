@@ -48,6 +48,13 @@ compatibility, no delivery promise and no warranty term appears until you put a 
 that file. That is deliberate: a fabricated number on a real product is the kind of mistake
 that costs a customer.
 
+The menu's four collection buttons live in **`assets/js/catalogue.js`** under `collections`.
+`All cups` and `Limited edition` are honest — the second is derived from the `limited` feature
+the Sadu line already carries, so nothing was tagged to make it work. `New arrivals` and
+`Best sellers` are hand-picked for the pitch and carry `placeholder: true`, which puts a line
+on the page saying so whenever one of them is the active filter. Replace the ids with real
+ones and drop the flag; the line goes away by itself.
+
 ---
 
 ## Two languages, not one language translated
