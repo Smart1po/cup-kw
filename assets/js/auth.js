@@ -1,4 +1,10 @@
-/* Sign in and create account.
+/* Logging in, and making an account.
+
+   Two pages, one file. Logging in needs an email and a password and nothing
+   else, so /login is two boxes and a button; making an account needs a name, a
+   phone and an area as well, and those questions belong on their own screen
+   rather than hidden behind a tab on this one. The form says which it is with
+   data-auth-mode and everything below reads that.
 
    Lifted out of the page into its own file so the Content-Security-Policy can
    forbid inline script entirely. An inline <script> block is indistinguishable,
@@ -11,11 +17,11 @@
   var form = document.getElementById('authform');
   if (!form || !B) return;
 
+  var mode = form.getAttribute('data-auth-mode') === 'up' ? 'up' : 'in';
   var msg = document.getElementById('msg');
   var submit = document.getElementById('submitbtn');
   var pw = document.getElementById('pw');
   var eye = document.getElementById('pweye');
-  var mode = 'in';
 
   function say(key, ok) {
     msg.hidden = false;
@@ -36,32 +42,6 @@
     if (on) say('auth.working', true);
   }
 
-  /* ---- which of the two we are doing ----------------------------------- */
-
-  function setMode(m) {
-    mode = m;
-    document.querySelectorAll('.authtab').forEach(function (b) {
-      var on = b.getAttribute('data-mode') === m;
-      b.classList.toggle('is-on', on);
-      b.setAttribute('aria-selected', String(on));
-    });
-    document.querySelectorAll('[data-signup-only]').forEach(function (el) {
-      el.hidden = m !== 'up';
-    });
-    submit.setAttribute('data-t', m === 'up' ? 'auth.signup' : 'auth.signin');
-    /* The browser's own password manager behaves differently for the two, and
-       it can only tell them apart from this. */
-    pw.setAttribute('autocomplete', m === 'up' ? 'new-password' : 'current-password');
-    if (window.cupApplyLang) window.cupApplyLang();
-    msg.hidden = true;
-  }
-
-  document.querySelectorAll('.authtab').forEach(function (b) {
-    b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); });
-  });
-
-  /* ---- doing it -------------------------------------------------------- */
-
   function done(r) {
     if (r && r.signedIn) { location.replace(next()); return; }
     busy(false);
@@ -73,7 +53,9 @@
     say(err && err.key ? err.key : 'auth.err.network');
   }
 
-  function signIn() {
+  /* ---- the two of them -------------------------------------------------- */
+
+  function logIn() {
     var email = form.email.value.trim();
     if (!email || !pw.value) { say('auth.err.email'); return; }
     busy(true);
@@ -97,11 +79,13 @@
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    mode === 'up' ? signUp() : signIn();
+    mode === 'up' ? signUp() : logIn();
   });
 
-  /* ---- through somebody else ------------------------------------------- */
+  /* ---- through somebody else -------------------------------------------
 
+     Only rendered on the sign-up screen, but the handler is here because the
+     provider sends everybody back to /login and the token is read there. */
   document.querySelectorAll('[data-oauth]').forEach(function (b) {
     b.addEventListener('click', function () {
       var q = new URLSearchParams(location.search).get('next');
@@ -144,8 +128,6 @@
   }
 
   /* ---- arriving --------------------------------------------------------- */
-
-  setMode(new URLSearchParams(location.search).get('mode') === 'up' ? 'up' : 'in');
 
   /* A provider sends the token back in the fragment. Read it before deciding
      whether this person is already signed in, or the redirect that just

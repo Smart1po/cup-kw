@@ -9,10 +9,12 @@ the library does for these operations anyway.
 
 ---
 
-## Three settings to change in the dashboard
+## Four settings to change in the dashboard
 
-None of these can be done from this repository. The code is written and waiting for all
-three; until they are switched on, the site says so honestly rather than pretending.
+None of these can be done from this repository, and none of them can be done by whoever
+wrote it: the Supabase account this code was written against does not have this project on
+it. The code is written and waiting for all four; until they are switched on, the site says
+so honestly rather than pretending.
 
 ### 1. Confirm email → **off**
 
@@ -40,9 +42,27 @@ https://vufibpaxprcydixjfoue.supabase.co/auth/v1/callback
 Same screen. Needs an Apple Developer account, a Services ID, and a signing key. Same
 callback URL.
 
+The two buttons are on **`/signup`**, not `/login` — logging in is an email and a password
+and nothing else. Both providers are a way of making an account as much as a way back into
+one, so that is where they sit.
+
 Until a provider is switched on, its button sends the person to Supabase and Supabase sends
 them straight back with an error in the URL. `login.html` reads that and says *"That way in
 is not switched on yet"* rather than hanging on a blank screen.
+
+### 4. Redirect URLs → **allow-list the login page**
+
+**Authentication → URL Configuration → Redirect URLs.** Supabase refuses to send anybody
+back to a `redirect_to` it has not been told about, and silently drops them at the site root
+instead. The provider always returns to `login.html`, whichever page sent them out, because
+that is where the token is read out of the fragment:
+
+```
+https://cup-kw.vercel.app/login.html
+http://localhost:3311/login.html
+```
+
+Add the second only while developing, and take it out before launch.
 
 ---
 
@@ -131,7 +151,7 @@ config file, or any deployment environment variable used by the front end.
 
 ## Checking it works
 
-1. Open `/login`, choose **Create account**, and fill in name, email, phone and area.
+1. Open `/signup` and fill in name, email, phone and area.
 2. Supabase dashboard → **Authentication → Users**. The account is there, and
    **Raw User Meta Data** holds the four fields.
 3. Put a cup in the cart from `/menu`, then **Checkout**. Save an address and place the order.

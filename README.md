@@ -17,7 +17,8 @@ from disk and it works; put it on a host and it works the same way.
 | The cups | `/menu` | The whole catalogue, filtered by kind, capacity and features. |
 | One cup | `/product?id=sadu/navy` | Its capacity, what it is made of, and the way through to the engraving screen with that colour already on. |
 | Engraving | `/engrave` | Type your name in Arabic or English and watch it land on the cup. |
-| Log in | `/login` | Email and password, or Google or Apple. Real accounts, real sessions. |
+| Log in | `/login` | An email and a password. Nothing else is on it. |
+| Create account | `/signup` | Name, email, phone and area — or Google or Apple. |
 | Checkout | `/checkout` | Gated. An address you keep, or a gift straight to somebody else. |
 | My account | `/account` | Gated. Your details, and every order with its status and when it was placed. |
 

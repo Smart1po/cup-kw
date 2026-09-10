@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title data-t-title="auth.title">Sign in — cup.kw</title>
-<meta name="description" content="Sign in to cup.kw, or create an account, to save your engraving and follow your orders.">
+<title data-t-title="auth.title">Log in — cup.kw</title>
+<meta name="description" content="Log in to cup.kw to follow your orders and keep your engraving.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/cup.css">
 <link rel="stylesheet" href="assets/css/experience.css">
@@ -29,43 +29,19 @@
       <div data-cup3d data-face="held" data-height="360" aria-label="A three-dimensional model of the cup"></div>
     </figure>
 
+    <!-- Two boxes and a button, and nothing else. Making an account is a
+         different job with different questions, so it is a different page —
+         and this one asks only what logging in actually needs. -->
     <div class="authlay__form stack" style="gap:1.3rem;width:100%">
-      <p class="micro" data-t="nav.login">Sign in</p>
-      <h1 class="display display--2" data-t="auth.h1">Sign in, or make an account.</h1>
-
-      <!-- Two modes, chosen rather than guessed. One button that decides for
-           you is how a typo in an address silently becomes a second account. -->
-      <div class="authtabs" role="tablist">
-        <button type="button" class="authtab is-on" id="tab-in" role="tab"
-                aria-selected="true" data-mode="in" data-t="auth.signin">Sign in</button>
-        <button type="button" class="authtab" id="tab-up" role="tab"
-                aria-selected="false" data-mode="up" data-t="auth.signup">Create account</button>
-      </div>
+      <p class="micro" data-t="nav.login">Log in</p>
+      <h1 class="display display--2" data-t="auth.h1">Log in.</h1>
 
       <p class="notice" id="msg" hidden></p>
 
-      <form id="authform" novalidate style="width:100%">
-
-        <!-- Only asked for when making an account. Hidden in the markup, so a
-             sign-in never tabs through four boxes it does not need. -->
-        <div class="field" data-signup-only hidden>
-          <label for="fullname" data-t="auth.fullname">Full name</label>
-          <input id="fullname" name="fullname" type="text" autocomplete="name">
-        </div>
-
+      <form id="authform" data-auth-mode="in" novalidate style="width:100%">
         <div class="field">
           <label for="email" data-t="auth.email">Email</label>
           <input id="email" name="email" type="email" autocomplete="email" required>
-        </div>
-
-        <div class="field" data-signup-only hidden>
-          <label for="phone" data-t="auth.phone">Phone number</label>
-          <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel">
-        </div>
-
-        <div class="field" data-signup-only hidden>
-          <label for="area" data-t="auth.area">Area</label>
-          <input id="area" name="area" type="text" autocomplete="address-level2">
         </div>
 
         <div class="field">
@@ -78,30 +54,10 @@
           <p class="hint" data-t="auth.pwShort">Never stored here. Only a hash of it is kept, and not by us.</p>
         </div>
 
-        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-          <button type="submit" class="btn" id="submitbtn" data-t="auth.signin">Sign in</button>
-        </div>
+        <button type="submit" class="btn" id="submitbtn" data-t="auth.signin">Log in</button>
       </form>
 
-      <p class="author"><span data-t="auth.or">or</span></p>
-
-      <div class="provider">
-        <button type="button" class="btn btn--ghost provider__btn" data-oauth="google">
-          <svg class="provider__i" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="#EA4335" d="M12 10.2v3.9h5.5a4.7 4.7 0 0 1-2 3.1l3.2 2.5c1.9-1.7 3-4.3 3-7.3 0-.7-.1-1.4-.2-2z"/>
-            <path fill="#34A853" d="M6.6 14.3 5.9 14l-2.3 1.8A9 9 0 0 0 12 21c2.4 0 4.5-.8 6-2.2l-3.2-2.5c-.8.6-1.9.9-2.8.9-2.4 0-4.4-1.6-5.1-3.8z"/>
-            <path fill="#FBBC05" d="M3.6 8.2A9 9 0 0 0 3.6 15.8L6.6 13.5a5.4 5.4 0 0 1 0-3z"/>
-            <path fill="#4285F4" d="M12 6.6c1.3 0 2.5.5 3.4 1.3l2.6-2.6A9 9 0 0 0 3.6 8.2l3 2.3C7.4 8.2 9.5 6.6 12 6.6z"/>
-          </svg>
-          <span data-t="auth.google">Continue with Google</span>
-        </button>
-        <button type="button" class="btn btn--ghost provider__btn" data-oauth="apple">
-          <svg class="provider__i" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M16.4 12.7c0-2.2 1.8-3.2 1.9-3.3-1-1.5-2.6-1.7-3.2-1.8-1.4-.1-2.7.8-3.3.8-.7 0-1.7-.8-2.8-.8-1.5 0-2.8.8-3.5 2.1-1.5 2.6-.4 6.5 1.1 8.6.7 1 1.6 2.2 2.7 2.1 1.1 0 1.5-.7 2.8-.7s1.7.7 2.8.7c1.2 0 1.9-1 2.6-2.1.8-1.2 1.2-2.3 1.2-2.4-.1 0-2.3-.9-2.3-3.2zM14.3 6.2c.6-.7 1-1.7.9-2.7-.9 0-2 .6-2.6 1.3-.6.6-1.1 1.7-.9 2.6 1 .1 2-.5 2.6-1.2z"/>
-          </svg>
-          <span data-t="auth.apple">Continue with Apple</span>
-        </button>
-      </div>
+      <p class="note"><a href="signup.html" data-t="auth.tosignup">New here? Create an account.</a></p>
     </div>
   </div>
 </main>

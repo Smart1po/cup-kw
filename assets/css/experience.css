@@ -1378,20 +1378,6 @@ html[lang="ar"] .track__s { text-transform: none; letter-spacing: 0; }
 
 /* ---- the two ways in ---- */
 
-.authtabs { display: flex; gap: .4rem; flex-wrap: wrap; }
-.authtab {
-  min-block-size: 40px; padding: .4rem .9rem;
-  border: 1px solid var(--line); border-radius: 999px;
-  background: none; color: var(--fg-dim); cursor: pointer;
-  font-family: inherit; font-size: var(--micro);
-  letter-spacing: .12em; text-transform: uppercase;
-  transition: color calc(.15s * var(--motion)) ease, border-color calc(.15s * var(--motion)) ease;
-}
-html[lang="ar"] .authtab { text-transform: none; letter-spacing: 0; }
-.authtab:hover { color: var(--fg); border-color: var(--fg-dim); }
-.authtab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.authtab.is-on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
-
 .author {
   margin: 0; text-align: center; font-size: var(--micro);
   letter-spacing: .12em; text-transform: uppercase; color: var(--fg-dim);

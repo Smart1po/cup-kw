@@ -333,7 +333,7 @@ window.CUP_STRINGS = {
   /* ---- auth ---- */
 
   'auth.title': { en: 'Log in — cup.kw', ar: 'الدخول — cup.kw' },
-  'auth.h1':    { en: 'Log in, or make an account.', ar: 'ادخل، أو سوِّ حساب.' },
+  'auth.h1':    { en: 'Log in.', ar: 'ادخل.' },
   'auth.lede':  { en: 'Two boxes, two buttons. Your reservation and your engraving live behind them.',
                  ar: 'خانتين وزرين. حجزك وحفرك محفوظين وراهم.' },
   'auth.email':    { en: 'Email', ar: 'الإيميل' },
@@ -570,6 +570,10 @@ window.CUP_STRINGS = {
   'auth.google':   { en: 'Continue with Google', ar: 'كمِّل بحساب Google' },
   'auth.apple':    { en: 'Continue with Apple', ar: 'كمِّل بحساب Apple' },
   'auth.or':       { en: 'or', ar: 'أو' },
+  'auth.up.title': { en: 'Create account — cup.kw', ar: 'حساب جديد — cup.kw' },
+  'auth.up.h1':    { en: 'Make an account.', ar: 'سوِّ حساب.' },
+  'auth.tosignup': { en: 'New here? Create an account.', ar: 'أول مرة؟ سوِّ حساب.' },
+  'auth.tologin':  { en: 'Already have an account? Log in.', ar: 'عندك حساب؟ ادخل.' },
   'auth.err.fields': { en: 'Fill in your name, email, phone and area first.',
                        ar: 'عبِّي اسمك والإيميل والتلفون والمنطقة الأول.' },
   'auth.err.provider': { en: 'That way in is not switched on yet.',
