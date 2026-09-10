@@ -949,7 +949,15 @@ html[lang="ar"] .tablewrap th { text-transform: none; letter-spacing: 0; }
    evidence rather than two stacked lists. */
 .proofgrid { display: grid; gap: clamp(1.6rem, 4vw, 3rem); inline-size: 100%; }
 @media (min-width: 62rem) { .proofgrid { grid-template-columns: 1.15fr .85fr; align-items: start; } }
-.proofgrid__label { color: var(--fg-dim); margin-block-end: .8rem; }
+.proofgrid__h {
+  font-size: var(--lede); font-weight: 600; margin: 0 0 1rem;
+  letter-spacing: -.01em;
+}
+/* The list of cars is long now, so it scrolls in place rather than setting the
+   height of the whole section against a six-row table beside it. */
+@media (min-width: 62rem) {
+  .proofgrid [data-fit] { max-block-size: 30rem; overflow-y: auto; scrollbar-width: thin; }
+}
 
 /* One car per row, laid out rather than written as a sentence: the name at
    reading size, the years small and dim beside it, the verdict as a tag at the

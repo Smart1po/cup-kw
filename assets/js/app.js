@@ -186,7 +186,10 @@
     wrap.className = 'tablewrap';
     var table = document.createElement('table');
     var head = document.createElement('tr');
-    ['', 'Ambient °C', 'Contents °C', ''].forEach(function (h, i) {
+    /* Four columns, four headings. Two of these were empty strings and the
+       other two were hardcoded English, so the time and note columns were
+       unlabelled and the table never translated with the rest of the page. */
+    ['k.at', 'k.ambient', 'k.contents', 'k.note'].map(t).forEach(function (h, i) {
       var th = document.createElement('th');
       if (i === 1 || i === 2) th.className = 'num';
       th.textContent = h;

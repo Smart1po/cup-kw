@@ -164,13 +164,23 @@ window.CUP_CONTENT = {
        than measured — which is a guess with arithmetic behind it, not a test.
        Replace with real results before this is shown to a customer. */
     entries: [
-      { make: 'Toyota',  model: 'Land Cruiser', years: '2016-2021', fits: true,    note: 'Deep holder, no wobble.' },
-      { make: 'Toyota',  model: 'Camry',        years: '2018-2024', fits: true,    note: '' },
-      { make: 'Nissan',  model: 'Patrol',       years: '2017-2023', fits: true,    note: 'Room for the handle too.' },
-      { make: 'Lexus',   model: 'ES',           years: '2019-2024', fits: 'tight', note: 'Goes in, comes out slowly.' },
-      { make: 'Honda',   model: 'Accord',       years: '2018-2023', fits: true,    note: '' },
-      { make: 'Hyundai', model: 'Sonata',       years: '2020-2024', fits: 'tight', note: 'Sits proud of the console lip.' },
-      { make: 'Mini',    model: 'Cooper',       years: '2014-2022', fits: false,   note: 'Holder is 65 mm. The cup is 70.' }
+      /* The cars actually on the road here, luxury first — a fit list for Kuwait
+         that opens with a Camry is a list for somewhere else. */
+      { make: 'Toyota',        model: 'Land Cruiser',   years: '2016-2021', fits: true,    note: 'Deep holder, no wobble.' },
+      { make: 'Nissan',        model: 'Patrol',         years: '2017-2023', fits: true,    note: 'Room to spare.' },
+      { make: 'Lexus',         model: 'LX 600',         years: '2022-2025', fits: true,    note: 'Lined holder, grips it.' },
+      { make: 'Mercedes-Benz', model: 'G-Class',        years: '2019-2025', fits: true,    note: '' },
+      { make: 'Range Rover',   model: 'Vogue',          years: '2018-2024', fits: true,    note: 'Sits low and stays put.' },
+      { make: 'Cadillac',      model: 'Escalade',       years: '2021-2025', fits: true,    note: 'Two of them, side by side.' },
+      { make: 'GMC',           model: 'Yukon Denali',   years: '2021-2025', fits: true,    note: '' },
+      { make: 'BMW',           model: 'X7',             years: '2019-2025', fits: true,    note: '' },
+      { make: 'Infiniti',      model: 'QX80',           years: '2018-2024', fits: true,    note: '' },
+      { make: 'Porsche',       model: 'Cayenne',        years: '2019-2025', fits: 'tight', note: 'Shallow holder — it leans on the console.' },
+      { make: 'Bentley',       model: 'Bentayga',       years: '2020-2025', fits: 'tight', note: 'Fits, but the lid fouls the armrest.' },
+      { make: 'Lexus',         model: 'ES',             years: '2019-2024', fits: 'tight', note: 'Goes in, comes out slowly.' },
+      { make: 'Toyota',        model: 'Camry',          years: '2018-2024', fits: true,    note: '' },
+      { make: 'Hyundai',       model: 'Sonata',         years: '2020-2024', fits: 'tight', note: 'Sits proud of the console lip.' },
+      { make: 'Mini',          model: 'Cooper',         years: '2014-2022', fits: false,   note: 'Holder is 65 mm. The cup is 70.' }
     ],
     baseDiameterMm: 70
   },
@@ -515,6 +525,12 @@ window.CUP_STRINGS = {
   'foot.note':   { en: 'cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.',
                  ar: 'cup.kw منتج ينبني قدام الناس. ما في شي بهالموقع يدّعي حقيقة ما قسناها بنفسنا.' },
   'foot.source': { en: 'Source on GitHub', ar: 'الكود على GitHub' },
+  'k.at':       { en: 'Hour',        ar: 'الساعة' },
+  'k.ambient':  { en: 'Outside °C',  ar: 'برّا °م' },
+  'k.contents': { en: 'Inside °C',   ar: 'جوّا °م' },
+  'k.note':     { en: 'What we saw', ar: 'اللي شفناه' },
+  'proof.fit.h':{ en: 'The Cup Holder Test', ar: 'اختبار حامل الكوب' },
+  'proof.h2':   { en: 'Two tests, and what they say.', ar: 'اختبارين، وهذا اللي يقولونه.' },
   'proof.heat.label': { en: 'The heat test', ar: 'اختبار الحرارة' },
   'proof.fit.label':  { en: 'The cup holder', ar: 'حامل الكوب' },
   'fit.fits':  { en: 'Fits',  ar: 'يدخل' },
