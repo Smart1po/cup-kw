@@ -231,9 +231,29 @@
     ul.className = 'claims';
     entries.forEach(function (e) {
       var li = document.createElement('li');
-      var verdict = e.fits === true ? 'fits' : (e.fits === 'tight' ? 'tight' : 'does not fit');
-      li.textContent = [e.make, e.model, e.years].filter(Boolean).join(' ') + ' — ' + verdict +
-        (e.note ? '. ' + e.note : '');
+      /* Three parts rather than one sentence, so the car, the verdict and the
+         caveat can each be sized and coloured for what they are. The verdict is
+         the thing being scanned for, so it is the one that carries colour. */
+      var state = e.fits === true ? 'fits' : (e.fits === 'tight' ? 'tight' : 'no');
+      var car = document.createElement('span');
+      car.className = 'claims__car';
+      car.textContent = [e.make, e.model].filter(Boolean).join(' ');
+      var yrs = document.createElement('span');
+      yrs.className = 'claims__years';
+      yrs.textContent = e.years || '';
+      var v = document.createElement('span');
+      v.className = 'claims__verdict';
+      v.setAttribute('data-v', state);
+      v.textContent = t('fit.' + state);
+      li.appendChild(car);
+      li.appendChild(yrs);
+      li.appendChild(v);
+      if (e.note) {
+        var n = document.createElement('span');
+        n.className = 'claims__note';
+        n.textContent = e.note;
+        li.appendChild(n);
+      }
       ul.appendChild(li);
     });
     el.appendChild(ul);

@@ -146,8 +146,8 @@ window.CUP_CONTENT = {
       { at: '12:00', ambientC: 38, contentsC: 13, note: 'Ice gone. Water still cool.' }
     ],
     conditions: {
-      en: 'Illustrative figures for a class pitch, not measured readings. An August afternoon in Kuwait, 887 ml of ice water, lid closed, cup left in a parked car.',
-      ar: 'أرقام توضيحية لعرض صفّي، مو قراءات مقاسة. ظهر أغسطس بالكويت، الكوب معبّى ماي بارد والغطا مسكّر، ومتروك بسيارة واقفة.'
+      en: 'Illustrative figures for a class pitch, not measured readings. An August afternoon in Kuwait, 650 ml of ice water, lid closed, cup left in a parked car.',
+      ar: 'أرقام توضيحية لعرض صفّي، مو قراءات مقاسة. ظهر أغسطس بالكويت، الكوب معبّى ٦٥٠ مل ماي بارد والغطا مسكّر، ومتروك بسيارة واقفة.'
     },
     date: '2026-08-14'
   },
@@ -515,6 +515,11 @@ window.CUP_STRINGS = {
   'foot.note':   { en: 'cup.kw is a product being built in the open. Nothing on this site claims a fact we have not measured.',
                  ar: 'cup.kw منتج ينبني قدام الناس. ما في شي بهالموقع يدّعي حقيقة ما قسناها بنفسنا.' },
   'foot.source': { en: 'Source on GitHub', ar: 'الكود على GitHub' },
+  'proof.heat.label': { en: 'The heat test', ar: 'اختبار الحرارة' },
+  'proof.fit.label':  { en: 'The cup holder', ar: 'حامل الكوب' },
+  'fit.fits':  { en: 'Fits',  ar: 'يدخل' },
+  'fit.tight': { en: 'Tight', ar: 'ضيّق' },
+  'fit.no':    { en: 'No',    ar: 'ما يدخل' },
   'home.fit.base': { en: 'The cup measures {mm} mm at the base. Measure your holder and you can check any of these yourself.',
                      ar: 'قاعدة الكوب {mm} مم. قِس مكان الكوب بسيارتك وتقدر تتأكد بنفسك.' },
   'foot.contactPending': { en: 'Contact details go here once they are real.',

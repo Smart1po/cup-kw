@@ -32,8 +32,14 @@
 
   function mount() {
     host = document.querySelector('[data-show]');
-    if (!host || !scenes().length) return;
-    list = scenes();
+    if (!host) return;
+    /* Photographs only. Three of the seven hours had no photograph and were
+       drawn around the 3D model; with the model moved to its own section they
+       rendered as an empty stage. Two of those three also described the
+       foldable handle, which belongs to the Advanced cup and not to this one,
+       so dropping them takes out a blank frame and a wrong claim at once. */
+    list = scenes().filter(function (s) { return !!s.photo; });
+    if (!list.length) return;
 
     /* Every scene is on the stage at once, in a scroll-snap track, rather than
        one image being swapped in and out of a single slot. That buys three

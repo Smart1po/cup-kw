@@ -222,7 +222,12 @@ html[lang="ar"] .burger { text-transform: none; letter-spacing: 0; }
   position: relative;
   min-block-size: 100svh;
   display: grid; align-content: center;
-  padding: 7rem var(--bleed) 5rem;
+  /* The bottom padding clears the dock. A full-height frame centres its content
+     in the viewport, so on a short screen the last thing in it — on the
+     engraving page, the save button — landed underneath the fixed bar and could
+     not be clicked at all. body's padding only protects the end of the
+     document, not content centred inside a 100svh frame. */
+  padding: 7rem var(--bleed) 8.5rem;
   overflow: hidden;
 }
 .frame--auto { min-block-size: 0; padding-block: clamp(4rem, 12vw, 8rem); }
