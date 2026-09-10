@@ -12,10 +12,10 @@
   if (!form || !B) return;
 
   var msg = document.getElementById('msg');
-  var signin = document.getElementById('signin');
-  var signup = document.getElementById('signup');
+  var submit = document.getElementById('submitbtn');
   var pw = document.getElementById('pw');
   var eye = document.getElementById('pweye');
+  var mode = 'in';
 
   function say(key, ok) {
     msg.hidden = false;
@@ -27,44 +27,131 @@
     var q = new URLSearchParams(location.search).get('next');
     /* Only ever a page name in this directory, so a crafted ?next= cannot bounce
        somebody off this site immediately after they hand over a password. */
-    return /^[a-z0-9_-]+\.html$/i.test(q || '') ? q : 'reserve.html';
+    return /^[a-z0-9_-]+\.html$/i.test(q || '') ? q : 'account.html';
   }
 
   function busy(on) {
-    signin.disabled = on;
-    signup.disabled = on;
+    submit.disabled = on;
+    document.querySelectorAll('[data-oauth]').forEach(function (b) { b.disabled = on; });
     if (on) say('auth.working', true);
   }
 
-  function go(fn) {
+  /* ---- which of the two we are doing ----------------------------------- */
+
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.authtab').forEach(function (b) {
+      var on = b.getAttribute('data-mode') === m;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    document.querySelectorAll('[data-signup-only]').forEach(function (el) {
+      el.hidden = m !== 'up';
+    });
+    submit.setAttribute('data-t', m === 'up' ? 'auth.signup' : 'auth.signin');
+    /* The browser's own password manager behaves differently for the two, and
+       it can only tell them apart from this. */
+    pw.setAttribute('autocomplete', m === 'up' ? 'new-password' : 'current-password');
+    if (window.cupApplyLang) window.cupApplyLang();
+    msg.hidden = true;
+  }
+
+  document.querySelectorAll('.authtab').forEach(function (b) {
+    b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); });
+  });
+
+  /* ---- doing it -------------------------------------------------------- */
+
+  function done(r) {
+    if (r && r.signedIn) { location.replace(next()); return; }
+    busy(false);
+    say(r && r.key ? r.key : 'auth.signedup', true);
+  }
+
+  function fail(err) {
+    busy(false);
+    say(err && err.key ? err.key : 'auth.err.network');
+  }
+
+  function signIn() {
     var email = form.email.value.trim();
     if (!email || !pw.value) { say('auth.err.email'); return; }
     busy(true);
     /* The password goes from the field straight into the call. It is never
        assigned to anything of ours, so there is nowhere for it to leak from. */
-    fn(email, pw.value).then(function (r) {
-      if (r && r.signedIn) { location.replace(next()); return; }
-      busy(false);
-      say(r && r.key ? r.key : 'auth.signedup', true);
-    }).catch(function (err) {
-      busy(false);
-      say(err && err.key ? err.key : 'auth.err.network');
-    });
+    B.signIn(email, pw.value).then(done).catch(fail);
   }
 
-  form.addEventListener('submit', function (e) { e.preventDefault(); go(B.signIn); });
-  signup.addEventListener('click', function () { go(B.signUp); });
+  function signUp() {
+    var email = form.email.value.trim();
+    var meta = {
+      full_name: form.fullname.value.trim(),
+      phone: form.phone.value.trim(),
+      area: form.area.value.trim()
+    };
+    if (!email || !pw.value) { say('auth.err.email'); return; }
+    if (!meta.full_name || !meta.phone || !meta.area) { say('auth.err.fields'); return; }
+    busy(true);
+    B.signUp(email, pw.value, meta).then(done).catch(fail);
+  }
 
-  /* Reveal is a real accessibility feature — people mistype passwords on phones
-     constantly — but it must announce its state, not just change an icon. */
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    mode === 'up' ? signUp() : signIn();
+  });
+
+  /* ---- through somebody else ------------------------------------------- */
+
+  document.querySelectorAll('[data-oauth]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var q = new URLSearchParams(location.search).get('next');
+      busy(true);
+      location.href = B.oauthUrl(b.getAttribute('data-oauth'),
+        /^[a-z0-9_-]+\.html$/i.test(q || '') ? q : '');
+    });
+  });
+
+  /* ---- the reveal ------------------------------------------------------
+
+     Two seconds, then it hides itself. Long enough to read back what you
+     typed, short enough that a password left visible on a screen in a café is
+     not a thing this page can cause. Pressing it again while it is showing
+     hides it at once rather than waiting the timer out — the control has to
+     answer immediately or it does not feel like a control. */
   if (eye) {
+    var timer = null;
+
+    function hide() {
+      clearTimeout(timer);
+      timer = null;
+      pw.type = 'password';
+      eye.setAttribute('aria-pressed', 'false');
+      eye.setAttribute('aria-label', window.cupT('auth.show'));
+    }
+
     eye.addEventListener('click', function () {
-      var shown = pw.type === 'text';
-      pw.type = shown ? 'password' : 'text';
-      eye.setAttribute('aria-pressed', String(!shown));
-      eye.setAttribute('aria-label', window.cupT(shown ? 'auth.show' : 'auth.hide'));
+      if (pw.type === 'text') { hide(); return; }
+      pw.type = 'text';
+      eye.setAttribute('aria-pressed', 'true');
+      eye.setAttribute('aria-label', window.cupT('auth.hide'));
+      clearTimeout(timer);
+      timer = setTimeout(hide, 2000);
     });
+
+    /* Leaving the page with it still showing should not leave it showing on
+       the way back through the cache. */
+    window.addEventListener('pagehide', hide);
   }
+
+  /* ---- arriving --------------------------------------------------------- */
+
+  setMode(new URLSearchParams(location.search).get('mode') === 'up' ? 'up' : 'in');
+
+  /* A provider sends the token back in the fragment. Read it before deciding
+     whether this person is already signed in, or the redirect that just
+     succeeded looks exactly like an ordinary visit. */
+  var back = B.captureRedirect();
+  if (back && back !== 'ok') say(back);
 
   if (!B.available) say('auth.err.nobackend');
   if (B.signedIn()) location.replace(next());

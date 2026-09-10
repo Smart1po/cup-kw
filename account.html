@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-gated>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="acct.title">My account — cup.kw</title>
+<meta name="description" content="Your details and your orders.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
+<style>
+  /* Nothing member-shaped is in the DOM unhidden before the guard runs, so a
+     signed-out visitor never sees a flash of somebody's account. */
+  html[data-gated] [data-member] { display: none; }
+  html[data-gated][data-signed-in] [data-member] { display: block; }
+  html[data-gated][data-signed-in] [data-waiting] { display: none; }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end"></span>
+</header>
+
+<main id="main" class="frame glow">
+  <div class="frame__in">
+
+    <p data-waiting class="pending" data-t="res.checking">Checking your session…</p>
+
+    <div data-member>
+      <div class="stack" data-rise style="gap:1.6rem;width:100%">
+        <p class="micro" data-t="nav.account">My account</p>
+        <h1 class="display display--2" id="hello" data-t="acct.h1">Your account.</h1>
+
+        <p class="notice" id="msg" hidden></p>
+
+        <section class="acct">
+          <h2 class="acct__h" data-t="acct.details">Your details</h2>
+          <form id="acctform" novalidate>
+            <div class="field">
+              <label for="a-name" data-t="auth.fullname">Full name</label>
+              <input id="a-name" name="full_name" type="text" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="a-email" data-t="auth.email">Email</label>
+              <input id="a-email" type="email" autocomplete="email" readonly>
+            </div>
+            <div class="field">
+              <label for="a-phone" data-t="auth.phone">Phone number</label>
+              <input id="a-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="a-area" data-t="auth.area">Area</label>
+              <input id="a-area" name="area" type="text" autocomplete="address-level2">
+            </div>
+            <button type="submit" class="btn" id="acctsave" data-t="acct.save">Save changes</button>
+          </form>
+        </section>
+
+        <section class="acct">
+          <h2 class="acct__h" data-t="acct.orders">Your orders</h2>
+          <div data-orders></div>
+        </section>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/catalogue.js"></script>
+<script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/backend.js"></script>
+<script src="assets/js/cup3d.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/account.js"></script>
+</body>
+</html>

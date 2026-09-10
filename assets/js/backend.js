@@ -109,17 +109,26 @@ window.CUP_BACKEND = (function () {
     /* The password is passed straight into the request body and is never
        assigned to anything that outlives this call. It is not stored, not
        logged, and not put on the session object. */
-    signUp: function (email, password) {
+    /* meta is the rest of the sign-up form — name, phone, area. It goes into
+       the user's own metadata on the account, which is where a detail about
+       the person belongs when there is no profiles table to put it in.
+
+       This expects "Confirm email" to be OFF in the Supabase auth settings, so
+       signing up returns a session and the person is simply in. If it is on,
+       no token comes back and there is nothing to be done from here except say
+       so honestly, which is what the second branch does. */
+    signUp: function (email, password, meta) {
       if (!available) return Promise.reject(nobackend());
       return call('/auth/v1/signup', {
         method: 'POST',
         headers: headers(false),
-        body: JSON.stringify({ email: email, password: password })
+        body: JSON.stringify({ email: email, password: password, data: meta || {} })
       }).then(function (body) {
-        /* With email confirmation on, a new account gets no session until the
-           link is clicked. That is correct behaviour, not an error. */
         if (body && body.access_token) {
-          writeSession({ access_token: body.access_token, refresh_token: body.refresh_token, email: email });
+          writeSession({
+            access_token: body.access_token, refresh_token: body.refresh_token,
+            email: email, display_name: (meta && meta.full_name) || ''
+          });
           return { signedIn: true };
         }
         return { signedIn: false, key: 'auth.signedup' };
@@ -133,38 +142,120 @@ window.CUP_BACKEND = (function () {
         headers: headers(false),
         body: JSON.stringify({ email: email, password: password })
       }).then(function (body) {
-        writeSession({ access_token: body.access_token, refresh_token: body.refresh_token, email: email });
+        var meta = (body && body.user && body.user.user_metadata) || {};
+        writeSession({
+          access_token: body.access_token, refresh_token: body.refresh_token,
+          email: email, display_name: meta.full_name || ''
+        });
         return { signedIn: true };
       });
     },
 
     signOut: function () { writeSession(null); },
 
-    getReservation: function () {
-      if (!available) return Promise.reject(nobackend());
-      return call('/rest/v1/reservations?select=*&limit=1', {
-        method: 'GET', headers: headers(true)
-      }).then(function (rows) { return (rows && rows[0]) || null; });
+    /* ---- signing in through somebody else ------------------------------
+
+       Supabase does the whole dance; we only send the person to it and read
+       the token out of the fragment we are sent back with. Both providers have
+       to be switched on in the Supabase dashboard with a real client id — until
+       they are, this lands back here with an error in the URL and the page says
+       so rather than hanging. */
+    oauthUrl: function (provider, nextPage) {
+      var back = location.origin + location.pathname.replace(/[^/]*$/, 'login.html') +
+                 (nextPage ? '?next=' + encodeURIComponent(nextPage) : '');
+      return URL_BASE + '/auth/v1/authorize?provider=' + encodeURIComponent(provider) +
+             '&redirect_to=' + encodeURIComponent(back);
     },
 
-    /* One row per person, so saving twice edits the reservation rather than
-       making a second one. user_id is deliberately not sent — a trigger fills
-       it from the verified token. */
-    saveReservation: function (data) {
-      if (!available) return Promise.reject(nobackend());
-      var h = headers(true);
-      h['Prefer'] = 'resolution=merge-duplicates,return=representation';
-      return call('/rest/v1/reservations?on_conflict=user_id', {
-        method: 'POST', headers: h, body: JSON.stringify([data])
-      }).then(function (rows) { return (rows && rows[0]) || null; });
+    /* Returns 'ok' if a session was picked up out of the URL, an error key if
+       the provider handed one back, and null if this is an ordinary visit. */
+    captureRedirect: function () {
+      var hash = String(location.hash || '').replace(/^#/, '');
+      var q = new URLSearchParams(hash);
+      var token = q.get('access_token');
+      if (token) {
+        writeSession({ access_token: token, refresh_token: q.get('refresh_token') || '', email: '' });
+        history.replaceState(null, '', location.pathname + location.search);
+        return 'ok';
+      }
+      var err = q.get('error') || new URLSearchParams(location.search).get('error');
+      if (err) {
+        history.replaceState(null, '', location.pathname);
+        return 'auth.err.provider';
+      }
+      return null;
     },
 
-    cancelReservation: function () {
+    /* ---- the person, and what they have ordered ------------------------
+
+       Name, phone, area, saved addresses and orders all live in the user's
+       metadata on their own account. That is a deliberate trade and it should
+       be understood before it is relied on: it needs no table and no migration,
+       which is why it works today against a project this repository cannot
+       reach — but metadata is writable by the person it belongs to, so an order
+       status kept here is a note to the customer, not a record they cannot
+       touch. The moment staff need to move an order through its stages, orders
+       belong in their own table with a policy that only staff can update.
+       SUPABASE.md carries the SQL for that. */
+    getUser: function () {
       if (!available) return Promise.reject(nobackend());
-      var s = readSession();
-      if (!s) return Promise.reject(nobackend());
-      return call('/rest/v1/reservations?user_id=eq.' + encodeURIComponent(userId(s)), {
-        method: 'DELETE', headers: headers(true)
+      return call('/auth/v1/user', { method: 'GET', headers: headers(true) })
+        .then(function (u) {
+          var s = readSession() || {};
+          var meta = (u && u.user_metadata) || {};
+          /* Keep the cheap things on the session so a header can greet somebody
+             without a round trip on every page. */
+          s.email = (u && u.email) || s.email;
+          s.display_name = meta.full_name || s.display_name || '';
+          writeSession(s);
+          return { email: (u && u.email) || '', meta: meta };
+        });
+    },
+
+    saveUser: function (meta) {
+      if (!available) return Promise.reject(nobackend());
+      return call('/auth/v1/user', {
+        method: 'PUT', headers: headers(true), body: JSON.stringify({ data: meta })
+      }).then(function (u) {
+        var s = readSession() || {};
+        s.display_name = (meta && meta.full_name) || s.display_name || '';
+        writeSession(s);
+        return (u && u.user_metadata) || meta;
+      });
+    },
+
+    /* Three is the cap, and it is enforced here as well as in the form. A
+       limit that only exists in the page it is typed into is not a limit. */
+    MAX_ADDRESSES: 3,
+
+    saveAddresses: function (list) {
+      var trimmed = (list || []).slice(0, api.MAX_ADDRESSES);
+      return api.getUser().then(function (u) {
+        var meta = u.meta || {};
+        meta.addresses = trimmed;
+        return api.saveUser(meta);
+      }).then(function () { return trimmed; });
+    },
+
+    /* Newest first, and stamped here rather than in the page so every order
+       carries the same shape however it was placed. */
+    placeOrder: function (order) {
+      return api.getUser().then(function (u) {
+        var meta = u.meta || {};
+        var list = Array.isArray(meta.orders) ? meta.orders : [];
+        var row = {
+          id: 'C' + String(Date.now()).slice(-8),
+          placed_at: new Date().toISOString(),
+          status: 'placed',
+          items: order.items || [],
+          total: order.total == null ? null : order.total,
+          gift: !!order.gift,
+          address: order.address || null,
+          recipient: order.recipient || null,
+          message: order.message || ''
+        };
+        meta.orders = [row].concat(list);
+        return api.saveUser(meta).then(function () { return row; });
       });
     }
   };
@@ -173,16 +264,6 @@ window.CUP_BACKEND = (function () {
     var e = new Error('no-backend');
     e.key = 'auth.err.nobackend';
     return e;
-  }
-
-  /* The user id is inside the access token. Reading it here avoids a round trip
-     just to delete a row we already know belongs to this session. RLS is still
-     what enforces it — this only shapes the request. */
-  function userId(s) {
-    try {
-      var payload = JSON.parse(atob(s.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-      return payload.sub || '';
-    } catch (e) { return ''; }
   }
 
   return api;
@@ -199,7 +280,7 @@ window.CUP_BACKEND = (function () {
   if (!document.documentElement.hasAttribute('data-gated')) return;
 
   if (!window.CUP_BACKEND.signedIn()) {
-    location.replace('login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() || 'reserve.html'));
+    location.replace('login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() || 'account.html'));
     return;
   }
   document.documentElement.setAttribute('data-signed-in', 'true');

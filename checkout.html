@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-gated>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="co.title">Checkout — cup.kw</title>
+<meta name="description" content="Where your cups are going: an address you keep, or a gift straight to somebody else.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
+<style>
+  html[data-gated] [data-member] { display: none; }
+  html[data-gated][data-signed-in] [data-member] { display: block; }
+  html[data-gated][data-signed-in] [data-waiting] { display: none; }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end"></span>
+</header>
+
+<main id="main" class="frame glow">
+  <div class="frame__in">
+
+    <p data-waiting class="pending" data-t="res.checking">Checking your session…</p>
+
+    <div data-member>
+      <div class="stack" data-rise style="gap:1.5rem;width:100%">
+        <p class="micro" data-t="cart.checkout">Checkout</p>
+        <h1 class="display display--2" data-t="co.h1">Where is it going?</h1>
+
+        <p class="notice" id="msg" hidden></p>
+
+        <!-- What is being paid for, before anything is asked about where it
+             goes. A checkout that hides the order until the last screen is
+             asking you to trust it about the one thing you can check. -->
+        <section class="acct">
+          <h2 class="acct__h" data-t="cart.title">Your cart</h2>
+          <div data-co-cart></div>
+        </section>
+
+        <fieldset class="field" style="max-inline-size:none;margin:0">
+          <legend class="acct__h" data-t="co.h1">Where is it going?</legend>
+          <div class="scripttoggle">
+            <label class="swatch"><input type="radio" name="dest" value="addr" checked>
+              <span data-t="co.tome">To an address</span></label>
+            <label class="swatch"><input type="radio" name="dest" value="gift">
+              <span data-t="co.gift">It is a gift</span></label>
+          </div>
+        </fieldset>
+
+        <section class="acct" data-pane="addr">
+          <h2 class="acct__h" data-t="co.addresses">Saved addresses</h2>
+          <div data-addresses></div>
+        </section>
+
+        <section class="acct" data-pane="gift" hidden>
+          <h2 class="acct__h" data-t="co.gift">It is a gift</h2>
+          <div class="field">
+            <label for="g-name" data-t="co.rname">Who it is for</label>
+            <input id="g-name" type="text" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="g-phone" data-t="co.rphone">Their phone number</label>
+            <input id="g-phone" type="tel" inputmode="tel" autocomplete="off">
+          </div>
+          <div class="field" style="max-inline-size:none">
+            <label for="g-msg" data-t="co.msg">A message with it (optional)</label>
+            <textarea id="g-msg" rows="4" maxlength="250"></textarea>
+            <p class="hint"><span class="counter" id="g-count">250</span>
+               <span data-t="co.msgleft">characters left</span></p>
+          </div>
+        </section>
+
+        <button type="button" class="btn" id="placebtn" data-t="co.place">Place the order</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/catalogue.js"></script>
+<script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/backend.js"></script>
+<script src="assets/js/cup3d.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/checkout.js"></script>
+</body>
+</html>

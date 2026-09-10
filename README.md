@@ -8,17 +8,26 @@ One cup, one link.
 
 ## What this is
 
-A four-screen bilingual website. No framework, no build step, no bundler. Open `index.html`
+A bilingual website with no framework, no build step and no bundler. Open `index.html`
 from disk and it works; put it on a host and it works the same way.
 
 | Screen | Address | What it does |
 |---|---|---|
 | Home | `/` | The promise in five seconds, the Kuwait Collection, the proof sections, and where the product stops. |
+| The cups | `/menu` | The whole catalogue, filtered by kind, capacity and features. |
+| One cup | `/product?id=sadu/navy` | Its capacity, what it is made of, and the way through to the engraving screen with that colour already on. |
 | Engraving | `/engrave` | Type your name in Arabic or English and watch it land on the cup. |
-| Sign in | `/login` | Email and password. Real accounts, real sessions. |
-| Your cup | `/reserve` | Gated. Your reservation and your saved engraving. |
+| Sign in | `/login` | Email and password, or Google or Apple. Real accounts, real sessions. |
+| Checkout | `/checkout` | Gated. An address you keep, or a gift straight to somebody else. |
+| My account | `/account` | Gated. Your details, and every order with its status and when it was placed. |
 
-`/reserve` is gated: opening it signed out sends you to `/login` before any of it paints.
+The two gated pages send you to `/login` before any of them paints, and back again once you
+are in — nothing member-shaped is ever in the DOM unhidden for a signed-out visitor.
+
+The cart lives in `localStorage` and needs no server, so the catalogue, the cup and the
+engraving screen are fully usable with no back end at all. Only the last two screens need
+one. See `SUPABASE.md` — including the three dashboard settings that have to be switched on
+before sign-up and the Google and Apple buttons do anything.
 
 ---
 

@@ -1,18 +1,19 @@
 /* The menu, and the dock.
 
    Two views of one list. The dock is a bar pinned to the bottom of every page
-   carrying the same four destinations, so the common case — go somewhere — is
-   one tap and never requires opening anything. The menu behind the burger is
-   still there for the full-size version and for the accent picker, which is a
-   row of swatches and wants the room.
-
-   On a phone the dock carries the destinations only and the display controls
-   stay in the menu: seven targets do not fit across 390px without becoming too
-   small to hit. On anything wider both sit in the dock.
+   carrying the same destinations, so the common case — go somewhere — is one
+   tap and never requires opening anything. The menu behind the burger is still
+   there for the full-size version and for the accent picker, which is a row of
+   swatches and wants the room.
 
    Both are built from the one LINKS array below, and both live here rather than
-   being copied into four HTML files, because hand-copied navigation is four
-   places for one to drift out of step. */
+   being copied into five HTML files, because hand-copied navigation is five
+   places for one to drift out of step.
+
+   The last entry is not a destination but a state: signed out it is the way in,
+   signed in it is the way out. It is decided at build time from the session and
+   rebuilt whenever that changes, so the bar never offers to sign in somebody
+   who already is. */
 
 (function () {
   'use strict';
@@ -21,11 +22,24 @@
     { href: 'index.html',   key: 'nav.home' },
     { href: 'menu.html',    key: 'nav.menu.page' },
     { href: 'engrave.html', key: 'nav.engrave' },
-    { href: 'reserve.html', key: 'nav.reserve' },
-    { href: 'login.html',   key: 'nav.login' }
+    { href: 'account.html', key: 'nav.account' }
   ];
 
   var menu, burger, open = false, lastFocus = null;
+
+  function signedIn() {
+    return !!(window.CUP_BACKEND && window.CUP_BACKEND.signedIn());
+  }
+
+  function t(k) { return window.cupT ? window.cupT(k) : k; }
+
+  /* Signing out is not navigation, so it is a button and not a link. It clears
+     the session and goes home rather than staying on a page that may have just
+     become somebody else's. */
+  function signOut() {
+    if (window.CUP_BACKEND) window.CUP_BACKEND.signOut();
+    location.href = 'index.html';
+  }
 
   function build() {
     burger = document.querySelector('[data-burger]');
@@ -36,6 +50,16 @@
     menu.id = 'mainmenu';
     menu.setAttribute('aria-label', 'Main');
     menu.hidden = true;
+
+    /* A way out that is not a way somewhere else. Escape has always closed
+       this, but Escape is not discoverable and is not on a phone at all. */
+    var x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'menu__x';
+    x.setAttribute('data-menu-close', '');
+    x.innerHTML = '<span aria-hidden="true">✕</span>';
+    x.addEventListener('click', close);
+    menu.appendChild(x);
 
     var ul = document.createElement('ul');
     ul.className = 'menu__list';
@@ -49,6 +73,25 @@
       li.appendChild(a);
       ul.appendChild(li);
     });
+
+    var li = document.createElement('li');
+    if (signedIn()) {
+      var out = document.createElement('button');
+      out.type = 'button';
+      out.className = 'menu__link menu__link--btn';
+      out.innerHTML = '<span class="n">' + String(LINKS.length + 1).padStart(2, '0') + '</span>' +
+                      '<span data-t="auth.signout"></span>';
+      out.addEventListener('click', signOut);
+      li.appendChild(out);
+    } else {
+      var a2 = document.createElement('a');
+      a2.className = 'menu__link';
+      a2.href = 'login.html';
+      a2.innerHTML = '<span class="n">' + String(LINKS.length + 1).padStart(2, '0') + '</span>' +
+                     '<span data-t="nav.login"></span>';
+      li.appendChild(a2);
+    }
+    ul.appendChild(li);
     menu.appendChild(ul);
 
     var foot = document.createElement('div');
@@ -60,7 +103,6 @@
           '<button type="button" class="btn btn--ghost" data-scheme-btn>' +
             '<span class="schemetext"></span></button>' +
           '<button type="button" class="btn btn--ghost" data-lang-btn></button>' +
-          '<button type="button" class="btn btn--ghost" data-motion-btn aria-pressed="true"></button>' +
         '</div>' +
       '</div>' +
       '<div class="picker">' +
@@ -83,13 +125,12 @@
     });
 
     menu.addEventListener('click', function (e) {
-      if (e.target.closest('.menu__link')) close();
+      if (e.target.closest('.menu__link') && !e.target.closest('[data-menu-close]')) close();
     });
-
   }
 
-  /* Which of the four we are looking at. On file:// and on a server the last
-     path segment is the filename; an empty segment is the index. */
+  /* Which page we are looking at. On file:// and on a server the last path
+     segment is the filename; an empty segment is the index. */
   function here() {
     var seg = location.pathname.split('/').pop();
     return seg === '' ? 'index.html' : seg;
@@ -120,9 +161,27 @@
       li.appendChild(a);
       ul.appendChild(li);
     });
+
+    var li = document.createElement('li');
+    if (signedIn()) {
+      var out = document.createElement('button');
+      out.type = 'button';
+      out.className = 'dock__link dock__link--btn';
+      out.setAttribute('data-t', 'auth.signout');
+      out.addEventListener('click', signOut);
+      li.appendChild(out);
+    } else {
+      var a2 = document.createElement('a');
+      a2.className = 'dock__link';
+      a2.href = 'login.html';
+      a2.setAttribute('data-t', 'nav.login');
+      if (at === 'login.html') a2.setAttribute('aria-current', 'page');
+      li.appendChild(a2);
+    }
+    ul.appendChild(li);
     bar.appendChild(ul);
 
-    /* The same three controls as the menu. Every file that labels them queries
+    /* The same two controls as the menu. Every file that labels them queries
        with querySelectorAll and delegates its clicks, so a second copy needs no
        JavaScript anywhere else. */
     var tools = document.createElement('div');
@@ -131,8 +190,7 @@
       '<span class="dock__sep" aria-hidden="true"></span>' +
       '<button type="button" class="dock__tool" data-scheme-btn>' +
         '<span class="schemetext"></span></button>' +
-      '<button type="button" class="dock__tool" data-lang-btn></button>' +
-      '<button type="button" class="dock__tool" data-motion-btn aria-pressed="true"></button>';
+      '<button type="button" class="dock__tool" data-lang-btn></button>';
     bar.appendChild(tools);
 
     dock.appendChild(bar);
@@ -182,18 +240,17 @@
     burger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
     setTimeout(function () { if (!open) menu.hidden = true; }, 700);
-    if (lastFocus) lastFocus.focus();
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
   /* Both the menu and the dock insert controls after everything that labels
      controls has already run once, so the labelling is re-run here — once,
      after both exist. Without it the menu opens with blank buttons in it and
-     the dock renders four empty links. */
+     the dock renders empty links. */
   function boot() {
     build();
     buildDock();
     if (window.cupApplyLang) window.cupApplyLang();
-    if (window.cupApplyMotion) window.cupApplyMotion();
     if (window.CUP_THEME) window.CUP_THEME.apply();
   }
 

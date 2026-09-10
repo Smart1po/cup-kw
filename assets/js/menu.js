@@ -19,9 +19,8 @@
 (function () {
   'use strict';
 
-  var KEY = 'cup.picked';
+  var CART = window.CUP_CART;
   var anim = 0;
-  var picked = [];
   var filters = { line: 'all', cap: 'all', feats: [] };
   var featOpen = false;
 
@@ -30,13 +29,6 @@
   function pick(o) { return (lang() === 'ar' ? o.ar : o.en) || o.en || ''; }
   function money(n) { return n.toFixed(3) + ' ' + t('menu.kwd'); }
 
-  function load() {
-    try { picked = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { picked = []; }
-    if (!Array.isArray(picked)) picked = [];
-  }
-  function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(picked)); } catch (e) {}
-  }
 
   /* ---- the drawn cup --------------------------------------------------- */
 
@@ -122,10 +114,17 @@
       ? '<p class="card__price card__price--unset">' + t('menu.price.unset') + '</p>'
       : '<p class="card__price">' + money(line.priceKwd) + '</p>';
 
+    /* The cup itself is a link to its own page — capacity, material, and the
+       way through to the engraving screen with this colour already on. Add to
+       cart stays a button beside it and does not navigate: putting something
+       in a cart and being taken somewhere else are two different intentions,
+       and a control should only ever have one. */
     el.innerHTML =
       '<p class="card__line">' + pick(line) + '</p>' +
-      '<div class="card__stage">' + cupSVG(item, line) + '</div>' +
-      '<h3 class="card__name">' + pick(item) + '</h3>' + price +
+      '<a class="card__go" href="product.html?id=' + encodeURIComponent(key) + '">' +
+        '<span class="card__stage">' + cupSVG(item, line) + '</span>' +
+        '<span class="card__name">' + pick(item) + '</span>' +
+      '</a>' + price +
       '<button type="button" class="card__add" data-add="' + key + '"></button>';
 
     /* A different move each time a cup is picked up. The counter is shared
@@ -141,7 +140,7 @@
   }
 
   function paintCard(el) {
-    var on = picked.indexOf(el.getAttribute('data-id')) > -1;
+    var on = CART.has(el.getAttribute('data-id'));
     el.classList.toggle('is-picked', on);
     var b = el.querySelector('.card__add');
     b.textContent = t(on ? 'shop.picked' : 'shop.add');
@@ -352,9 +351,10 @@
   function paintTray() {
     var tray = document.querySelector('[data-tray]');
     if (!tray) return;
-    tray.hidden = picked.length === 0;
+    var c = CART.count();
+    tray.hidden = c === 0;
     var n = tray.querySelector('[data-tray-count]');
-    if (n) n.textContent = picked.length + ' ' + t(picked.length === 1 ? 'shop.one' : 'shop.many');
+    if (n) n.textContent = c + ' ' + t(c === 1 ? 'shop.one' : 'shop.many');
     document.querySelectorAll('.card').forEach(paintCard);
   }
 
@@ -432,15 +432,10 @@
     }
     var add = e.target.closest && e.target.closest('[data-add]');
     if (add) {
-      var key = add.getAttribute('data-add');
-      var i = picked.indexOf(key);
-      if (i > -1) picked.splice(i, 1); else picked.push(key);
-      save(); paintTray();
+      CART.toggle(add.getAttribute('data-add'));
       return;
     }
-    if (e.target.closest && e.target.closest('[data-tray-clear]')) {
-      picked = []; save(); paintTray();
-    }
+    if (e.target.closest && e.target.closest('[data-tray-clear]')) CART.clear();
   });
 
   /* Escape closes it and hands focus back to the funnel, the same bargain the
@@ -449,7 +444,10 @@
     if (e.key === 'Escape') closeFeats(true);
   });
 
-  load();
+  /* The cart tells everything that shows it when it changed — this page, the
+     button in the header, and the tray — so none of them has to poll. */
+  CART.onChange(paintTray);
+
   if (window.cupT) render();
   else document.addEventListener('cup:ready', render, { once: true });
   document.addEventListener('cup:lang', render);

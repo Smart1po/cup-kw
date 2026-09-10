@@ -300,5 +300,5 @@ the side of the cup. It has happened twice. Centre it in one place.
 | Cup-holder results | `content.js` → `fit.entries` — physically tested cars only |
 | Contact handles | `content.js` → `contact` |
 | Capacity, hours cold/hot, weight, steel grade | `content.js` → `product` |
-| `unsafe-inline` in the script CSP | `vercel.json` — `/login` and `/reserve` still carry inline scripts |
+| Order status is customer-editable | it lives in `auth.users` metadata — `SUPABASE.md` carries the table that fixes it |
 | The `[ MOUDHI ]` wordmark | hard-coded in `assets/js/cup3d.js` |

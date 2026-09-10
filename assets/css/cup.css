@@ -106,7 +106,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-:root[data-motion="off"] html, html:has([data-motion="off"]) { scroll-behavior: auto; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 body {
   margin: 0;
@@ -374,15 +374,14 @@ fieldset.field { border: 0; margin-inline: 0; padding: 0; }
 .foot a:hover { color: var(--accent); }
 
 /* ---- motion ----
-   Two gates. The OS sets the default; the visible switch overrides it in both
-   directions. Nothing here is ever the only reason content exists. */
-@media (prefers-reduced-motion: reduce) {
-  :root:not([data-motion="on"]) { --motion: 0; }
-}
-:root[data-motion="off"] { --motion: 0; }
+   One gate, and it is the operating system's. There was a switch here too and
+   it is gone: somebody who has asked their machine for less movement has asked
+   every site at once, and should not have to ask this one again. Nothing here
+   is ever the only reason content exists. */
+@media (prefers-reduced-motion: reduce) { :root { --motion: 0; } }
 
 /* Frames rise as they arrive. The class is added by script only when motion is
    wanted, so with it off the markup is simply never given anything to undo. */
 .rise { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
 .rise.is-in { opacity: 1; transform: none; }
-:root[data-motion="off"] .rise { opacity: 1; transform: none; transition: none; }
+@media (prefers-reduced-motion: reduce) { .rise { opacity: 1; transform: none; transition: none; } }

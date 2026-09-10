@@ -236,9 +236,6 @@ window.CUP_STRINGS = {
 
   'switch.lang':       { en: 'العربية', ar: 'English' },
   'switch.lang.aria':  { en: 'Switch to Arabic', ar: 'التبديل إلى الإنجليزية' },
-  'switch.motion.on':  { en: 'Motion on',  ar: 'الحركة شغالة' },
-  'switch.motion.off': { en: 'Motion off', ar: 'الحركة مطفية' },
-  'switch.motion.aria':{ en: 'Turn animation on or off', ar: 'تشغيل أو إطفاء الحركة' },
 
   /* ---- home ---- */
 
@@ -354,8 +351,6 @@ window.CUP_STRINGS = {
   'auth.hide': { en: 'Hide password', ar: 'أخفِ كلمة السر' },
   /* Said out loud because their design mockup had both buttons on it. A button
      that looks like it works and does not is worse than no button. */
-  'auth.nosocial': { en: 'There is no sign in with Apple or Google here. We have not wired either, and a button that looks like it works is worse than no button.',
-                 ar: 'ما في دخول عن طريق Apple ولا Google هني. ما ربطنا ولا وحدة منهم، وزر يبيّن إنه يشتغل وهو ما يشتغل أسوأ من إنه ما يكون موجود أصلاً.' },
 
   'auth.signin':  { en: 'Sign in', ar: 'دخول' },
   'auth.signup':  { en: 'Create account', ar: 'حساب جديد' },
@@ -447,10 +442,10 @@ window.CUP_STRINGS = {
   'shop.kind':     { en: 'Kind', ar: 'النوع' },
   'shop.capacity': { en: 'Capacity', ar: 'الحجم' },
   'shop.features': { en: 'Features', ar: 'المواصفات' },
-  'shop.add':      { en: 'Put aside', ar: 'حطه جنب' },
-  'shop.picked':   { en: 'Put aside ✓', ar: 'محطوط ✓' },
-  'shop.one':      { en: 'cup put aside', ar: 'كوب محطوط' },
-  'shop.many':     { en: 'cups put aside', ar: 'أكواب محطوطة' },
+  'shop.add':      { en: 'Add to cart', ar: 'ضفه للسلة' },
+  'shop.picked':   { en: 'In cart ✓', ar: 'بالسلة ✓' },
+  'shop.one':      { en: 'cup in the cart', ar: 'كوب بالسلة' },
+  'shop.many':     { en: 'cups in the cart', ar: 'أكواب بالسلة' },
   'shop.clear':    { en: 'Clear', ar: 'فضّيها' },
   'shop.none':     { en: 'Nothing matches those filters. Take one off and try again.',
                      ar: 'ما في شي يطابق. شيل فلتر وجرّب مرة ثانية.' },
@@ -538,5 +533,90 @@ window.CUP_STRINGS = {
   'home.fit.base': { en: 'The cup measures {mm} mm at the base. Measure your holder and you can check any of these yourself.',
                      ar: 'قاعدة الكوب {mm} مم. قِس مكان الكوب بسيارتك وتقدر تتأكد بنفسك.' },
   'foot.contactPending': { en: 'Contact details go here once they are real.',
-                 ar: 'معلومات التواصل بتنحط هني أول ما تصير حقيقية.' }
+                 ar: 'معلومات التواصل بتنحط هني أول ما تصير حقيقية.' },
+
+  /* ---- the cart, the account, and what is ordered through them ----------
+
+     Written in the same Kuwaiti register as everything above rather than
+     translated from the English beside it. ⚠ These lines are the one part of
+     this file that has not been read by a native speaker yet — the rest was
+     written by one. Read them before launch. */
+
+  'nav.account': { en: 'My account', ar: 'حسابي' },
+  'nav.cart':    { en: 'Cart',       ar: 'السلة' },
+  'nav.close':   { en: 'Close',      ar: 'سكِّر' },
+
+  'cart.title':    { en: 'Your cart', ar: 'سلتك' },
+  'cart.empty':    { en: 'Nothing in it yet. Every cup we make is on the cups page.',
+                     ar: 'ما فيها شي بعد. كل الأكواب بصفحة الأكواب.' },
+  'cart.remove':   { en: 'Remove', ar: 'شِله' },
+  'cart.checkout': { en: 'Checkout', ar: 'إتمام الطلب' },
+  'cart.open':     { en: 'Open the cart', ar: 'افتح السلة' },
+  'cart.total':    { en: 'Total', ar: 'المجموع' },
+  'cart.unpriced': { en: 'Not all of these have a price yet',
+                     ar: 'مو كلها لها سعر بعد' },
+
+  'prod.capacity': { en: 'Capacity', ar: 'الحجم' },
+  'prod.material': { en: 'Material', ar: 'الخامة' },
+  'prod.engrave':  { en: 'Engrave this one', ar: 'احفر عليه' },
+  'prod.back':     { en: 'All the cups', ar: 'كل الأكواب' },
+  'prod.gone':     { en: 'That cup is not one of ours.', ar: 'هذا الكوب مو من عندنا.' },
+
+  'auth.fullname': { en: 'Full name', ar: 'الاسم الكامل' },
+  'auth.phone':    { en: 'Phone number', ar: 'رقم التلفون' },
+  'auth.area':     { en: 'Area', ar: 'المنطقة' },
+  'auth.google':   { en: 'Continue with Google', ar: 'كمِّل بحساب Google' },
+  'auth.apple':    { en: 'Continue with Apple', ar: 'كمِّل بحساب Apple' },
+  'auth.or':       { en: 'or', ar: 'أو' },
+  'auth.err.fields': { en: 'Fill in your name, email, phone and area first.',
+                       ar: 'عبِّي اسمك والإيميل والتلفون والمنطقة الأول.' },
+  'auth.err.provider': { en: 'That way in is not switched on yet.',
+                         ar: 'طريقة الدخول هذي ما هي مفعّلة بعد.' },
+
+  'acct.title':    { en: 'My account — cup.kw', ar: 'حسابي — cup.kw' },
+  'acct.h1':       { en: 'Your account.', ar: 'حسابك.' },
+  'acct.details':  { en: 'Your details', ar: 'معلوماتك' },
+  'acct.save':     { en: 'Save changes', ar: 'احفظ التعديل' },
+  'acct.saved':    { en: 'Saved.', ar: 'انحفظ.' },
+  'acct.orders':   { en: 'Your orders', ar: 'طلباتك' },
+  'acct.noorders': { en: 'No orders yet.', ar: 'ما في طلبات بعد.' },
+  'acct.placed':   { en: 'Placed', ar: 'انطلب' },
+  'acct.order':    { en: 'Order', ar: 'طلب' },
+  'acct.items':    { en: 'items', ar: 'قطعة' },
+  'acct.giftto':   { en: 'A gift for', ar: 'هدية إلى' },
+
+  'status.placed':    { en: 'Placed',     ar: 'انطلب' },
+  'status.making':    { en: 'Engraving',  ar: 'قاعد ينحفر' },
+  'status.onway':     { en: 'On the way', ar: 'بالطريق' },
+  'status.delivered': { en: 'Delivered',  ar: 'وصل' },
+
+  'co.title':     { en: 'Checkout — cup.kw', ar: 'إتمام الطلب — cup.kw' },
+  'co.h1':        { en: 'Where is it going?', ar: 'وين يروح؟' },
+  'co.tome':      { en: 'To an address', ar: 'لعنوان' },
+  'co.gift':      { en: 'It is a gift', ar: 'هدية' },
+  'co.addresses': { en: 'Saved addresses', ar: 'العناوين المحفوظة' },
+  'co.addnew':    { en: 'Add an address', ar: 'ضِف عنوان' },
+  'co.edit':      { en: 'Edit', ar: 'عدِّل' },
+  'co.delete':    { en: 'Delete', ar: 'امسح' },
+  'co.addrname':  { en: 'Name this address', ar: 'سمِّ العنوان' },
+  'co.addrnameph':{ en: 'Home, work, my mother’s', ar: 'البيت، الدوام، بيت أمي' },
+  'co.addrbody':  { en: 'The address', ar: 'العنوان' },
+  'co.max':       { en: 'Three addresses is the most you can keep. Delete one to add another.',
+                    ar: 'ثلاثة عناوين هي الأكثر. امسح واحد عشان تضيف غيره.' },
+  'co.pickaddr':  { en: 'Pick an address, or add one.', ar: 'اختر عنوان، أو ضِف واحد.' },
+  'co.rname':     { en: 'Who it is for', ar: 'لمنو' },
+  'co.rphone':    { en: 'Their phone number', ar: 'رقم تلفونه' },
+  'co.msg':       { en: 'A message with it (optional)', ar: 'رسالة معاه (اختياري)' },
+  'co.msgleft':   { en: 'characters left', ar: 'حرف باقي' },
+  'co.place':     { en: 'Place the order', ar: 'أرسل الطلب' },
+  'co.needaddr':  { en: 'Pick an address first.', ar: 'اختر عنوان الأول.' },
+  'co.needgift':  { en: 'A gift needs a name and a phone number.',
+                    ar: 'الهدية تبي اسم ورقم تلفون.' },
+  'co.emptycart': { en: 'There is nothing in the cart to order.',
+                    ar: 'ما في شي بالسلة عشان ينطلب.' },
+  'co.save':      { en: 'Save', ar: 'احفظ' },
+  'co.cancel':    { en: 'Cancel', ar: 'ألغِ' },
+
+  'eng.group.sadu':    { en: 'Sadu collection', ar: 'مجموعة السدو' },
+  'eng.group.classic': { en: 'Classic', ar: 'الأساسي' }
 };

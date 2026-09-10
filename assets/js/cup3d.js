@@ -377,9 +377,6 @@ window.CUP3D = (function () {
     /* ---- the slow turn ---- */
     var raf = null;
     function motionWanted() {
-      var set = document.documentElement.getAttribute('data-motion');
-      if (set === 'off') return false;
-      if (set === 'on') return true;
       return !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     }
     function tick() {
@@ -393,9 +390,10 @@ window.CUP3D = (function () {
     }
     api.stopSpin = function () { opts.spin = false; syncMotion(); return api; };
 
-    new MutationObserver(syncMotion).observe(document.documentElement, {
-      attributes: true, attributeFilter: ['data-motion']
-    });
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mq.addEventListener) mq.addEventListener('change', syncMotion);
+    }
 
     host.setAttribute('tabindex', '0');
     host.setAttribute('role', 'img');

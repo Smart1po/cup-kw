@@ -21,9 +21,6 @@
   var root = document.documentElement;
 
   function reduced() {
-    var set = root.getAttribute('data-motion');
-    if (set === 'off') return true;
-    if (set === 'on') return false;
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 

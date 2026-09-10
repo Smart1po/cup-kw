@@ -20,9 +20,11 @@
     return checked ? checked.value : 'latin';
   }
 
+  /* The value is a catalogue id — "sadu/beige-sand" — because both
+     collections are on this page and both of them have a Navy. */
   function colour() {
     var checked = form.querySelector('input[name="colour"]:checked');
-    return checked ? checked.value : 'navy';
+    return checked ? checked.value : 'sadu/beige-sand';
   }
 
   function limit() {
@@ -59,7 +61,7 @@
       save.style.pointerEvents = over ? 'none' : '';
     }
 
-    /* Carried to the reservation page, so nobody types their own name twice. */
+    /* Carried across pages, so nobody types their own name twice. */
     try {
       localStorage.setItem('cup.draft', JSON.stringify({
         engraving: value,
@@ -73,17 +75,57 @@
   form.addEventListener('change', draw);
   document.addEventListener('cup:lang', draw);
 
-  /* Anything chosen on a previous visit comes back. */
+  /* Choosing the colour that is already on the cup you came from.
+
+     A cup's own page links here as ?line=sadu&colour=beige-sand, and that beats
+     whatever was chosen last time: arriving from a cup and being shown a
+     different one is the page contradicting the link that opened it. Its group
+     is opened too, or the colour would be selected inside a section that is
+     folded shut. */
+  function select(value) {
+    var c = form.querySelector('input[name="colour"][value="' + value + '"]');
+    if (!c) return false;
+    c.checked = true;
+    var row = c.closest('.palette');
+    if (row && row.hidden) {
+      row.hidden = false;
+      var head = row.previousElementSibling;
+      if (head) head.setAttribute('aria-expanded', 'true');
+    }
+    c.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+  }
+
+  var q = new URLSearchParams(location.search);
+  var fromLink = q.get('line') && q.get('colour')
+    ? q.get('line') + '/' + q.get('colour') : null;
+
   try {
     var d = JSON.parse(localStorage.getItem('cup.draft') || 'null');
     if (d) {
       input.value = d.engraving || '';
-      var s = form.querySelector('input[name="script"][value="' + d.engraving_script + '"]');
-      if (s) s.checked = true;
-      var c = form.querySelector('input[name="colour"][value="' + d.colour + '"]');
-      if (c) { c.checked = true; c.dispatchEvent(new Event('change', { bubbles: true })); }
+      var sc = form.querySelector('input[name="script"][value="' + d.engraving_script + '"]');
+      if (sc) sc.checked = true;
+      if (!fromLink && d.colour) select(d.colour);
     }
   } catch (e) {}
+
+  if (fromLink) select(fromLink);
+
+  /* The engraving is saved against the cup, and the cup goes in the cart. The
+     colour value is already a catalogue id, so it is the cart's id too. */
+  var savebtn = document.getElementById('savebtn');
+  if (savebtn) {
+    savebtn.addEventListener('click', function () {
+      if (savebtn.getAttribute('aria-disabled') === 'true') return;
+      draw();
+      var id = colour();
+      if (window.CUP_CART && String(id).indexOf('/') > -1 && !window.CUP_CART.has(id)) {
+        window.CUP_CART.add(id, 1);
+      }
+      location.href = 'checkout.html';
+    });
+  }
 
   if (limits.available === false) {
     var note = document.createElement('p');

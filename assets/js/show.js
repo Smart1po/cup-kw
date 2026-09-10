@@ -20,9 +20,6 @@
   }
 
   function reduced() {
-    var set = document.documentElement.getAttribute('data-motion');
-    if (set === 'off') return true;
-    if (set === 'on') return false;
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   }
 
@@ -129,9 +126,10 @@
     go(0, false);
     if (!reduced()) play();
 
-    new MutationObserver(function () {
-      reduced() ? pause() : play();
-    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-motion'] });
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      if (mq.addEventListener) mq.addEventListener('change', function () { reduced() ? pause() : play(); });
+    }
 
     document.addEventListener('cup:lang', words);
   }
