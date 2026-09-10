@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-gated>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="res.title">Your cup — cup.kw</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
+<style>
+  /* The gate is CSS, not script, so member content is never painted and then
+     hidden. Signed out you are redirected before it matters; with JavaScript
+     broken you see the waiting line and nothing else, rather than a flash of
+     somebody else's reservation. */
+  html[data-gated] [data-member] { display: none; }
+  html[data-gated][data-signed-in] [data-member] { display: block; }
+  html[data-gated][data-signed-in] [data-waiting] { display: none; }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end">
+    <button type="button" class="btn btn--ghost" id="signout" data-t="auth.signout">Sign out</button>
+  </span>
+</header>
+
+<main id="main" class="frame glow">
+  <div class="frame__in">
+
+    <p data-waiting class="pending" data-t="res.checking">Checking your session…</p>
+
+    <div data-member>
+      <div class="split">
+        <figure style="margin:0">
+          <div data-cup3d data-face="proud" data-height="380"
+               aria-label="A three-dimensional model of your reserved cup"></div>
+        </figure>
+
+        <div class="stack" style="gap:1.3rem;width:100%">
+          <p class="micro" data-t="nav.reserve">Your cup</p>
+          <h1 class="display display--2" id="hello"></h1>
+
+          <p class="notice" id="msg" hidden></p>
+
+          <form id="resform" novalidate style="width:100%">
+            <div class="field">
+              <label for="qty" data-t="res.qty">How many</label>
+              <input id="qty" type="number" min="1" max="20" step="1" value="1" inputmode="numeric">
+            </div>
+
+            <div class="field">
+              <label for="eng" data-t="res.engraving">Engraving</label>
+              <input id="eng" type="text" maxlength="20" autocomplete="off">
+            </div>
+
+            <fieldset class="field" style="max-inline-size:none">
+              <legend data-t="res.colour">Colour</legend>
+              <div class="palette" data-swatches="colour" data-drives-cup></div>
+              <p class="swatchname" data-swatchname></p>
+            </fieldset>
+
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+              <button type="submit" class="btn" data-t="res.save">Save reservation</button>
+              <button type="button" class="btn btn--ghost" id="cancel" data-t="res.cancel">Cancel</button>
+            </div>
+          </form>
+
+          <p class="note" data-t="res.short">Not an order. Holds no money. Commits you to nothing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/backend.js"></script>
+<script src="assets/js/cup3d.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/reserve.js"></script>
+</body>
+</html>

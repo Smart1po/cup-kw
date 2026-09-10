@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="auth.title">Sign in — cup.kw</title>
+<meta name="description" content="Sign in to cup.kw, or create an account, to save your engraving and reserve a cup.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end"></span>
+</header>
+
+<main id="main" class="frame glow">
+  <div class="frame__in authlay">
+
+    <figure class="authlay__art" style="margin:0">
+      <div data-cup3d data-face="held" data-height="360" aria-label="A three-dimensional model of the cup"></div>
+    </figure>
+
+    <div class="authlay__form stack" style="gap:1.3rem;width:100%">
+      <p class="micro" data-t="nav.login">Sign in</p>
+      <h1 class="display display--2" data-t="auth.h1">Sign in, or make an account.</h1>
+
+      <p class="notice" id="msg" hidden></p>
+
+      <form id="authform" novalidate style="width:100%">
+        <div class="field">
+          <label for="email" data-t="auth.email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="pw" data-t="auth.password">Password</label>
+          <div class="pwwrap">
+            <input id="pw" name="password" type="password" autocomplete="current-password" required>
+            <button type="button" class="pweye" id="pweye" aria-pressed="false"
+                    data-t-attr="aria-label:auth.show"></button>
+          </div>
+          <p class="hint" data-t="auth.pwShort">Never stored here. Only a hash of it is kept, and not by us.</p>
+        </div>
+
+        <!-- Two distinct actions, not one button that guesses. Guessing is how a
+             typo in an address silently becomes a second account. -->
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button type="submit" class="btn" id="signin" data-t="auth.signin">Sign in</button>
+          <button type="button" class="btn btn--ghost" id="signup" data-t="auth.signup">Create account</button>
+        </div>
+      </form>
+
+      <p class="note" data-t="auth.nosocial"></p>
+    </div>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/backend.js"></script>
+<script src="assets/js/cup3d.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/intro.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/auth.js"></script>
+</body>
+</html>

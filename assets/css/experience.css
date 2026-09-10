@@ -1,0 +1,1109 @@
+/* The experience layer: the entrance, the menu, the colour picker, the cup,
+   the frames of photography, and the assistant.
+
+   Additive. None of it mounts without JavaScript, and the pages underneath
+   stay complete. Load after cup.css. */
+
+/* =========================================================================
+   THE ENTRANCE
+   A count to one hundred and a curtain. It runs on arrival and on every
+   refresh, because that is what was asked for — but it is capped, skippable
+   on any key or tap, and removed entirely when reduced motion is on.
+   ========================================================================= */
+
+.intro {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--bg);
+  display: grid; place-items: center;
+  transition: clip-path 1s cubic-bezier(.7, 0, .2, 1), opacity .4s ease .6s;
+  clip-path: inset(0 0 0 0);
+  /* The curtain is theatre in front of a finished page, so it must not eat the
+     clicks meant for that page. It used to: for the ~2.2s it was up, the first
+     click anywhere landed on the curtain and was spent dismissing it. On the
+     home page nobody noticed, because everything worth clicking is below the
+     fold and the curtain is long gone by the time you scroll. On the engraving
+     screen the controls are in the first viewport, so the first click on them
+     did nothing at all and the control looked broken.
+
+     intro.js dismisses on a window-level pointerdown, which still fires with
+     pointer-events off here, so the curtain lifts AND the click reaches what it
+     was aimed at. Only the skip button needs to be hittable itself. */
+  pointer-events: none;
+}
+.intro__skip { min-block-size: 44px; display: inline-flex; align-items: center; pointer-events: auto; }
+.intro.is-out {
+  /* The curtain lifts rather than fading — the page is already behind it. */
+  clip-path: inset(0 0 100% 0);
+  pointer-events: none;
+}
+
+.intro__in { display: grid; justify-items: center; gap: 2.5rem; text-align: center; padding: var(--bleed); }
+
+.intro__mark {
+  font-size: clamp(2rem, 8vw, 4.5rem); font-weight: 700; letter-spacing: -.05em;
+  direction: ltr; line-height: 1;
+}
+.intro__mark b { color: var(--accent); }
+
+/* The count. Tabular so the digits do not jitter as they climb. */
+.intro__count {
+  font-size: clamp(3.5rem, 16vw, 9rem); font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: -.05em;
+  line-height: 1; color: var(--fg); direction: ltr;
+}
+.intro__count sup { font-size: .3em; vertical-align: super; color: var(--fg-dim); margin-inline-start: .15em; }
+
+.intro__bar { inline-size: min(70vw, 22rem); block-size: 1px; background: var(--line); position: relative; }
+.intro__bar i { position: absolute; inset-block: 0; inset-inline-start: 0; inline-size: 0%; background: var(--accent); display: block; }
+
+.intro__line { font-size: var(--micro); text-transform: uppercase; letter-spacing: .22em; color: var(--fg-dim); min-block-size: 1.2em; }
+html[lang="ar"] .intro__line { text-transform: none; letter-spacing: 0; }
+
+.intro__skip {
+  position: absolute; inset-block-end: var(--bleed); inset-inline-end: var(--bleed);
+  font-size: var(--micro); letter-spacing: .2em; text-transform: uppercase;
+  color: var(--fg-dim); background: none; border: 0; cursor: pointer; font-family: inherit;
+}
+html[lang="ar"] .intro__skip { text-transform: none; letter-spacing: 0; }
+
+/* =========================================================================
+   THE MENU
+   Full frame, six words, one column. Not a nav bar.
+   ========================================================================= */
+
+.menu {
+  position: fixed; inset: 0; z-index: 95;
+  background: var(--bg);
+  display: grid; align-content: center;
+  padding: 6rem var(--bleed) var(--bleed);
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path .7s cubic-bezier(.7, 0, .2, 1);
+  overflow-y: auto;
+}
+.menu.is-open { clip-path: inset(0 0 0 0); }
+.menu[hidden] { display: none; }
+
+.menu__list { list-style: none; margin: 0; padding: 0; display: grid; gap: .1rem; inline-size: min(100%, 82rem); margin-inline: auto; }
+.menu__list li { border-block-end: 1px solid var(--line); }
+.menu__link {
+  display: flex; align-items: baseline; gap: 1.5rem;
+  padding-block: clamp(.7rem, 2.2vw, 1.4rem);
+  text-decoration: none; color: var(--fg);
+  font-size: clamp(2rem, 7vw, 4.5rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.05;
+  transition: color calc(.25s * var(--motion)) ease, padding-inline-start calc(.25s * var(--motion)) ease;
+}
+html[lang="ar"] .menu__link { letter-spacing: 0; }
+.menu__link:hover { color: var(--accent); padding-inline-start: 1rem; }
+.menu__link .n { font-size: var(--micro); letter-spacing: .2em; color: var(--fg-dim); font-weight: 600; direction: ltr; }
+.menu__foot { inline-size: min(100%, 82rem); margin-inline: auto; margin-block-start: 2.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+
+/* =========================================================================
+   THE COLOUR PICKER
+   The visitor's accent, kept separately for day and night, because a colour
+   that sings on cream is often illegible on charcoal.
+   ========================================================================= */
+
+.picker { display: grid; gap: 1rem; }
+.picker__row { display: flex; gap: .55rem; flex-wrap: wrap; align-items: center; }
+.picker__dot {
+  inline-size: 30px; block-size: 30px; border-radius: 50%; padding: 0;
+  border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent);
+  background: var(--c); cursor: pointer; position: relative;
+}
+.picker__dot[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg); }
+.picker__dot:focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+
+/* =========================================================================
+   THE CUP
+   ========================================================================= */
+
+.c3d {
+  --cup-body: #16233D;
+  --cup-ink: #F4EEE3;
+  display: block; inline-size: 100%;
+  perspective: 1500px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  cursor: grab;
+  position: relative;
+  user-select: none; -webkit-user-select: none;
+  /* The cup is a physical object and does not mirror in Arabic — a lid is on
+     the same side in every language. Forcing LTR inside makes every logical
+     property resolve identically in both directions. */
+  direction: ltr;
+}
+.c3d.is-dragging { cursor: grabbing; }
+.c3d:focus-visible { outline: 2px solid var(--accent); outline-offset: 8px; }
+
+.c3d__scene { position: relative; block-size: var(--scene-h, 420px); inline-size: 100%; z-index: 0; }
+.c3d__obj {
+  position: absolute; left: 50%; inset-block-start: 0; inline-size: 0; block-size: 0;
+  transform-style: preserve-3d; will-change: transform; z-index: 1;
+}
+.c3d__group { position: absolute; left: 0; inline-size: 0; block-size: 0; transform-style: preserve-3d; }
+
+/* Matte anodised steel: a soft vertical sheen over the body colour, no specular
+   highlight. A shiny cup would read as plastic, and the real thing is powder
+   matte — in the photographs the surface has no hot spot anywhere on it.
+
+   The tonal ramp only: a matte cylinder catches a broad soft band about a sixth
+   down and falls away steadily to the foot, so the light stops sit close
+   together at the top and spread out below. A fine vertical grain was tried
+   here for the anodised texture and had to come out — at a 3px repeat against
+   a ~17px panel it striped the whole cup. No blend modes and no filters either;
+   an earlier version put one in and locked the renderer up. */
+.c3d__panel {
+  position: absolute; inset-block-start: 0; left: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(255,255,255,.11) 0%,
+      rgba(255,255,255,.06) 12%,
+      rgba(255,255,255,.02) 30%,
+      rgba(0,0,0,.03) 56%,
+      rgba(0,0,0,.09) 80%,
+      rgba(0,0,0,.17) 100%),
+    var(--cup-body);
+  backface-visibility: hidden;
+}
+.c3d__disc { position: absolute; left: 50%; border-radius: 50%; background: var(--cup-body); backface-visibility: hidden; }
+
+.c3d__lid .c3d__panel { background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(0,0,0,.10)), color-mix(in srgb, var(--cup-body) 92%, #000); }
+.c3d__lidtop {
+  background:
+    radial-gradient(ellipse at 38% 30%, rgba(255,255,255,.16), transparent 62%),
+    radial-gradient(ellipse at 62% 82%, rgba(0,0,0,.22), transparent 58%),
+    color-mix(in srgb, var(--cup-body) 86%, #000);
+  box-shadow:
+    inset 0 0 0 3px color-mix(in srgb, var(--cup-body) 74%, #000),
+    inset 0 2px 6px rgba(255,255,255,.06);
+}
+.c3d__hole { background: color-mix(in srgb, var(--cup-body) 62%, #000); box-shadow: inset 0 0 7px rgba(0,0,0,.6); }
+.c3d__straw .c3d__panel { background: color-mix(in srgb, var(--cup-body) 84%, #000); }
+.c3d__strawtop { background: color-mix(in srgb, var(--cup-body) 50%, #000); }
+/* The base is the rubber foot in the photographs, not a shadow: near-black,
+   very slightly domed, with a rim catching a little light. */
+.c3d__base {
+  background: radial-gradient(circle at 50% 42%, #24242A, #131317 72%);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.06), inset 0 -3px 7px rgba(0,0,0,.55);
+}
+
+/* The Sadu band, built to the palette in the reference: maroon ground, off-white
+   motif, camel bridging, black as hairline only.
+
+   The rule that matters is that maroon never touches the cup body. Against the
+   navy the two are 1.7:1 and collapse into one muddy mass, so the selvedge goes
+   off-white first, then camel, and the black hairline sits on the light ground
+   where it reads as a line rather than disappearing. Inset shadows paint first
+   one on top, so they are listed outermost first. */
+/* Rounded edges, top and bottom. The body is a ring of flat panels, so a curve
+   is real geometry, not a corner radius.
+
+   A radius on each panel was the first attempt and it scalloped: at roughly
+   17px per panel a 6px corner turns the rim into a row of notches. So the curve
+   is a short chamfer ring at the foot, built in cup3d.js, and these shadows only
+   deepen where it turns under. */
+.c3d__body .c3d__panel {
+  box-shadow:
+    inset 0 -11px 13px -9px rgba(0,0,0,.5),
+    inset 0 6px 8px -7px rgba(0,0,0,.28);
+}
+.c3d__lid .c3d__panel { box-shadow: inset 0 8px 10px -8px rgba(0,0,0,.3); }
+
+/* The chamfer at the foot: the last centimetre of body, drawn as its own ring
+   pulled in to 86% so the silhouette curves into the base instead of stopping
+   on a hard right angle. */
+.c3d__foot .c3d__panel {
+  box-shadow: inset 0 -8px 10px -6px rgba(0,0,0,.6);
+}
+
+/* Hidden by default and revealed by the class.
+
+   display, not opacity. The band is a ring of panels inside a preserve-3d
+   subtree, and opacity on such an element is where engines disagree — it forces
+   flattening, and whether the group is actually painted at 0 varies. Chrome
+   removed the class and still reported the band at opacity 1. display: none
+   takes the element out entirely and means the same thing everywhere. The cost
+   is the quarter-second fade, which is worth losing to have the control work. */
+.c3d__band { display: none; }
+.c3d.has-band .c3d__band { display: block; }
+
+
+
+.c3d__band .c3d__panel {
+  background-color: #8C1D24;
+  background-image:
+    repeating-linear-gradient(45deg, transparent 0 6px, #F2EAD8 6px 7.5px),
+    repeating-linear-gradient(-45deg, transparent 0 6px, #F2EAD8 6px 7.5px);
+  box-shadow:
+    inset 0 3px 0 #F2EAD8, inset 0 -3px 0 #F2EAD8,
+    inset 0 5px 0 #C9A87C, inset 0 -5px 0 #C9A87C,
+    inset 0 6px 0 #1A1A1A, inset 0 -6px 0 #1A1A1A;
+}
+
+.c3d__handle {
+  position: absolute; left: 0; inline-size: 26px;
+  border: 5px solid color-mix(in srgb, var(--cup-body) 86%, #000);
+  border-inline-start: 0;
+  border-start-end-radius: 26px; border-end-end-radius: 26px;
+  background: transparent; backface-visibility: hidden;
+  opacity: 0; transition: opacity calc(.25s * var(--motion)) ease;
+}
+.c3d.has-handle .c3d__handle { opacity: 1; }
+
+/* No margin offset: cup3d.js centres these with translateX(-50%) already, and
+   doing it twice pushes the printing off the side of the cup. */
+.c3d__decal {
+  position: absolute; left: 50%; inline-size: 86px;
+  display: grid; justify-items: center; gap: 6px;
+  color: var(--cup-ink); font-family: var(--face-display);
+  backface-visibility: hidden; pointer-events: none;
+}
+.c3d__logo { border: 1.5px solid currentColor; padding: 3px 10px; font-size: 12px; font-weight: 600; letter-spacing: .1em; }
+.c3d__blueprint {
+  inline-size: 46px; block-size: 78px; opacity: .8;
+  background-image: radial-gradient(currentColor .9px, transparent 1px);
+  background-size: 6px 6px;
+}
+.c3d__word { font-size: 9px; letter-spacing: .16em; opacity: .9; }
+.c3d__eng {
+  min-block-size: 18px; font-weight: 600; text-align: center; inline-size: 86px;
+  white-space: nowrap; overflow: hidden;
+  border-block-start: 1px solid currentColor; padding-block-start: 5px; opacity: .95;
+}
+.c3d__eng:empty { border-block-start: 0; }
+
+/* The face. Fixed colours, because they must read as eyes on all fourteen
+   collection colours, cream through matte black. */
+.c3d__face {
+  position: absolute; left: 50%; inline-size: 78px;
+  display: flex; justify-content: center; gap: 14px;
+  backface-visibility: hidden; pointer-events: none;
+  opacity: 0; transition: opacity calc(.3s * var(--motion)) ease;
+  --look-x: 0; --look-y: 0;
+}
+.c3d[data-face] .c3d__face { opacity: 1; }
+/* A face and a technical texture on the same panel compete. The face wins. */
+.c3d[data-face] .c3d__blueprint { opacity: 0; }
+
+/* The face and the band do not share the cup: a band on means this is the
+   Limited Edition, which is a product shot rather than a character. Written
+   with both classes so it out-specifies .c3d[data-face] .c3d__face above, which
+   is the same weight and would otherwise win on order alone. */
+.c3d.has-band[data-face] .c3d__face { opacity: 0; }
+.c3d.has-band .c3d__blueprint { opacity: 0; }
+
+.c3d__eye {
+  inline-size: 16px; block-size: 18px; border-radius: 50%;
+  background: #F6F1E7; position: relative; flex: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,.35);
+  transition: block-size calc(.18s * var(--motion)) ease;
+}
+.c3d__pupil {
+  position: absolute; inline-size: 7px; block-size: 7px; border-radius: 50%;
+  background: #201C18; inset-block-start: 50%; inset-inline-start: 50%;
+  transform: translate(calc(-50% + (var(--look-x) * 4px)), calc(-50% + (var(--look-y) * 3px)));
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+.c3d[data-face="idle"] .c3d__eye { animation: blink 5s infinite; }
+:root[data-motion="off"] .c3d__eye { animation: none !important; }
+@keyframes blink { 0%, 92%, 100% { block-size: 18px; } 95%, 97% { block-size: 3px; } }
+.c3d[data-face="heat"] .c3d__eye { block-size: 7px; }
+.c3d[data-face="cold"] .c3d__eye { block-size: 20px; }
+.c3d[data-face="car"] .c3d__face { --look-x: .9; }
+.c3d[data-face="bag"] .c3d__eye { block-size: 3px; border-radius: 3px; }
+.c3d[data-face="bag"] .c3d__pupil { opacity: 0; }
+.c3d[data-face="held"] .c3d__eye, .c3d[data-face="proud"] .c3d__eye {
+  block-size: 9px; background: transparent; box-shadow: none;
+  border-block-start: 2.5px solid #F6F1E7; border-radius: 50% 50% 0 0;
+}
+.c3d[data-face="held"] .c3d__pupil, .c3d[data-face="proud"] .c3d__pupil { opacity: 0; }
+
+/* Fixed lighting, scaled about the same origin the model scales about — get
+   that origin wrong and zooming slides the light off the cup. */
+.c3d__shade {
+  position: absolute; z-index: 4; pointer-events: none; left: 50%;
+  inline-size: calc(var(--cup-r) * 2 + 6px);
+  margin-left: calc((var(--cup-r) * -1) - 3px);
+  inset-block-start: var(--lid-top);
+  block-size: calc(var(--body-top) + var(--body-h) - var(--lid-top));
+  background: linear-gradient(90deg,
+    rgba(0,0,0,.44) 0%, rgba(0,0,0,.20) 12%, rgba(0,0,0,.01) 30%,
+    rgba(255,255,255,.14) 40%, rgba(255,255,255,.03) 50%,
+    rgba(0,0,0,.06) 66%, rgba(0,0,0,.26) 86%, rgba(0,0,0,.46) 100%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) + 3px) calc(var(--lid-top) * -1);
+  /* Full width down the lid, then narrowing with the body, so the overlay
+     stops at the cup instead of hanging in the air beside the base. */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% var(--shade-body, 0%),
+    calc(100% - var(--shade-inset, 0%)) 100%,
+    var(--shade-inset, 0%) 100%,
+    0 var(--shade-body, 0%));
+}
+.c3d__shadow {
+  position: absolute; z-index: 0; pointer-events: none; left: 50%;
+  inline-size: calc(var(--cup-r) * 3.4); margin-left: calc(var(--cup-r) * -1.7);
+  inset-block-start: calc(var(--body-top) + var(--body-h) - 12px);
+  block-size: 34px;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,.42), rgba(0,0,0,0) 70%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: calc(var(--cup-r) * 1.7) calc((var(--body-top) + var(--body-h) - 12px) * -1);
+}
+
+.c3d__zoombar {
+  position: absolute; z-index: 6; inset-block-end: 0; left: 50%; transform: translateX(-50%);
+  display: flex; gap: .3rem; opacity: .35;
+  transition: opacity calc(.2s * var(--motion)) ease;
+}
+.c3d:hover .c3d__zoombar, .c3d:focus-within .c3d__zoombar { opacity: 1; }
+.c3d__zoombtn {
+  inline-size: 34px; block-size: 34px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--fg);
+  font: inherit; font-size: .95rem; line-height: 1; cursor: pointer; padding: 0;
+  display: grid; place-items: center;
+}
+.c3d__zoombtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* =========================================================================
+   THE COLLECTION
+   ========================================================================= */
+
+.palette { display: flex; gap: .6rem; flex-wrap: wrap; padding: 0; margin: 0; border: 0; }
+.palette .swatch { position: relative; }
+.palette .swatch input { position: absolute; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
+.palette .swatch span {
+  display: grid; place-items: center; cursor: pointer;
+  inline-size: 42px; block-size: 42px; border-radius: 50%;
+  background: var(--sw); border: 1px solid rgba(0,0,0,.25);
+  box-shadow: inset -5px -6px 12px rgba(0,0,0,.32), inset 4px 5px 10px rgba(255,255,255,.14);
+  font-size: 0;
+  transition: transform calc(.2s * var(--motion)) ease;
+}
+.palette .swatch span:hover { transform: scale(1.1); }
+.palette .swatch input:checked + span { box-shadow: inset -5px -6px 12px rgba(0,0,0,.32), 0 0 0 2px var(--bg), 0 0 0 4px var(--fg); }
+.palette .swatch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 4px; }
+/* The name is announced, not printed — fourteen labels in a row is a wall. */
+.palette .swatch span::after { content: attr(data-name); position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
+
+/* ---- the collection as a rail ----
+   Fourteen swatches wrapped into three rows push the cup they are meant to be
+   recolouring off the screen. In one line you push through, the cup stays put
+   and the colours stay next to it. fit-content keeps the row centred while it
+   fits and lets it go full-width and scroll once it does not, so there is no
+   breakpoint to maintain. Snap points mean a flick lands on a colour rather
+   than between two. */
+.palette--rail {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline proximity;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  margin-inline: auto;
+  padding-block: .45rem;
+  /* The row reports ~21px of overflow it does not visually have, which on any
+     platform with persistent scrollbars would park a permanent bar under the
+     swatches. The affordance is the half-swatch cut off at the edge, so the bar
+     is hidden rather than left there looking broken. */
+  scrollbar-width: none;
+}
+.palette--rail::-webkit-scrollbar { display: none; }
+.palette--rail .swatch { flex: 0 0 auto; scroll-snap-align: start; }
+/* The hover lift is clipped by the scroll container, so give it room. */
+.palette--rail .swatch span { margin-block: 3px; }
+
+.swatchname { font-size: var(--micro); letter-spacing: .2em; text-transform: uppercase; color: var(--fg-dim); min-block-size: 1.2em; }
+html[lang="ar"] .swatchname { text-transform: none; letter-spacing: 0; }
+
+.scripttoggle { display: flex; gap: 0; border: 1px solid var(--line); inline-size: fit-content; }
+/* position: relative is load-bearing, not tidiness. The input below is absolute
+   at 100% x 100%, and without a positioned parent it sizes against the page
+   instead of its label: it measured 1440x892 on a 1440-wide screen, an
+   invisible sheet over the whole engraving screen. Being positioned, it won the
+   hit test against every plain element under it, so clicking the Sadu toggle —
+   or anywhere else that was not itself positioned — selected a script radio
+   instead of doing what it looked like it would do. .palette .swatch has always
+   had this; .scripttoggle .swatch was missing it. */
+.scripttoggle .swatch { position: relative; }
+.scripttoggle .swatch input { position: absolute; inset: 0; opacity: 0; inline-size: 100%; block-size: 100%; margin: 0; cursor: pointer; }
+.scripttoggle .swatch span {
+  display: block; padding: .8rem 1.6rem; cursor: pointer;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .18em; font-weight: 600;
+}
+html[lang="ar"] .scripttoggle .swatch span { text-transform: none; letter-spacing: 0; }
+.scripttoggle .swatch input:checked + span { background: var(--accent); color: var(--accent-fg); }
+
+.counter { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--fg); }
+.counter[data-state="over"] { color: #E8A972; }
+
+/* =========================================================================
+   PHOTOGRAPHY
+   ========================================================================= */
+
+.gallery { display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.shot { margin: 0; position: relative; overflow: hidden; }
+.shot img { inline-size: 100%; aspect-ratio: 3 / 4; object-fit: cover; transition: transform calc(.8s * var(--motion)) ease; }
+.shot:hover img { transform: scale(1.04); }
+.shot figcaption {
+  position: absolute; inset-block-end: 0; inset-inline: 0; padding: 1rem;
+  font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase; color: #F4EEE3;
+  background: linear-gradient(to top, rgba(0,0,0,.75), transparent);
+}
+html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
+
+/* A photographic band, after the Tubik reference: the picture on one side, the
+   line about it on the other, and the whole thing only as tall as it needs to
+   be.
+
+   Two rewrites got here. It began full-bleed — 100svh with object-fit: cover —
+   which drew a 896px-wide photograph at 1440 (1.61x its own pixels, 2.14x at
+   1920) and threw away 58% of it to the crop. Upscaling a photograph past 1:1
+   is the one thing guaranteed to make it look worse than the file you started
+   with. Showing it whole instead fixed the resolution but left a viewport-tall
+   section with a small picture adrift in the middle of it.
+
+   A band solves both. The picture sits in a landscape box at roughly half the
+   width, which on a 1440 screen works out around 0.7x its own pixels — a
+   reduction, never an enlargement — and the section costs about half the height
+   it used to. The caption moves out from on top of the photograph and sits
+   beside it, so the gradient scrim that used to make white text legible over
+   the image is gone, and with it the hard-coded pale text colours: those were a
+   latent bug, because #F4EEE3 on the day theme's cream is nearly invisible. */
+.photoframe {
+  position: relative;
+  display: grid; align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  inline-size: min(100%, 82rem); margin-inline: auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) var(--bleed);
+}
+@media (min-width: 60rem) {
+  .photoframe { grid-template-columns: 1fr 1.15fr; }
+  /* Source order is picture then words; on a wide screen the words lead. */
+  .photoframe__in { grid-area: 1 / 1; }
+  .photoframe img { grid-area: 1 / 2; }
+  /* The second band mirrors the first, so two pictures in a row do not read as
+     a column of identical slabs. */
+  .photoframe--flip { grid-template-columns: 1.15fr 1fr; }
+  .photoframe--flip .photoframe__in { grid-area: 1 / 2; }
+  .photoframe--flip img { grid-area: 1 / 1; }
+}
+.photoframe img {
+  display: block; inline-size: 100%; block-size: auto;
+  /* Landscape box out of a 3:4 original: a centre crop, but a downscale — the
+     drawn size stays well under the file's own pixels at every width. */
+  aspect-ratio: 4 / 3; object-fit: cover; object-position: center;
+  max-block-size: 56svh;
+}
+.photoframe__in { inline-size: 100%; max-inline-size: 34rem; padding: 0; }
+
+/* =========================================================================
+   THE SHOW
+   ========================================================================= */
+
+/* Stage over script, at every width. Side by side put the photograph in half the
+   page and the day's text in the other half, which made both small; stacked, the
+   picture gets the full column and the writing sits under it where it reads as a
+   caption to what you are looking at. */
+.show { display: grid; gap: 1.5rem; }
+
+.show__stage {
+  position: relative; display: grid; place-items: center;
+  min-block-size: min(62svh, 460px); overflow: hidden;
+  background: var(--bg-2); border: 1px solid var(--line);
+}
+.show__cup { position: relative; z-index: 2; inline-size: 100%; }
+.show__cup[hidden] { display: none; }
+/* contain, not cover: the stage is smaller than every photograph in it, so
+   fitting the whole frame in costs no resolution and crops nothing. */
+/* The track. Every scene sits on the stage at once and you scroll between them,
+   so the day is something you can move through by hand and not only watch. The
+   browser owns the easing, which is smoother than anything scripted here and
+   free when motion is switched off. */
+.show__track {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.show__track::-webkit-scrollbar { display: none; }
+.show__track:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+:root:not([data-motion="off"]) .show__track { scroll-behavior: smooth; }
+
+.show__slide {
+  position: relative;
+  flex: 0 0 100%; scroll-snap-align: center;
+  min-inline-size: 0;
+}
+/* The whole photograph, letterboxed into the slide.
+
+   max-block-size: 100% was the obvious way to write this and it did nothing:
+   the slide takes its height from an ancestor's min-block-size, which leaves the
+   percentage indefinite, so the image rendered at its natural 896x1195 and the
+   stage simply clipped it. Insetting it did not help either — a replaced element
+   with intrinsic size does not stretch to its insets the way a div does. An
+   explicit 100% x 100% against the definite containing block does, and with
+   border-box sizing the padding sits inside it, so object-fit letterboxes into
+   the padded area. The stage is never taller than 460px and no photograph here
+   is under 1195px, so contain is always a reduction. */
+.show__slide img {
+  position: absolute; inset: 0;
+  inline-size: 100%; block-size: 100%;
+  padding: clamp(.6rem, 2vw, 1.4rem);
+  object-fit: contain; display: block;
+}
+/* The move between scenes: the one you are on comes up to full size and full
+   strength, the ones either side sit back. With the snap scrolling this reads
+   as the day stepping forward rather than images being swapped. */
+.show__slide img {
+  opacity: .3; transform: scale(.93);
+  transition: opacity calc(.45s * var(--motion)) ease,
+              transform calc(.45s * var(--motion)) cubic-bezier(.2, .7, .2, 1);
+}
+.show__slide.is-on img { opacity: 1; transform: none; }
+
+.show__props { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.show__props i { position: absolute; display: block; opacity: 0; transition: opacity calc(.5s * var(--motion)) ease; }
+
+.show__stage[data-prop="hot"] i:nth-child(-n+3) {
+  opacity: .6; inline-size: 3px; block-size: 46px; border-radius: 3px;
+  background: linear-gradient(to top, transparent, var(--fg-dim));
+  inset-block-start: 12%; animation: steam calc(2.6s * var(--motion)) ease-in-out infinite;
+}
+.show__stage[data-prop="hot"] i:nth-child(1) { inset-inline-start: 44%; }
+.show__stage[data-prop="hot"] i:nth-child(2) { inset-inline-start: 50%; animation-delay: .5s; }
+.show__stage[data-prop="hot"] i:nth-child(3) { inset-inline-start: 56%; animation-delay: 1s; }
+@keyframes steam { 0% { transform: translateY(10px) scaleY(.6); opacity: 0; } 40% { opacity: .7; } 100% { transform: translateY(-30px) scaleY(1.15); opacity: 0; } }
+
+.show__stage[data-prop="bag"] i:nth-child(1) {
+  opacity: 1; inline-size: 74%; block-size: 40%; inset-block-end: 0; inset-inline-start: 13%;
+  background: #211E1A; border-start-start-radius: 26px; border-start-end-radius: 26px; z-index: 3;
+}
+.show__stage[data-prop="bag"] i:nth-child(2) {
+  opacity: 1; inline-size: 78%; block-size: 14px; inset-block-end: 39%; inset-inline-start: 11%;
+  background: #3E382F; border-radius: 10px; z-index: 3;
+}
+
+.show__stage[data-prop="night"] i {
+  opacity: .8; inline-size: 3px; block-size: 3px; border-radius: 50%;
+  background: var(--fg); animation: twinkle calc(3s * var(--motion)) ease-in-out infinite;
+}
+.show__stage[data-prop="night"] i:nth-child(1) { inset-inline-start: 24%; inset-block-start: 18%; }
+.show__stage[data-prop="night"] i:nth-child(2) { inset-inline-start: 72%; inset-block-start: 24%; animation-delay: .7s; }
+.show__stage[data-prop="night"] i:nth-child(3) { inset-inline-start: 62%; inset-block-start: 12%; animation-delay: 1.4s; }
+.show__stage[data-prop="night"] i:nth-child(4) { inset-inline-start: 34%; inset-block-start: 30%; animation-delay: 2.1s; }
+@keyframes twinkle { 0%, 100% { opacity: .2; } 50% { opacity: .9; } }
+
+:root[data-motion="off"] .show__props i { animation: none; }
+
+/* Every scene's words are in the page from the start. The animation only
+   decides which is foregrounded; with motion off the day reads as a list. */
+.show__script { position: relative; display: grid; gap: .2rem; }
+/* One hour at a time. Four scenes stacked at 30% opacity was four things to
+   read at once and none of them comfortably: the eye kept going to the dim ones
+   to check whether they mattered. Only the current scene is shown, and because
+   the track is scrollable and the controls are right there, the others are one
+   swipe away rather than hidden behind an animation.
+
+   The rule this file was built to still holds. Every scene's words are in the
+   DOM from the start, and with motion off the whole day reads as a list — so
+   nothing is ever visible only because an animation ran. */
+/* Centred under the stage. The scene used to sit left with an accent rule down
+   its edge, which read correctly as one item marked out of a list of four. With
+   only one hour on screen there is no list to mark, so the rule goes and the
+   block centres under the picture it belongs to. */
+.show__scene {
+  padding: .8rem 0;
+  display: none;
+  text-align: center;
+}
+.show__scene.is-on {
+  display: block;
+  animation: sceneIn calc(.4s * var(--motion)) ease both;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+:root[data-motion="off"] .show__scene { display: block; opacity: 1; animation: none; }
+:root[data-motion="off"] .show__scene:not(.is-on) { opacity: .55; }
+/* Centred text wants its controls centred under it too. */
+.show__controls { justify-content: center; }
+/* The block does not resize as you move between hours of different length, and
+   the line does not run the full width of the stage above it. Stacking the show
+   handed this column 1326px, which measured 172 characters on the body copy —
+   roughly two and a half times a comfortable line. */
+.show__script { min-block-size: 8rem; }
+.show__scene > * { max-inline-size: 62ch; margin-inline: auto; }
+.show__time { font-size: var(--micro); letter-spacing: .2em; color: var(--accent); font-variant-numeric: tabular-nums; direction: ltr; margin: 0 0 .2em; }
+.show__h { font-size: var(--lede); margin: 0 0 .2em; font-weight: 700; }
+.show__b { margin: 0; color: var(--fg-dim); font-size: var(--small); }
+
+.show__controls { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.show__controls .chip {
+  display: inline-flex; align-items: center; min-block-size: 40px;
+  font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .18em;
+  background: none; color: var(--fg-dim); border: 1px solid var(--line);
+  padding: .55rem 1rem; cursor: pointer;
+}
+html[lang="ar"] .show__controls .chip { text-transform: none; letter-spacing: 0; }
+.show__controls .chip:hover { border-color: var(--accent); color: var(--accent); }
+.show__dots { display: flex; gap: .1rem; margin-inline: .4rem; }
+/* The mark stays a 22x2 line; the button around it is 22x24. Padding plus
+   background-clip means the thing you aim at is twelve times the height of the
+   thing you see, which is the whole trick — a 2px tap target was unusable on a
+   phone and awkward with a mouse. */
+.show__dot {
+  inline-size: 34px; block-size: 34px; padding: 16px 6px; border: 0;
+  background: var(--line); background-clip: content-box;
+  cursor: pointer;
+}
+.show__dot.is-on { background: var(--accent); background-clip: content-box; }
+.show__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* =========================================================================
+   FURNITURE
+   ========================================================================= */
+
+/* ---- the dock ----
+   The four destinations, pinned to the bottom of every page so that going
+   somewhere never starts with opening something. The burger menu stays for the
+   full-size list and the accent swatches.
+
+   Two corners of the bottom edge are already taken — the back-to-top button on
+   one side, the assistant on the other — so on a wide screen the dock is a
+   centred pill with both corners kept clear, and on a narrow one it becomes a
+   full-width bar and pushes those two buttons up above it instead. */
+.dock {
+  position: fixed; inset-block-end: 1.2rem; inset-inline: 0; z-index: 50;
+  display: flex; justify-content: center;
+  padding-inline: 5rem;
+  pointer-events: none;
+}
+.dock__bar {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: .2rem;
+  max-inline-size: 100%;
+  padding: .3rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-2) 88%, transparent);
+  backdrop-filter: blur(14px);
+}
+.dock__list { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: .1rem; }
+.dock__link {
+  display: flex; align-items: center; min-block-size: 40px;
+  text-decoration: none; white-space: nowrap;
+  padding: .5rem .85rem; border-radius: 999px;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .14em;
+  color: var(--fg-dim);
+  transition: color calc(.2s * var(--motion)) ease, background calc(.2s * var(--motion)) ease;
+}
+html[lang="ar"] .dock__link { text-transform: none; letter-spacing: 0; }
+.dock__link:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+/* The page you are on, said twice: aria-current for a screen reader, the fill
+   for everyone else. */
+.dock__link[aria-current="page"] { background: var(--accent); color: var(--accent-fg); }
+.dock__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.dock__tools { display: flex; align-items: center; gap: .1rem; }
+.dock__sep { inline-size: 1px; block-size: 20px; background: var(--line); margin-inline: .35rem; }
+/* 40px minimum on everything in the bar. These were 29px tall, which is under
+   every touch-target guideline and fiddly with a mouse too. */
+.dock__tool {
+  border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; min-block-size: 40px;
+  padding: .5rem .7rem; border-radius: 999px;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .12em;
+  color: var(--fg-dim); font-family: inherit; white-space: nowrap;
+}
+html[lang="ar"] .dock__tool { text-transform: none; letter-spacing: 0; }
+.dock__tool:hover { color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent); }
+/* "Theme: follows your device" is a sentence, and a sentence does not belong in
+   a pill. theme.js already puts the full wording on aria-label and title, so
+   the dock shows the state as a mark and loses nothing a screen reader needs. */
+.dock__tool[data-scheme-btn] .schemetext { display: none; }
+.dock__tool[data-scheme-btn]::before { content: "\25D0"; font-size: .95rem; letter-spacing: 0; }
+.dock__tool[data-scheme-btn][data-state="light"]::before { content: "\2600"; }
+.dock__tool[data-scheme-btn][data-state="dark"]::before { content: "\263E"; }
+.dock__tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Nothing should end up underneath it. */
+body { padding-block-end: 5.5rem; }
+
+@media (max-width: 52rem) {
+  .dock { inset-block-end: 0; padding-inline: 0; }
+  .dock__bar {
+    inline-size: 100%; border-radius: 0;
+    border-inline: 0; border-block-end: 0;
+    padding: .25rem .2rem;
+    padding-block-end: max(.25rem, env(safe-area-inset-bottom));
+  }
+  .dock__list { flex: 1; justify-content: space-around; }
+  .dock__link { padding-inline: .5rem; letter-spacing: .08em; }
+  /* Seven targets do not fit across a phone at a size anyone can hit. The
+     display controls stay one tap away in the menu. */
+  .dock__tools { display: none; }
+  body { padding-block-end: 4.5rem; }
+}
+
+.totop {
+  position: fixed; inset-block-end: 1.2rem; inset-inline-start: 1.2rem;
+  inline-size: 44px; block-size: 44px; z-index: 40;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--bg-2); color: var(--fg); border: 1px solid var(--line);
+  cursor: pointer; padding: 0;
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity calc(.25s * var(--motion)) ease, transform calc(.25s * var(--motion)) ease;
+}
+.totop.is-in { opacity: 1; transform: none; pointer-events: auto; }
+.totop:hover { border-color: var(--accent); color: var(--accent); }
+.totop svg { inline-size: 20px; block-size: 20px; }
+
+.assist { position: fixed; inset-block-end: 1.2rem; inset-inline-end: 1.2rem; z-index: 45; }
+.assist__fab {
+  inline-size: 52px; block-size: 52px; border-radius: 50%;
+  border: 1px solid var(--accent); cursor: pointer; padding: 0;
+  background: var(--accent); color: var(--accent-fg);
+  display: grid; place-items: center;
+}
+.assist__fab:hover { background: transparent; color: var(--accent); }
+.assist__fabmark {
+  inline-size: 17px; block-size: 23px; display: block; position: relative;
+  border: 2px solid currentColor;
+  border-start-start-radius: 2px; border-start-end-radius: 2px;
+  border-end-start-radius: 6px; border-end-end-radius: 6px;
+  clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%);
+}
+.assist__fabmark::after {
+  content: ""; position: absolute; inset-block-start: -7px; inset-inline-start: 44%;
+  inline-size: 3px; block-size: 8px; background: currentColor;
+}
+
+.assist__panel[hidden] { display: none; }
+.assist__panel {
+  position: absolute; inset-block-end: 64px; inset-inline-end: 0;
+  inline-size: min(92vw, 22rem);
+  background: var(--bg-2); border: 1px solid var(--line);
+  display: grid; gap: .6rem; padding: 1rem;
+}
+.assist__head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.assist__head strong { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; }
+html[lang="ar"] .assist__head strong { text-transform: none; letter-spacing: 0; }
+.assist__x { border: 0; background: none; color: var(--fg-dim); font-size: 1.4rem; line-height: 1; cursor: pointer; padding: .1rem .4rem; }
+.assist__note { font-size: var(--micro); color: var(--fg-dim); margin: 0; letter-spacing: .02em; }
+.assist__log { display: grid; gap: .5rem; max-block-size: 42vh; overflow-y: auto; }
+.assist__msg { margin: 0; padding: .55rem .75rem; font-size: var(--small); max-inline-size: 92%; }
+.assist__msg--bot { background: var(--bg-3); justify-self: start; }
+.assist__msg--me { background: var(--accent); color: var(--accent-fg); justify-self: end; }
+.assist__chips { display: flex; gap: .3rem; flex-wrap: wrap; }
+.assist__chip {
+  font: inherit; font-size: var(--micro); background: none; color: var(--accent);
+  border: 1px solid var(--line); padding: .35rem .7rem; cursor: pointer; text-align: start;
+}
+.assist__chip:hover { border-color: var(--accent); }
+.assist__form { display: flex; gap: .4rem; }
+.assist__input {
+  font: inherit; flex: 1; min-inline-size: 0; padding: .6rem .7rem;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+}
+.assist__send {
+  font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .15em;
+  cursor: pointer; padding: .6rem .9rem; border: 0;
+  background: var(--accent); color: var(--accent-fg);
+}
+html[lang="ar"] .assist__send { text-transform: none; letter-spacing: 0; }
+
+@media (max-width: 30rem) {
+  .assist__panel { inline-size: calc(100vw - 2.4rem); }
+  .totop { inline-size: 40px; block-size: 40px; }
+}
+
+/* ---- page layouts ---- */
+.authlay { display: grid; gap: clamp(2rem, 6vw, 4rem); align-items: center; }
+@media (min-width: 60rem) { .authlay { grid-template-columns: 1fr .9fr; } .authlay__art { order: 2; } .authlay__form { order: 1; } }
+
+.pwwrap { position: relative; display: flex; }
+.pwwrap input { padding-inline-end: 3rem; }
+.pweye {
+  position: absolute; inset-inline-end: 0; inset-block-start: 50%; transform: translateY(-50%);
+  inline-size: 2.2rem; block-size: 2.2rem; border: 0; background: none; cursor: pointer;
+  display: grid; place-items: center; padding: 0;
+}
+.pweye::before { content: ""; inline-size: 1.05rem; block-size: 1.05rem; border-radius: 50% 0; border: 1.5px solid var(--fg-dim); transform: rotate(45deg); }
+.pweye::after { content: ""; position: absolute; inline-size: 1.3rem; block-size: 1.5px; background: var(--fg-dim); transform: rotate(-45deg); opacity: 0; }
+.pweye[aria-pressed="true"]::after { opacity: 1; }
+
+/* The two corner buttons are declared above with the same specificity as any
+   override, so lifting them clear of the full-width dock has to come after them
+   in source order rather than in the dock's own block. */
+@media (max-width: 52rem) {
+  .totop, .assist { inset-block-end: calc(1.2rem + 52px); }
+}
+
+/* =========================================================================
+   THE MENU
+   A catalogue of drawn cups. The card is deliberately quiet — the only loud
+   thing on it is the cup, because the cup is the only thing that differs.
+   ========================================================================= */
+
+/* .frame__in cannot be used on its own here: it sets inline-size and then
+   width: 100% straight after, so the 82rem cap only holds because the .frame
+   around it supplies the gutter. This wrapper is that gutter. */
+.menuwrap { inline-size: min(100%, 82rem); margin-inline: auto; padding-inline: var(--bleed); }
+
+.lineup { padding-block: clamp(2.5rem, 6vw, 4.5rem); border-block-start: 1px solid var(--line); }
+.lineup:first-child { border-block-start: 0; }
+.lineup__head { display: grid; gap: .7rem; justify-items: start; margin-block-end: 2.2rem; }
+.lineup__head .frame__no { position: static; }
+.lineup__head .lede { max-inline-size: 46ch; }
+
+.chips { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; margin: .4rem 0 0; }
+.chip {
+  font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--fg-dim); border: 1px solid var(--line); border-radius: 999px;
+  padding: .3rem .7rem;
+}
+html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
+
+.cards {
+  display: grid; gap: .8rem;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+}
+.card {
+  border: 1px solid var(--line); background: var(--bg-2);
+  padding: 1rem .8rem 1.1rem;
+  display: grid; justify-items: center; gap: .5rem;
+  transition: border-color calc(.2s * var(--motion)) ease,
+              transform calc(.2s * var(--motion)) ease;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.card__stage { display: grid; place-items: center; block-size: 132px; perspective: 520px; }
+
+/* Five ways to pick a cup up, and they are meant to be seen. menu.js stamps
+   data-anim on hover and steps a shared counter, so each cup you touch moves
+   differently from the last one.
+
+   transform-origin sits at the foot for everything that leans or turns, because
+   a cup pivots where it meets the table and not through its middle. The first
+   attempt at these was a set of 4-5 degree nudges, which is the sort of motion
+   you only notice if you already know it is there. */
+
+/* Tips forward like doffing a hat, holds a beat, comes back up. */
+@keyframes cupDoff {
+  0%   { transform: none; }
+  28%  { transform: rotate(-19deg) translateY(-5px); }
+  52%  { transform: rotate(-19deg) translateY(-5px); }
+  78%  { transform: rotate(4deg); }
+  100% { transform: none; }
+}
+/* A full turn on its own axis. */
+@keyframes cupSpin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+/* Comes toward you and stays there while you are on it. */
+@keyframes cupGrow {
+  0%   { transform: scale(1); }
+  60%  { transform: scale(1.24) translateY(-6px); }
+  100% { transform: scale(1.18) translateY(-4px); }
+}
+/* A hop, with the squash and stretch that makes a hop read as weight. */
+@keyframes cupHop {
+  0%   { transform: none; }
+  18%  { transform: scaleY(.9) scaleX(1.06); }
+  45%  { transform: translateY(-26px) scaleY(1.07) scaleX(.96); }
+  72%  { transform: translateY(0) scaleY(.94) scaleX(1.04); }
+  100% { transform: none; }
+}
+/* Swings from the lid, like it was knocked. */
+@keyframes cupSwing {
+  0%   { transform: rotate(0deg); }
+  22%  { transform: rotate(13deg); }
+  46%  { transform: rotate(-9deg); }
+  68%  { transform: rotate(5deg); }
+  86%  { transform: rotate(-2deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.card__cup { transform-origin: 50% 92%; }
+.card[data-anim="0"]:hover .card__cup { animation: cupDoff  .8s cubic-bezier(.3,.7,.3,1); }
+.card[data-anim="1"]:hover .card__cup { animation: cupSpin  .9s cubic-bezier(.45,0,.25,1); }
+.card[data-anim="2"]:hover .card__cup { animation: cupGrow  .45s cubic-bezier(.25,.9,.3,1) both; }
+.card[data-anim="3"]:hover .card__cup { animation: cupHop   .8s cubic-bezier(.3,.8,.3,1); }
+/* The swing hangs from the lid rather than standing on its foot. */
+.card[data-anim="4"]:hover .card__cup { animation: cupSwing 1s ease-out; transform-origin: 50% 12%; }
+
+/* Whatever it is doing, it does it over its neighbours rather than under them. */
+.card:hover { z-index: 2; }
+.card { position: relative; }
+/* Motion off means off — the cards still highlight, they just do not move. */
+:root[data-motion="off"] .card .card__cup { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) .card .card__cup { animation: none !important; }
+}
+.card__cup { inline-size: auto; block-size: 132px; display: block; }
+.card__name { font-size: var(--small); font-weight: 500; margin: 0; text-align: center; }
+.card__price {
+  margin: 0; font-size: var(--micro); letter-spacing: .1em;
+  color: var(--fg-dim); font-variant-numeric: tabular-nums;
+}
+.card__price--unset { color: var(--accent); }
+.lineup .pending { margin-block-start: 1.4rem; }
+
+@media (max-width: 40rem) {
+  .cards { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); }
+  .card__stage, .card__cup { block-size: 108px; }
+}
+/* ---- the shop on the menu ---- */
+
+.filter {
+  display: grid; gap: 1rem;
+  padding-block: 1.6rem 0;
+}
+@media (min-width: 48rem) { .filter { grid-template-columns: auto auto 1fr; gap: 1.4rem 2.4rem; align-items: start; } }
+.filter__group { display: grid; gap: .5rem; justify-items: start; }
+.filter__group .micro { color: var(--fg-dim); }
+
+/* The filter chips are buttons, so they get a real target height. The plain
+   .chip beside them is a list item and stays as it is. */
+.chip--btn {
+  display: inline-flex; align-items: center; min-block-size: 40px;
+  cursor: pointer; font-family: inherit; background: none;
+  color: var(--fg-dim); transition: color calc(.15s * var(--motion)) ease,
+                                    border-color calc(.15s * var(--motion)) ease;
+}
+.chip--btn:hover { color: var(--fg); border-color: var(--fg-dim); }
+.chip--btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.chip--btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The band toggle sits in a .field on the engraving page, and a grid item with
+   width auto stretches — which turned a chip into a full-width pill. Sizing it
+   to its content lets whatever contains it do the aligning: start inside the
+   form, centred under the cup on the home page. */
+[data-band-toggle] {
+  inline-size: fit-content; margin-block-start: .35rem;
+  display: inline-flex; align-items: center; min-block-size: 40px;
+}
+
+/* The turn-and-zoom hint belongs under the cup, not stretched across the whole
+   column with the page gutter for a margin. */
+.cuphint {
+  text-align: center; margin-block-start: .9rem;
+  max-inline-size: 34ch; margin-inline: auto;
+}
+
+.card__add {
+  margin-block-start: .1rem; inline-size: 100%;
+  min-block-size: 36px;
+  border: 1px solid var(--line); background: none; color: var(--fg-dim);
+  font-family: inherit; font-size: var(--micro); letter-spacing: .1em;
+  text-transform: uppercase; padding: .4rem .5rem; cursor: pointer;
+  transition: border-color calc(.15s * var(--motion)) ease, color calc(.15s * var(--motion)) ease;
+}
+html[lang="ar"] .card__add { text-transform: none; letter-spacing: 0; }
+.card__add:hover { color: var(--fg); border-color: var(--fg-dim); }
+.card.is-picked { border-color: var(--accent); }
+.card.is-picked .card__add { border-color: var(--accent); color: var(--accent); }
+
+/* The tray sits above the dock, and above the two corner buttons with it. */
+.tray {
+  position: fixed; inset-block-end: calc(1.2rem + 58px); inset-inline: 0; z-index: 55;
+  display: flex; justify-content: center; padding-inline: 1rem; pointer-events: none;
+}
+.tray[hidden] { display: none; }
+.tray__in {
+  pointer-events: auto; display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .5rem .5rem 1.1rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-2) 94%, transparent);
+  backdrop-filter: blur(14px);
+}
+.tray__count { margin: 0; font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+html[lang="ar"] .tray__count { text-transform: none; letter-spacing: 0; }
+@media (max-width: 52rem) {
+  .tray { inset-block-end: calc(4.5rem + .6rem); }
+  .tray__in { inline-size: 100%; justify-content: space-between; }
+}
+
+/* ---- the proof table ----
+   The heat test renders a real <table> and nothing was styling it, so it came
+   out as raw browser default: cramped, unaligned, and with the numbers in a
+   proportional face. Numbers are the point of this table, so they are tabular,
+   right-aligned and given the room to be compared down the column. */
+.tablewrap { inline-size: 100%; overflow-x: auto; }
+.tablewrap table {
+  inline-size: 100%; border-collapse: collapse;
+  font-size: var(--small); min-inline-size: 34rem;
+}
+.tablewrap th, .tablewrap td {
+  padding: .75rem .9rem; text-align: start;
+  border-block-end: 1px solid var(--line); vertical-align: baseline;
+}
+.tablewrap th {
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .16em;
+  color: var(--fg-dim); font-weight: 500; white-space: nowrap;
+  border-block-end: 2px solid var(--accent);
+}
+html[lang="ar"] .tablewrap th { text-transform: none; letter-spacing: 0; }
+.tablewrap td.num, .tablewrap th.num {
+  text-align: end; font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum"; white-space: nowrap;
+}
+/* The contents column is the one being proved, so it carries the weight. */
+.tablewrap tr td:nth-child(3) { color: var(--accent); font-weight: 600; }
+.tablewrap tr:last-child td { border-block-end: 0; }
+.tablewrap tr td:first-child { color: var(--fg-dim); font-variant-numeric: tabular-nums; }
+.tablewrap tr td:last-child { color: var(--fg-dim); font-size: var(--micro); }
+
+/* The two halves of the proof sit side by side on a wide screen: the readings
+   on one side, the cars on the other, so the section reads as one piece of
+   evidence rather than two stacked lists. */
+.proofgrid { display: grid; gap: clamp(1.6rem, 4vw, 3rem); inline-size: 100%; }
+/* Grid items default to min-width: auto, so the heat table's 34rem minimum was
+   pushing its column wider than the phone instead of letting .tablewrap scroll
+   inside it. On a 390px screen the column measured 544px and the frame simply
+   clipped it. */
+.proofgrid > * { min-inline-size: 0; }
+@media (min-width: 62rem) { .proofgrid { grid-template-columns: 1.15fr .85fr; align-items: start; } }
+.proofgrid__h {
+  font-size: var(--lede); font-weight: 600; margin: 0 0 1rem;
+  letter-spacing: -.01em;
+}
+/* The list of cars is long now, so it scrolls in place rather than setting the
+   height of the whole section against a six-row table beside it. */
+@media (min-width: 62rem) {
+  .proofgrid [data-fit] { max-block-size: 30rem; overflow-y: auto; scrollbar-width: thin; }
+}
+
+/* One car per row, laid out rather than written as a sentence: the name at
+   reading size, the years small and dim beside it, the verdict as a tag at the
+   end carrying the colour, and the caveat under all three. The verdict is what
+   the eye is scanning for, so it is the only part with a fill. */
+.claims { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+.claims li {
+  display: grid; align-items: baseline; gap: .1rem .6rem;
+  grid-template-columns: 1fr auto;
+  padding-block: .7rem; border-block-end: 1px solid var(--line);
+}
+.claims li:last-child { border-block-end: 0; }
+.claims__car { font-size: var(--small); font-weight: 500; }
+.claims__years {
+  grid-column: 1; grid-row: 2;
+  font-size: var(--micro); color: var(--fg-dim); font-variant-numeric: tabular-nums;
+}
+.claims__verdict {
+  grid-column: 2; grid-row: 1 / span 2; align-self: center;
+  font-size: var(--micro); text-transform: uppercase; letter-spacing: .12em;
+  padding: .25rem .6rem; border-radius: 999px; white-space: nowrap;
+  border: 1px solid currentColor;
+}
+html[lang="ar"] .claims__verdict { text-transform: none; letter-spacing: 0; }
+.claims__verdict[data-v="fits"]  { color: var(--v-fits); }
+.claims__verdict[data-v="tight"] { color: var(--v-tight); }
+.claims__verdict[data-v="no"]    { color: var(--v-no); }
+.claims__note {
+  grid-column: 1 / -1; grid-row: 3;
+  font-size: var(--micro); color: var(--fg-dim); margin-block-start: .2rem;
+}

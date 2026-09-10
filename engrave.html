@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-t-title="eng.title">Engraving — cup.kw</title>
+<meta name="description" content="Type your name in Arabic or English and watch it land on the cup, in any of the fourteen Sadu colours.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/cup.css">
+<link rel="stylesheet" href="assets/css/experience.css">
+</head>
+<body>
+
+<a class="skip" href="#main" data-t="nav.skip">Skip to content</a>
+
+<header class="top">
+  <button type="button" class="burger" data-burger>
+    <span class="burger__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span data-t="nav.menu">Menu</span>
+  </button>
+  <a class="mark" href="index.html">cup<b>.kw</b></a>
+  <span class="top__end">
+    <a class="btn btn--ghost" href="reserve.html" data-t="nav.reserve">Your cup</a>
+  </span>
+</header>
+
+<main id="main" class="frame glow">
+  <div class="frame__in split">
+
+    <div>
+      <div data-cup3d data-face="idle" data-height="440"
+           aria-label="A three-dimensional model of the cup showing your engraving. Drag to turn it."></div>
+      <p class="micro cuphint" data-t="home.cup.hint"></p>
+    </div>
+
+    <form id="engform" class="stack" novalidate style="gap:1.4rem;width:100%">
+      <p class="micro" data-t="f.eng.label">Engraving</p>
+      <h1 class="display display--2" data-t="eng.h1">Put your name on it.</h1>
+
+      <div class="field" style="width:100%">
+        <label for="engin" data-t="eng.label">What it should say</label>
+        <input id="engin" type="text" maxlength="40" autocomplete="off"
+               placeholder="Your name" data-t-attr="placeholder:eng.placeholder">
+        <p class="hint"><span class="counter" id="count">16</span>
+           <span data-t="eng.left">characters left</span></p>
+      </div>
+
+      <fieldset class="field" style="margin:0">
+        <legend data-t="eng.script">Script</legend>
+        <div class="scripttoggle">
+          <label class="swatch"><input type="radio" name="script" value="latin" checked>
+            <span data-t="eng.latin">Latin</span></label>
+          <label class="swatch"><input type="radio" name="script" value="arabic">
+            <span data-t="eng.arabic">Arabic</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field" style="margin:0;max-inline-size:none">
+        <legend data-t="eng.colour">Colour</legend>
+        <div class="palette" data-swatches="colour" data-drives-cup></div>
+        <p class="swatchname" data-swatchname></p>
+        <button type="button" class="chip chip--btn" data-band-toggle aria-pressed="true"></button>
+      </fieldset>
+
+      <!-- The warning a person needs BEFORE committing to something permanent. -->
+      <p class="notice" id="arwarn" hidden data-t="eng.warn.ar"></p>
+      <p class="note" data-t="eng.warn.perm">An engraving is permanent.</p>
+
+      <a class="btn" href="reserve.html" id="savebtn">
+        <span data-t="eng.save">Save this to my cup</span><span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </form>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="foot__in">
+    <p class="mark" style="font-size:1.4rem">cup<b>.kw</b></p>
+    <p class="micro"><a href="https://github.com/Smart1po/cup-kw" rel="noopener" data-t="foot.source">Source on GitHub</a></p>
+  </div>
+</footer>
+
+<script src="assets/js/content.js"></script>
+<script src="assets/js/experience.js"></script>
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/cup3d.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/nav.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/intro.js"></script>
+<script src="assets/js/chat.js"></script>
+<script src="assets/js/engrave.js"></script>
+</body>
+</html>
