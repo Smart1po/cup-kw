@@ -1000,6 +1000,71 @@ html[lang="ar"] .card__line { text-transform: none; letter-spacing: 0; }
 .filter__group { display: grid; gap: .5rem; justify-items: start; }
 .filter__group .micro { color: var(--fg-dim); }
 
+/* ---- features, behind a funnel ---- */
+
+/* The funnel anchors its own panel, so the panel follows the button when the
+   bar wraps to a second line. */
+.filter__group--menu { position: relative; align-content: start; }
+
+.filterbtn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  min-block-size: 40px; padding: .3rem .8rem;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: none; color: var(--fg-dim); cursor: pointer;
+  font-family: inherit; font-size: var(--micro);
+  letter-spacing: .12em; text-transform: uppercase;
+  transition: color calc(.15s * var(--motion)) ease,
+              border-color calc(.15s * var(--motion)) ease;
+}
+html[lang="ar"] .filterbtn { text-transform: none; letter-spacing: 0; }
+.filterbtn:hover { color: var(--fg); border-color: var(--fg-dim); }
+.filterbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Lit rather than filled: the funnel is a way in, not a choice, and filling it
+   the way a chosen chip fills would claim it was one. */
+.filterbtn.is-on { border-color: var(--accent); color: var(--accent); }
+
+.funnel { inline-size: 15px; block-size: 15px; flex: none; }
+
+/* How many are on, without opening it. */
+.filterbtn__n {
+  min-inline-size: 1.15rem; padding-inline: .25rem; border-radius: 999px;
+  background: var(--accent); color: var(--accent-fg);
+  letter-spacing: 0; text-align: center; font-variant-numeric: tabular-nums;
+}
+
+.filterpop {
+  position: absolute; z-index: 5;
+  inset-block-start: calc(100% + .5rem); inset-inline-start: 0;
+  /* Wide enough for its chips and no wider, and never wider than the gutter
+     allows — max-content on its own came out 676px and hung off the edge. */
+  inline-size: max-content;
+  max-inline-size: min(22rem, calc(100vw - 2 * var(--bleed)));
+  padding: .85rem; border: 1px solid var(--line); background: var(--bg-2);
+  display: grid; gap: .7rem; justify-items: start;
+}
+.filterpop[hidden] { display: none; }
+.filterpop .chips { margin: 0; }
+.filterpop__clear {
+  min-block-size: 32px; padding: .2rem .1rem;
+  border: 0; background: none; color: var(--fg-dim); cursor: pointer;
+  font-family: inherit; font-size: var(--micro);
+  letter-spacing: .12em; text-transform: uppercase;
+  transition: color calc(.15s * var(--motion)) ease;
+}
+html[lang="ar"] .filterpop__clear { text-transform: none; letter-spacing: 0; }
+.filterpop__clear:hover { color: var(--accent); }
+.filterpop__clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* On a phone every group is its own full-width row and the funnel starts the
+   row, so the panel hangs from where the button is. From 48rem the bar is a
+   wrapping row and the funnel is the last thing in it — against the end of
+   the line — so the panel has to open back towards the middle or it leaves
+   the screen. Logical properties, so this is the right edge in English and
+   the left one in Arabic without a second rule. */
+@media (min-width: 48rem) {
+  .filterpop { inset-inline-start: auto; inset-inline-end: 0; }
+}
+
 /* The filter chips are buttons, so they get a real target height. The plain
    .chip beside them is a list item and stays as it is. */
 .chip--btn {

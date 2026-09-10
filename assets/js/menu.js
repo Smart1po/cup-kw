@@ -23,6 +23,7 @@
   var anim = 0;
   var picked = [];
   var filters = { line: 'all', cap: 'all', feats: [] };
+  var featOpen = false;
 
   function lang() { return window.cupLang ? window.cupLang() : 'en'; }
   function t(k) { return window.cupT ? window.cupT(k) : k; }
@@ -248,17 +249,102 @@
       });
     }));
 
+    featuresMenu(host, cat);
+  }
+
+  /* ---- features, behind a funnel --------------------------------------- */
+
+  /* Kind and Capacity are one answer each and read well as a row of chips.
+     Features are a set you combine, and six of them laid out flat were the
+     widest thing on the page — the row that pushed everything else down.
+     Behind a funnel they cost one control, and the count on it says how many
+     are on without opening anything. */
+  function funnel() {
+    return '<svg class="funnel" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+           'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+           '<path d="M3 4h18l-7 8.5v7.5l-4 2.5v-10z"/></svg>';
+  }
+
+  function closeFeats(focusBtn) {
+    if (!featOpen) return;
+    featOpen = false;
+    var pop = document.querySelector('.filterpop');
+    var btn = document.querySelector('.filterbtn');
+    if (pop) pop.hidden = true;
+    if (btn) {
+      btn.setAttribute('aria-expanded', 'false');
+      if (focusBtn) btn.focus();
+    }
+  }
+
+  function featuresMenu(host, cat) {
     var feats = [];
     cat.lines.forEach(function (l) {
       l.features.forEach(function (f) { if (feats.indexOf(f) < 0) feats.push(f); });
     });
-    group(host, t('shop.features'), feats.map(function (f) {
-      return chip(t('feat.' + f), filters.feats.indexOf(f) > -1, function () {
+    if (!feats.length) return;
+
+    var label = t('shop.features');
+    var on = filters.feats.length;
+
+    var g = document.createElement('div');
+    g.className = 'filter__group filter__group--menu';
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'filterbtn' + (on ? ' is-on' : '');
+    btn.setAttribute('aria-haspopup', 'true');
+    btn.setAttribute('aria-expanded', String(featOpen));
+    btn.setAttribute('aria-controls', 'featpop');
+    btn.innerHTML = funnel() + '<span>' + label + '</span>' +
+      (on ? '<span class="filterbtn__n">' + on + '</span>' : '');
+    /* Opening does not rebuild the bar, so the button keeps focus. Only a
+       choice inside rebuilds, and that puts focus back on the chip chosen. */
+    btn.addEventListener('click', function () {
+      featOpen = !featOpen;
+      pop.hidden = !featOpen;
+      btn.setAttribute('aria-expanded', String(featOpen));
+    });
+
+    var pop = document.createElement('div');
+    pop.className = 'filterpop';
+    pop.id = 'featpop';
+    pop.hidden = !featOpen;
+    pop.setAttribute('role', 'group');
+    pop.setAttribute('aria-label', label);
+
+    var row = document.createElement('div');
+    row.className = 'chips';
+    feats.forEach(function (f) {
+      var c = chip(t('feat.' + f), filters.feats.indexOf(f) > -1, function () {
         var i = filters.feats.indexOf(f);
         if (i > -1) filters.feats.splice(i, 1); else filters.feats.push(f);
         buildFilters(cat); apply();
+        var again = document.querySelector('.filterpop [data-feat="' + f + '"]');
+        if (again) again.focus();
       });
-    }));
+      c.setAttribute('data-feat', f);
+      row.appendChild(c);
+    });
+    pop.appendChild(row);
+
+    if (on) {
+      var clear = document.createElement('button');
+      clear.type = 'button';
+      clear.className = 'filterpop__clear';
+      clear.textContent = t('shop.clear');
+      clear.addEventListener('click', function () {
+        filters.feats = [];
+        buildFilters(cat); apply();
+        var b = document.querySelector('.filterbtn');
+        if (b) b.focus();
+      });
+      pop.appendChild(clear);
+    }
+
+    g.appendChild(btn);
+    g.appendChild(pop);
+    host.appendChild(g);
   }
 
   /* ---- the tray -------------------------------------------------------- */
@@ -339,6 +425,11 @@
   }
 
   document.addEventListener('click', function (e) {
+    /* Before anything else: a click anywhere outside the funnel closes it,
+       including one that also puts a cup aside. */
+    if (featOpen && !(e.target.closest && e.target.closest('.filter__group--menu'))) {
+      closeFeats(false);
+    }
     var add = e.target.closest && e.target.closest('[data-add]');
     if (add) {
       var key = add.getAttribute('data-add');
@@ -350,6 +441,12 @@
     if (e.target.closest && e.target.closest('[data-tray-clear]')) {
       picked = []; save(); paintTray();
     }
+  });
+
+  /* Escape closes it and hands focus back to the funnel, the same bargain the
+     burger menu makes. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeFeats(true);
   });
 
   load();
