@@ -1510,3 +1510,38 @@ html[dir="rtl"] .quest__arw span { display: inline-block; scale: -1 1; }
 
 /* The two toggles under the colour row on the engraving page. */
 .cuptoggles { display: flex; flex-wrap: wrap; gap: .4rem; margin-block-start: .5rem; }
+
+/* ---- the account: details beside the orders ---- */
+
+/* Stacked on a phone, side by side once there is room for two readable
+   columns. The details are four short lines that rarely change; the orders
+   are the part with something new in it, so they take the wider column. */
+.acctlay { display: grid; gap: 1.6rem; inline-size: 100%; }
+@media (min-width: 64rem) {
+  .acctlay { grid-template-columns: minmax(17rem, 22rem) 1fr; gap: 2.6rem; align-items: start; }
+  /* The details are short and the orders are long; letting the left column
+     stay put means it is still there when you have scrolled into last
+     month's orders. */
+  .acctlay .acct--me { position: sticky; inset-block-start: 1.5rem; }
+}
+.acctlay .acct { margin: 0; }
+
+.acct__top {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap; margin-block-end: 1rem;
+}
+.acct__top .acct__h { margin: 0; }
+.btn--sm { padding: .35rem .8rem; min-block-size: 34px; font-size: var(--micro); }
+.acct__btns { display: flex; gap: .5rem; flex-wrap: wrap; margin-block-start: .4rem; }
+
+/* Locked, a field is a line of text under a label rather than a box asking
+   to be filled in. The only thing that changes when it unlocks is the rule
+   under it coming back, so nothing moves between the two states and the
+   column does not reflow while you are reading it. */
+.acct--me input[readonly] {
+  border-block-end-color: transparent;
+  cursor: default;
+}
+/* The email is flat in both states, because it is never editable — and dim,
+   so it does not read as something the edit button will open up. */
+.acct--me #a-email { color: var(--fg-dim); }

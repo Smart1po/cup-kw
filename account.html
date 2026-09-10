@@ -41,33 +41,56 @@
 
         <p class="notice" id="msg" hidden></p>
 
-        <section class="acct">
-          <h2 class="acct__h" data-t="acct.details">Your details</h2>
-          <form id="acctform" novalidate>
-            <div class="field">
-              <label for="a-name" data-t="auth.fullname">Full name</label>
-              <input id="a-name" name="full_name" type="text" autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="a-email" data-t="auth.email">Email</label>
-              <input id="a-email" type="email" autocomplete="email" readonly>
-            </div>
-            <div class="field">
-              <label for="a-phone" data-t="auth.phone">Phone number</label>
-              <input id="a-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel">
-            </div>
-            <div class="field">
-              <label for="a-area" data-t="auth.area">Area</label>
-              <input id="a-area" name="area" type="text" autocomplete="address-level2">
-            </div>
-            <button type="submit" class="btn" id="acctsave" data-t="acct.save">Save changes</button>
-          </form>
-        </section>
+        <!-- Details beside the orders, not above them. The details are four
+             short lines that never change; the orders are the part with
+             something new in it, so they get the wider column. -->
+        <div class="acctlay">
 
-        <section class="acct">
-          <h2 class="acct__h" data-t="acct.orders">Your orders</h2>
-          <div data-orders></div>
-        </section>
+          <!-- Read-only until asked otherwise. A form that is always live
+               invites an accidental edit, and there is nothing on this screen
+               anybody needs to change most visits. -->
+          <section class="acct acct--me">
+            <div class="acct__top">
+              <h2 class="acct__h" data-t="acct.details">Your details</h2>
+              <button type="button" class="btn btn--ghost btn--sm" id="editbtn"
+                      data-t="acct.edit">Edit my profile</button>
+            </div>
+
+            <form id="acctform" novalidate>
+              <div class="field">
+                <label for="a-name" data-t="auth.fullname">Full name</label>
+                <input id="a-name" name="full_name" type="text" autocomplete="name" readonly>
+              </div>
+              <div class="field">
+                <label for="a-email" data-t="auth.email">Email</label>
+                <!-- Never editable, in either state. Changing the address on an
+                     account is changing the way back into it, and doing that
+                     properly needs a confirmation sent to both addresses. -->
+                <input id="a-email" type="email" autocomplete="email" readonly>
+                <p class="hint" data-t="acct.emailfixed">Your email is how you get back in, so it is not editable here.</p>
+              </div>
+              <div class="field">
+                <label for="a-phone" data-t="auth.phone">Phone number</label>
+                <input id="a-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" readonly>
+              </div>
+              <div class="field">
+                <label for="a-area" data-t="auth.area">Area</label>
+                <input id="a-area" name="area" type="text" autocomplete="address-level2" readonly>
+              </div>
+
+              <div class="acct__btns" id="acctbtns" hidden>
+                <button type="submit" class="btn" id="acctsave" data-t="acct.save">Save changes</button>
+                <button type="button" class="btn btn--ghost" id="acctcancel" data-t="co.cancel">Cancel</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="acct acct--orders">
+            <h2 class="acct__h" data-t="acct.orders">Your orders</h2>
+            <div data-orders></div>
+          </section>
+
+        </div>
       </div>
     </div>
 

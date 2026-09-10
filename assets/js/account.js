@@ -17,7 +17,13 @@
 
   var msg = document.getElementById('msg');
   var save = document.getElementById('acctsave');
+  var editBtn = document.getElementById('editbtn');
+  var cancelBtn = document.getElementById('acctcancel');
+  var btns = document.getElementById('acctbtns');
   var meta = {};
+
+  /* The three that can be edited. Email is not among them in either state. */
+  var EDITABLE = ['a-name', 'a-phone', 'a-area'];
 
   function t(k) { return window.cupT ? window.cupT(k) : k; }
   function lang() { return window.cupLang ? window.cupLang() : 'en'; }
@@ -41,6 +47,31 @@
     if (hello && meta.full_name) hello.textContent = meta.full_name;
   }
 
+  /* Locked is the resting state. A form that is always live invites an
+     accidental edit, and most visits to this page are to look at an order
+     rather than to change a phone number. */
+  function setEditing(on) {
+    EDITABLE.forEach(function (id) {
+      document.getElementById(id).readOnly = !on;
+    });
+    form.classList.toggle('is-editing', on);
+    btns.hidden = !on;
+    editBtn.hidden = on;
+    if (on) document.getElementById('a-name').focus();
+  }
+
+  editBtn.addEventListener('click', function () {
+    msg.hidden = true;
+    setEditing(true);
+  });
+
+  /* Cancel puts back what was last saved rather than what was last typed. */
+  cancelBtn.addEventListener('click', function () {
+    fillForm(document.getElementById('a-email').value);
+    setEditing(false);
+    msg.hidden = true;
+  });
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     save.disabled = true;
@@ -52,11 +83,14 @@
     meta.area = document.getElementById('a-area').value.trim();
     B.saveUser(meta).then(function () {
       save.disabled = false;
+      setEditing(false);
       say('acct.saved', true);
       var hello = document.getElementById('hello');
       if (hello && meta.full_name) hello.textContent = meta.full_name;
     }).catch(function (err) {
       save.disabled = false;
+      /* Stay in edit mode on a failure — dropping somebody back to a locked
+         form after losing their change is the worst of both. */
       say(err && err.key ? err.key : 'auth.err.network');
     });
   });
@@ -150,6 +184,7 @@
     B.getUser().then(function (u) {
       meta = u.meta || {};
       fillForm(u.email);
+      setEditing(false);
       renderOrders();
     }).catch(function (err) {
       say(err && err.key ? err.key : 'auth.err.network');
