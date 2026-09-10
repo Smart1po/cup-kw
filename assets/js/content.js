@@ -179,8 +179,7 @@ window.CUP_CONTENT = {
       { make: 'Bentley',       model: 'Bentayga',       years: '2020-2025', fits: 'tight', note: 'Fits, but the lid fouls the armrest.' },
       { make: 'Lexus',         model: 'ES',             years: '2019-2024', fits: 'tight', note: 'Goes in, comes out slowly.' },
       { make: 'Toyota',        model: 'Camry',          years: '2018-2024', fits: true,    note: '' },
-      { make: 'Hyundai',       model: 'Sonata',         years: '2020-2024', fits: 'tight', note: 'Sits proud of the console lip.' },
-      { make: 'Mini',          model: 'Cooper',         years: '2014-2022', fits: false,   note: 'Holder is 65 mm. The cup is 70.' }
+      { make: 'Hyundai',       model: 'Sonata',         years: '2020-2024', fits: 'tight', note: 'Sits proud of the console lip.' }
     ],
     baseDiameterMm: 70
   },

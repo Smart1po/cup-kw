@@ -35,6 +35,23 @@
   --accent:    #C9A87C;          /* replaced by theme.js from the visitor's pick */
   --accent-fg: #16233D;
 
+  /* The accent set used for spec rules and fit verdicts. These have to be
+     tokens rather than literals because the page has two grounds: every value
+     below is measured against the night navy, and the same value on the day
+     cream runs 1.78-2.03:1 — the off-white one is 1.00, i.e. invisible. The
+     light overrides further down are the same hues taken dark enough to pass.
+     Night, against #101A2E: 8.15 / 7.36 / 8.05 and 7.75 / 8.15 / 7.15 / 7.36 /
+     5.62 / 14.50. */
+  --v-fits:  #A9B69C;
+  --v-tight: #D5A02E;
+  --v-no:    #E0A0A4;
+  --c1: #C9A87C;
+  --c2: #A9B69C;
+  --c3: #90A9C2;
+  --c4: #D5A02E;
+  --c5: #B08D57;
+  --c6: #F2EAD8;
+
   --face-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
                   "Helvetica Neue", Arial, sans-serif;
   --face-arabic:  "Segoe UI", "Dubai", "Geeza Pro", "Noto Naskh Arabic",
@@ -61,6 +78,18 @@
   --fg-dim:    #5A6478;
   --line:      #DCCFB4;
   --accent-fg: #FFFFFF;
+
+  /* Same hues, taken dark enough to carry on cream. Against #F2EAD8:
+     7.88 / 5.78 / 7.57 and 5.28 / 7.88 / 6.91 / 5.78 / 7.08 / 13.07. */
+  --v-fits:  #3F4A2B;
+  --v-tight: #7A5200;
+  --v-no:    #8C1D24;
+  --c1: #7A5A2A;
+  --c2: #3F4A2B;
+  --c3: #2A5270;
+  --c4: #7A5200;
+  --c5: #63481F;
+  --c6: #16233D;
 }
 
 @media (prefers-color-scheme: light) {
@@ -195,6 +224,10 @@ html[dir="rtl"] .btn:hover .arrow { transform: scaleX(-1) translateX(4px); }
 
 .top__end { grid-column: 3; justify-self: end; display: flex; gap: .5rem; align-items: center; }
 
+/* 40px minimum on the header controls too. The burger was 31px tall and the
+   wordmark 29 — both under any touch-target guideline, and the wordmark is the
+   way back to the home page from every other screen. */
+.burger, .top .mark { min-block-size: 40px; display: inline-flex; align-items: center; }
 .burger {
   grid-column: 1; justify-self: start;
   display: inline-flex; align-items: center; gap: .7rem;
@@ -273,21 +306,20 @@ html[dir="rtl"] .stack { justify-items: start; }
   max-inline-size: 62rem; margin-inline: auto;
   text-align: center; justify-items: center;
 }
-/* Each fact gets its own rule colour. Six of them, cycled with nth-child, every
-   one measured against the navy ground: camel 6.99, brass 5.06, off-white
-   13.07, sage 7.35, slate 6.44, mustard 6.63. The Sadu maroon is not among them
-   on purpose — it is 1.73 here and would read as a dark smudge. */
+/* Each fact gets its own rule colour, cycled with nth-child from the --c1..--c6
+   tokens so both schemes are covered. The Sadu maroon is not among them on
+   purpose — it is 1.73 on the night ground and would read as a dark smudge. */
 .facts li {
   display: grid; gap: .4rem; align-content: start; justify-items: center;
   padding-block: 1.1rem; border-block-start: 2px solid var(--rule, var(--line));
   inline-size: 100%;
 }
-.facts li:nth-child(6n+1) { --rule: #C9A87C; }
-.facts li:nth-child(6n+2) { --rule: #A9B69C; }
-.facts li:nth-child(6n+3) { --rule: #90A9C2; }
-.facts li:nth-child(6n+4) { --rule: #D5A02E; }
-.facts li:nth-child(6n+5) { --rule: #B08D57; }
-.facts li:nth-child(6n+6) { --rule: #F2EAD8; }
+.facts li:nth-child(6n+1) { --rule: var(--c1); }
+.facts li:nth-child(6n+2) { --rule: var(--c2); }
+.facts li:nth-child(6n+3) { --rule: var(--c3); }
+.facts li:nth-child(6n+4) { --rule: var(--c4); }
+.facts li:nth-child(6n+5) { --rule: var(--c5); }
+.facts li:nth-child(6n+6) { --rule: var(--c6); }
 .facts dt, .facts .k { font-size: var(--micro); text-transform: uppercase; letter-spacing: .2em; color: var(--fg-dim); }
 html[lang="ar"] .facts .k { text-transform: none; letter-spacing: 0; }
 /* The number is the point of the row, so it is set at display weight and takes
@@ -340,7 +372,13 @@ fieldset.field { border: 0; margin-inline: 0; padding: 0; }
   justify-items: center; text-align: center;
 }
 .foot__in .stack { justify-items: center; }
-.foot a { color: var(--fg-dim); text-decoration: none; }
+/* The footer links were 12px tall — the contact handles and the source link,
+   which are the only outbound routes on the page. Padded to a real target
+   without changing how they look. */
+.foot a {
+  color: var(--fg-dim); text-decoration: none;
+  display: inline-flex; align-items: center; min-block-size: 40px;
+}
 .foot a:hover { color: var(--accent); }
 
 /* ---- motion ----

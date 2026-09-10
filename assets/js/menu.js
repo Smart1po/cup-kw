@@ -20,6 +20,7 @@
   'use strict';
 
   var KEY = 'cup.picked';
+  var anim = 0;
   var picked = [];
   var filters = { line: 'all', cap: 'all', feats: [] };
 
@@ -121,6 +122,16 @@
       '<div class="card__stage">' + cupSVG(item, line) + '</div>' +
       '<h3 class="card__name">' + pick(item) + '</h3>' + price +
       '<button type="button" class="card__add" data-add="' + key + '"></button>';
+
+    /* A different move each time a cup is picked up. The counter is shared
+       across the whole grid rather than per card, so going along a row cycles
+       through all five instead of replaying one card's move — and consecutive
+       hovers always differ, which is also what makes the animation restart at
+       all: an identical value would not re-trigger the rule. */
+    el.addEventListener('mouseenter', function () {
+      el.setAttribute('data-anim', String(anim % 5));
+      anim++;
+    });
     return el;
   }
 

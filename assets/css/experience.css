@@ -30,7 +30,7 @@
      was aimed at. Only the skip button needs to be hittable itself. */
   pointer-events: none;
 }
-.intro__skip { pointer-events: auto; }
+.intro__skip { min-block-size: 44px; display: inline-flex; align-items: center; pointer-events: auto; }
 .intro.is-out {
   /* The curtain lifts rather than fading — the page is already behind it. */
   clip-path: inset(0 0 100% 0);
@@ -601,28 +601,67 @@ html[lang="ar"] .shot figcaption { text-transform: none; letter-spacing: 0; }
 /* Every scene's words are in the page from the start. The animation only
    decides which is foregrounded; with motion off the day reads as a list. */
 .show__script { position: relative; display: grid; gap: .2rem; }
+/* One hour at a time. Four scenes stacked at 30% opacity was four things to
+   read at once and none of them comfortably: the eye kept going to the dim ones
+   to check whether they mattered. Only the current scene is shown, and because
+   the track is scrollable and the controls are right there, the others are one
+   swipe away rather than hidden behind an animation.
+
+   The rule this file was built to still holds. Every scene's words are in the
+   DOM from the start, and with motion off the whole day reads as a list — so
+   nothing is ever visible only because an animation ran. */
+/* Centred under the stage. The scene used to sit left with an accent rule down
+   its edge, which read correctly as one item marked out of a list of four. With
+   only one hour on screen there is no list to mark, so the rule goes and the
+   block centres under the picture it belongs to. */
 .show__scene {
-  padding: .8rem 0 .8rem 1rem; opacity: .3;
-  border-inline-start: 2px solid transparent;
-  transition: opacity calc(.4s * var(--motion)) ease;
+  padding: .8rem 0;
+  display: none;
+  text-align: center;
 }
-.show__scene.is-on { opacity: 1; border-inline-start-color: var(--accent); }
-:root[data-motion="off"] .show__scene { opacity: 1; }
+.show__scene.is-on {
+  display: block;
+  animation: sceneIn calc(.4s * var(--motion)) ease both;
+}
+@keyframes sceneIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+:root[data-motion="off"] .show__scene { display: block; opacity: 1; animation: none; }
+:root[data-motion="off"] .show__scene:not(.is-on) { opacity: .55; }
+/* Centred text wants its controls centred under it too. */
+.show__controls { justify-content: center; }
+/* The block does not resize as you move between hours of different length, and
+   the line does not run the full width of the stage above it. Stacking the show
+   handed this column 1326px, which measured 172 characters on the body copy —
+   roughly two and a half times a comfortable line. */
+.show__script { min-block-size: 8rem; }
+.show__scene > * { max-inline-size: 62ch; margin-inline: auto; }
 .show__time { font-size: var(--micro); letter-spacing: .2em; color: var(--accent); font-variant-numeric: tabular-nums; direction: ltr; margin: 0 0 .2em; }
 .show__h { font-size: var(--lede); margin: 0 0 .2em; font-weight: 700; }
 .show__b { margin: 0; color: var(--fg-dim); font-size: var(--small); }
 
 .show__controls { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .show__controls .chip {
+  display: inline-flex; align-items: center; min-block-size: 40px;
   font: inherit; font-size: var(--micro); text-transform: uppercase; letter-spacing: .18em;
   background: none; color: var(--fg-dim); border: 1px solid var(--line);
   padding: .55rem 1rem; cursor: pointer;
 }
 html[lang="ar"] .show__controls .chip { text-transform: none; letter-spacing: 0; }
 .show__controls .chip:hover { border-color: var(--accent); color: var(--accent); }
-.show__dots { display: flex; gap: .3rem; margin-inline: .4rem; }
-.show__dot { inline-size: 22px; block-size: 2px; padding: 0; border: 0; background: var(--line); cursor: pointer; }
-.show__dot.is-on { background: var(--accent); }
+.show__dots { display: flex; gap: .1rem; margin-inline: .4rem; }
+/* The mark stays a 22x2 line; the button around it is 22x24. Padding plus
+   background-clip means the thing you aim at is twelve times the height of the
+   thing you see, which is the whole trick — a 2px tap target was unusable on a
+   phone and awkward with a mouse. */
+.show__dot {
+  inline-size: 34px; block-size: 34px; padding: 16px 6px; border: 0;
+  background: var(--line); background-clip: content-box;
+  cursor: pointer;
+}
+.show__dot.is-on { background: var(--accent); background-clip: content-box; }
+.show__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* =========================================================================
    FURNITURE
@@ -654,7 +693,8 @@ html[lang="ar"] .show__controls .chip { text-transform: none; letter-spacing: 0;
 }
 .dock__list { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: .1rem; }
 .dock__link {
-  display: block; text-decoration: none; white-space: nowrap;
+  display: flex; align-items: center; min-block-size: 40px;
+  text-decoration: none; white-space: nowrap;
   padding: .5rem .85rem; border-radius: 999px;
   font-size: var(--micro); text-transform: uppercase; letter-spacing: .14em;
   color: var(--fg-dim);
@@ -669,8 +709,11 @@ html[lang="ar"] .dock__link { text-transform: none; letter-spacing: 0; }
 
 .dock__tools { display: flex; align-items: center; gap: .1rem; }
 .dock__sep { inline-size: 1px; block-size: 20px; background: var(--line); margin-inline: .35rem; }
+/* 40px minimum on everything in the bar. These were 29px tall, which is under
+   every touch-target guideline and fiddly with a mouse too. */
 .dock__tool {
   border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; min-block-size: 40px;
   padding: .5rem .7rem; border-radius: 999px;
   font-size: var(--micro); text-transform: uppercase; letter-spacing: .12em;
   color: var(--fg-dim); font-family: inherit; white-space: nowrap;
@@ -836,7 +879,29 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
               transform calc(.2s * var(--motion)) ease;
 }
 .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.card__stage { display: grid; place-items: center; block-size: 132px; }
+.card__stage { display: grid; place-items: center; block-size: 132px; perspective: 520px; }
+
+/* Five ways to pick a cup up. menu.js stamps data-anim on hover and steps a
+   shared counter, so each cup you touch moves differently from the last one.
+   transform-origin sits at the foot on the ones that lean, because a cup pivots
+   where it meets the table and not through its middle. */
+@keyframes cupTilt  { 0%{transform:none} 40%{transform:rotate(-5deg) translateY(-8px)} 100%{transform:none} }
+@keyframes cupTurn  { 0%{transform:none} 50%{transform:rotateY(38deg)} 100%{transform:none} }
+@keyframes cupBob   { 0%{transform:none} 30%{transform:translateY(-12px)} 55%{transform:translateY(0)} 75%{transform:translateY(-5px)} 100%{transform:none} }
+@keyframes cupSway  { 0%{transform:none} 25%{transform:rotate(4deg)} 60%{transform:rotate(-4deg)} 100%{transform:none} }
+@keyframes cupPop   { 0%{transform:none} 45%{transform:scale(1.09) translateY(-4px)} 100%{transform:none} }
+
+.card__cup { transform-origin: 50% 92%; }
+.card[data-anim="0"]:hover .card__cup { animation: cupTilt .55s cubic-bezier(.3,.7,.3,1); }
+.card[data-anim="1"]:hover .card__cup { animation: cupTurn .7s cubic-bezier(.4,0,.3,1); }
+.card[data-anim="2"]:hover .card__cup { animation: cupBob  .75s cubic-bezier(.3,.8,.3,1); }
+.card[data-anim="3"]:hover .card__cup { animation: cupSway .65s ease-in-out; }
+.card[data-anim="4"]:hover .card__cup { animation: cupPop  .5s cubic-bezier(.3,.9,.3,1); }
+/* Motion off means off — the cards still highlight, they just do not move. */
+:root[data-motion="off"] .card .card__cup { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="on"]) .card .card__cup { animation: none !important; }
+}
 .card__cup { inline-size: auto; block-size: 132px; display: block; }
 .card__name { font-size: var(--small); font-weight: 500; margin: 0; text-align: center; }
 .card__price {
@@ -860,7 +925,10 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
 .filter__group { display: grid; gap: .5rem; justify-items: start; }
 .filter__group .micro { color: var(--fg-dim); }
 
+/* The filter chips are buttons, so they get a real target height. The plain
+   .chip beside them is a list item and stays as it is. */
 .chip--btn {
+  display: inline-flex; align-items: center; min-block-size: 40px;
   cursor: pointer; font-family: inherit; background: none;
   color: var(--fg-dim); transition: color calc(.15s * var(--motion)) ease,
                                     border-color calc(.15s * var(--motion)) ease;
@@ -873,7 +941,10 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
    width auto stretches — which turned a chip into a full-width pill. Sizing it
    to its content lets whatever contains it do the aligning: start inside the
    form, centred under the cup on the home page. */
-[data-band-toggle] { inline-size: fit-content; margin-block-start: .35rem; }
+[data-band-toggle] {
+  inline-size: fit-content; margin-block-start: .35rem;
+  display: inline-flex; align-items: center; min-block-size: 40px;
+}
 
 /* The turn-and-zoom hint belongs under the cup, not stretched across the whole
    column with the page gutter for a margin. */
@@ -884,6 +955,7 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
 
 .card__add {
   margin-block-start: .1rem; inline-size: 100%;
+  min-block-size: 36px;
   border: 1px solid var(--line); background: none; color: var(--fg-dim);
   font-family: inherit; font-size: var(--micro); letter-spacing: .1em;
   text-transform: uppercase; padding: .4rem .5rem; cursor: pointer;
@@ -948,6 +1020,11 @@ html[lang="ar"] .tablewrap th { text-transform: none; letter-spacing: 0; }
    on one side, the cars on the other, so the section reads as one piece of
    evidence rather than two stacked lists. */
 .proofgrid { display: grid; gap: clamp(1.6rem, 4vw, 3rem); inline-size: 100%; }
+/* Grid items default to min-width: auto, so the heat table's 34rem minimum was
+   pushing its column wider than the phone instead of letting .tablewrap scroll
+   inside it. On a 390px screen the column measured 544px and the frame simply
+   clipped it. */
+.proofgrid > * { min-inline-size: 0; }
 @media (min-width: 62rem) { .proofgrid { grid-template-columns: 1.15fr .85fr; align-items: start; } }
 .proofgrid__h {
   font-size: var(--lede); font-weight: 600; margin: 0 0 1rem;
@@ -982,9 +1059,9 @@ html[lang="ar"] .tablewrap th { text-transform: none; letter-spacing: 0; }
   border: 1px solid currentColor;
 }
 html[lang="ar"] .claims__verdict { text-transform: none; letter-spacing: 0; }
-.claims__verdict[data-v="fits"]  { color: #A9B69C; }
-.claims__verdict[data-v="tight"] { color: #D5A02E; }
-.claims__verdict[data-v="no"]    { color: #E0A0A4; }
+.claims__verdict[data-v="fits"]  { color: var(--v-fits); }
+.claims__verdict[data-v="tight"] { color: var(--v-tight); }
+.claims__verdict[data-v="no"]    { color: var(--v-no); }
 .claims__note {
   grid-column: 1 / -1; grid-row: 3;
   font-size: var(--micro); color: var(--fg-dim); margin-block-start: .2rem;
