@@ -9,9 +9,12 @@
    of the site makes — a drawn thing that is honest beats a photograph that does
    not exist.
 
-   Filters act on lines rather than items because everything that can be filtered
-   — body, capacity, features — is a property of the line, and every item in a
-   line shares it. Filtering per card would be the same answer with more code.
+   Kind, capacity and features are properties of the LINE — every item in a line
+   shares them — so those three ask the line and every card in it gets the same
+   answer. Collections are the exception: new arrivals and best sellers pick
+   individual cups out of several lines at once, so membership is a property of
+   the cup. Both end up in the same pass over the cards, which is why the grid
+   went flat.
 
    The selection is kept in localStorage and is a list of intentions, not an
    order. Nothing here takes money or claims stock. */
@@ -21,7 +24,7 @@
 
   var CART = window.CUP_CART;
   var anim = 0;
-  var filters = { line: 'all', cap: 'all', feats: [] };
+  var filters = { coll: 'all', line: 'all', cap: 'all', feats: [] };
   var featOpen = false;
 
   function lang() { return window.cupLang ? window.cupLang() : 'en'; }
@@ -109,6 +112,7 @@
     el.className = 'card';
     el.setAttribute('data-id', key);
     el.setAttribute('data-line', line.slug);
+    el.setAttribute('data-coll', collsFor(line, item).join(' '));
 
     var price = line.priceKwd == null
       ? '<p class="card__price card__price--unset">' + t('menu.price.unset') + '</p>'
@@ -159,15 +163,37 @@
     return b;
   }
 
-  function group(host, title, nodes) {
+  function group(host, title, nodes, cls) {
     var g = document.createElement('div');
-    g.className = 'filter__group';
+    g.className = 'filter__group' + (cls ? ' ' + cls : '');
     g.innerHTML = '<p class="micro">' + title + '</p>';
     var row = document.createElement('div');
     row.className = 'chips';
     nodes.forEach(function (n) { row.appendChild(n); });
     g.appendChild(row);
     host.appendChild(g);
+  }
+
+  /* Which collections a cup is in. `all` is never stamped: it is the absence of
+     a filter rather than a tag, and writing it onto all thirty-six cards would
+     put a word on every one of them that never narrows anything.
+
+     `limited` asks the line for the feature it already carries, so the Sadu
+     line answers because it IS a limited edition and not because it was listed
+     here a second time. The hand-tagged collections answer by id. */
+  function collsFor(line, item) {
+    var cat = window.CUP_CATALOGUE;
+    var key = id(line, item);
+    return (cat.collections || []).filter(function (c) {
+      if (c.slug === 'all') return false;
+      if (c.feature) return line.features.indexOf(c.feature) > -1;
+      return (c.ids || []).indexOf(key) > -1;
+    }).map(function (c) { return c.slug; });
+  }
+
+  function inColl(el) {
+    if (filters.coll === 'all') return true;
+    return (el.getAttribute('data-coll') || '').split(' ').indexOf(filters.coll) > -1;
   }
 
   function matches(line, cat) {
@@ -197,15 +223,21 @@
     var shown = 0;
     var concept = false;
 
-    document.querySelectorAll('[data-head]').forEach(function (head) {
-      head.hidden = flat || head.getAttribute('data-head') !== filters.line;
+    var per = {};
+    document.querySelectorAll('.card[data-line]').forEach(function (el) {
+      var slug = el.getAttribute('data-line');
+      var line = lineOf(slug);
+      var ok = !!line && matches(line, cat) && inColl(el);
+      el.hidden = !ok;
+      if (ok) { shown++; per[slug] = (per[slug] || 0) + 1; if (line.concept) concept = true; }
     });
 
-    document.querySelectorAll('.card[data-line]').forEach(function (el) {
-      var line = lineOf(el.getAttribute('data-line'));
-      var ok = !!line && matches(line, cat);
-      el.hidden = !ok;
-      if (ok) { shown++; if (line.concept) concept = true; }
+    /* The head comes back when a single kind is picked, and now only if that
+       kind still has cups under it: a collection can empty the line you
+       selected, and a heading standing over nothing reads as a broken page. */
+    document.querySelectorAll('[data-head]').forEach(function (head) {
+      var slug = head.getAttribute('data-head');
+      head.hidden = flat || slug !== filters.line || !per[slug];
     });
 
     var grid = document.querySelector('[data-grid]');
@@ -220,12 +252,32 @@
     if (count) count.textContent = shown + ' ' + t(shown === 1 ? 'menu.item' : 'menu.items');
     var empty = document.querySelector('[data-menu-empty]');
     if (empty) empty.hidden = shown > 0;
+
+    /* New arrivals and best sellers are tagged by hand, and "best seller" reads
+       as a fact about sales. While one of those is the active filter, the page
+       says where the list came from. */
+    var cnote = document.querySelector('[data-coll-note]');
+    if (cnote) {
+      var def = (cat.collections || []).filter(function (c) { return c.slug === filters.coll; })[0];
+      var mark = !!(def && def.placeholder);
+      cnote.hidden = !mark;
+      if (mark) cnote.textContent = t('coll.note');
+    }
   }
 
   function buildFilters(cat) {
     var host = document.querySelector('[data-filters]');
     if (!host) return;
     host.innerHTML = '';
+
+    /* Collections first: it is the cut a visitor arrives wanting — what is new,
+       what is limited — and kind, capacity and features narrow what it leaves. */
+    var colls = (cat.collections || []).map(function (c) {
+      return chip(t(c.key), filters.coll === c.slug, function () {
+        filters.coll = c.slug; buildFilters(cat); apply();
+      });
+    });
+    if (colls.length) group(host, t('shop.collections'), colls, 'filter__group--coll');
 
     var kinds = [chip(t('shop.all'), filters.line === 'all', function () {
       filters.line = 'all'; buildFilters(cat); apply();

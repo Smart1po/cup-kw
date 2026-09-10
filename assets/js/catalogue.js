@@ -126,5 +126,42 @@ window.CUP_CATALOGUE = {
         { slug: 'matcha-clear', en: 'Clear', ar: 'شفاف', hex: '#DCE3E8', clear: true, bare: true }
       ]
     }
+  ],
+
+  /* THE COLLECTIONS — the four buttons at the top of the menu.
+
+     Two of these are honest and two are not yet.
+
+     `all` is every cup, and `limited` is derived: it asks the line for the
+     `limited` feature it already carries, so the Sadu line answers because it
+     IS a limited edition and not because anyone tagged it here. Correct the
+     feature and this button follows.
+
+     `new` and `best` are PLACEHOLDER. There is no release date on anything in
+     this file and no sales data anywhere in this repository, so membership is a
+     hand-picked editorial guess for the pitch — the same standing as the two
+     invented prices above and the demo contact handles in content.js. Both are
+     marked `placeholder: true`, which puts a line on the page saying so
+     whenever one of them is the active filter. Replace the ids with real ones
+     and drop that flag; a "best seller" that is really a favourite is exactly
+     the kind of claim the README forbids.
+
+     Ids are `line/item`, the same key the cart stores, so a cup renamed in
+     `items` above has to be renamed here too or it silently leaves the
+     collection. */
+  collections: [
+    { slug: 'all', key: 'coll.all' },
+
+    { slug: 'new', key: 'coll.new', placeholder: true, ids: [
+      'concept/cyber-navy', 'concept/harry-potter', 'concept/interstellar',
+      'clear/matcha-clear', 'classic/butter-yellow', 'classic/baby-blue'
+    ] },
+
+    { slug: 'limited', key: 'coll.limited', feature: 'limited' },
+
+    { slug: 'best', key: 'coll.best', placeholder: true, ids: [
+      'classic/navy', 'classic/black', 'classic/beige',
+      'sadu/beige-sand', 'sadu/sadu-burgundy', 'advanced/navy-blueprint'
+    ] }
   ]
 };
