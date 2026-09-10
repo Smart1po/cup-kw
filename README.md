@@ -17,7 +17,7 @@ from disk and it works; put it on a host and it works the same way.
 | The cups | `/menu` | The whole catalogue, filtered by kind, capacity and features. |
 | One cup | `/product?id=sadu/navy` | Its capacity, what it is made of, and the way through to the engraving screen with that colour already on. |
 | Engraving | `/engrave` | Type your name in Arabic or English and watch it land on the cup. |
-| Sign in | `/login` | Email and password, or Google or Apple. Real accounts, real sessions. |
+| Log in | `/login` | Email and password, or Google or Apple. Real accounts, real sessions. |
 | Checkout | `/checkout` | Gated. An address you keep, or a gift straight to somebody else. |
 | My account | `/account` | Gated. Your details, and every order with its status and when it was placed. |
 
@@ -95,24 +95,13 @@ language, so the model is pinned left-to-right while the page around it flips.
 ## Photographs, and everything else drawn
 
 The photographs are in `assets/img/`. They earn their place: a photograph of the cup actually
-standing in a car cup holder is worth more than any cup holder that can be drawn in CSS, and
-the engraved names differing between shots demonstrates the whole positioning without a word
-of copy.
+standing in a car cup holder is worth more than any cup holder that can be drawn in CSS.
 
-**Five of them are placeholders and need replacing with the real files, at the same paths:**
-
-| Path | Should be | Standing in for now |
-|---|---|---|
-| `assets/img/cup-in-hand.jpg` | the cup in a hand, engraved `CUP` | the same shot engraved `CODED / MOUDNI` |
-| `assets/img/quest-majlis.jpg` | the brown cup in a majlis, `AHMAD` | the café shot |
-| `assets/img/quest-balcony.jpg` | the green cup on a Dubai balcony, `MAJED` | the desk shot |
-| `assets/img/quest-poolside.jpg` | the Butter Yellow cup poolside, `WAHAJ` | the same scene in navy |
-| `assets/img/quest-pilates.jpg` | the Baby Pink cup at pilates, `ASMAA` | the same scene in navy |
-
-Overwrite the file and the page picks it up. The alt text for the four quest photographs is
-in `assets/js/experience.js` under `quests`, written for the placeholders that are there
-now — **correct it when you swap the files**, because alt describing a picture the page is
-not showing is worse than no alt at all.
+Five of them carry a different colourway with a different name cut into it — AHMAD in a
+majlis, MAJED on a balcony in Dubai, WAHAJ poolside, ASMAA at pilates. That is the whole
+positioning demonstrated without a word of copy. Four of the five are the slideshow on the
+home page; their alt text and their captions are in `assets/js/experience.js` under
+`quests`.
 
 Everything else is still drawn — the 3D cup, the engraving preview, the icons, the marks, the
 stage props for the scenes that have no photograph. There is no web font, and nothing is

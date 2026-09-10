@@ -1019,43 +1019,35 @@ window.CUP_EXPERIENCE = {
 
      The captions are written as messages rather than as marketing, because
      that is the register the photographs are already in: somebody's hand,
-     somebody's evening, somebody's name on the cup.
-
-     ⚠ TWO OF THESE FOUR FILES ARE PLACEHOLDERS. `quest-poolside.jpg` and
-     `quest-pilates.jpg` are the right scenes in the wrong colourway — navy,
-     where the real shots are Butter Yellow and Baby Pink. `quest-majlis.jpg`
-     and `quest-balcony.jpg` are not the right scenes at all; they are the
-     café and the desk standing in until the majlis and the Dubai balcony
-     shots are dropped in. Overwrite the four files at those exact paths, and
-     correct the alt text below to match what each photograph actually shows.
-     The alt is written for the placeholders that are there NOW, because alt
-     that describes a picture the page is not showing is worse than none. */
+     somebody's evening, somebody's name on the cup. Each one is a different
+     colourway with a different name cut into it, which is the whole
+     positioning demonstrated without a word of copy. */
   "quests": [
     {
       "src": "assets/img/quest-majlis.jpg",
-      "altEn": "The cup on a café table in the sun, filled with iced coffee, its lid beside it",
-      "altAr": "الكوب على طاولة كافيه بالشمس، وفيه قهوة مثلجة، وغطاه جنبه",
+      "altEn": "The brown cup held in a majlis, engraved AHMAD, a television and lit shelves of dallah pots behind it",
+      "altAr": "الكوب البني بيد في ديوانية، محفور عليه AHMAD، وخلفه تلفزيون ورفوف دلال مضويّة",
       "capEn": "the diwaniya starts at nine. brought my own.",
       "capAr": "الدوانية تبدأ التسعة. جبت كوبي وياي."
     },
     {
       "src": "assets/img/quest-balcony.jpg",
-      "altEn": "The cup held at a desk, two screens of code behind it",
-      "altAr": "الكوب بيد على مكتب، وخلفه شاشتين كود",
+      "altEn": "The green cup held on a balcony at night, engraved MAJED, a laptop of code and lit towers behind it",
+      "altAr": "الكوب الأخضر بيد على بلكونة بالليل، محفور عليه MAJED، وخلفه لابتوب فيه كود وأبراج مضويّة",
       "capEn": "main quest: finish it before the sun comes up.",
       "capAr": "المهمة الأساسية: نخلّصه قبل ما تطلع الشمس."
     },
     {
       "src": "assets/img/quest-poolside.jpg",
-      "altEn": "The cup held on a stone table beside a swimming pool",
-      "altAr": "الكوب بيد على طاولة حجر جنب المسبح",
+      "altEn": "The Butter Yellow cup held on a stone table beside a swimming pool, engraved WAHAJ",
+      "altAr": "الكوب الأصفر بيد على طاولة حجر جنب المسبح، محفور عليه WAHAJ",
       "capEn": "side quest: do absolutely nothing, but cold.",
       "capAr": "مهمة جانبية: ما أسوي ولا شي، بس بارد."
     },
     {
       "src": "assets/img/quest-pilates.jpg",
-      "altEn": "The cup on a table in a pilates studio, full of iced matcha, its lid off",
-      "altAr": "الكوب على طاولة بستوديو بيلاتس، معبّى ماتشا مثلجة، وغطاه مشيول",
+      "altEn": "The Baby Pink cup held in a pilates studio, engraved ASMAA, full of iced matcha with its lid off beside it",
+      "altAr": "الكوب الوردي بيد في ستوديو بيلاتس، محفور عليه ASMAA، معبّى ماتشا مثلجة وغطاه جنبه",
       "capEn": "reformer at seven. the matcha made it.",
       "capAr": "بيلاتس السابعة. والماتشا نجت."
     }

@@ -230,7 +230,7 @@ window.CUP_STRINGS = {
   'nav.home':     { en: 'Home',      ar: 'الرئيسية' },
   'nav.engrave':  { en: 'Engraving', ar: 'الحفر' },
   'nav.reserve':  { en: 'Your cup',  ar: 'كوبك' },
-  'nav.login':    { en: 'Sign in',   ar: 'دخول' },
+  'nav.login':    { en: 'Log in',    ar: 'دخول' },
   'nav.skip':     { en: 'Skip to content', ar: 'تخطَّ إلى المحتوى' },
   'nav.menu':     { en: 'Menu', ar: 'القائمة' },
 
@@ -332,8 +332,8 @@ window.CUP_STRINGS = {
 
   /* ---- auth ---- */
 
-  'auth.title': { en: 'Sign in — cup.kw', ar: 'الدخول — cup.kw' },
-  'auth.h1':    { en: 'Sign in, or make an account.', ar: 'ادخل، أو سوِّ حساب.' },
+  'auth.title': { en: 'Log in — cup.kw', ar: 'الدخول — cup.kw' },
+  'auth.h1':    { en: 'Log in, or make an account.', ar: 'ادخل، أو سوِّ حساب.' },
   'auth.lede':  { en: 'Two boxes, two buttons. Your reservation and your engraving live behind them.',
                  ar: 'خانتين وزرين. حجزك وحفرك محفوظين وراهم.' },
   'auth.email':    { en: 'Email', ar: 'الإيميل' },
@@ -352,14 +352,14 @@ window.CUP_STRINGS = {
   /* Said out loud because their design mockup had both buttons on it. A button
      that looks like it works and does not is worse than no button. */
 
-  'auth.signin':  { en: 'Sign in', ar: 'دخول' },
+  'auth.signin':  { en: 'Log in', ar: 'دخول' },
   'auth.signup':  { en: 'Create account', ar: 'حساب جديد' },
   'auth.working': { en: 'Working…', ar: 'لحظة…' },
-  'auth.signout': { en: 'Sign out', ar: 'خروج' },
+  'auth.signout': { en: 'Log out', ar: 'خروج' },
 
   'auth.err.credentials': { en: 'That email and password do not match an account. If you have not made one yet, use Create account.',
                  ar: 'الإيميل وكلمة السر ما يطابقون أي حساب. إذا ما سويت حساب، اضغط حساب جديد.' },
-  'auth.err.exists': { en: 'There is already an account on that email. Use Sign in instead.',
+  'auth.err.exists': { en: 'There is already an account on that email. Log in instead.',
                  ar: 'في حساب أصلاً على هالإيميل. اضغط دخول بدالها.' },
   'auth.err.weak': { en: 'That password is too short. Six characters at the very least.',
                  ar: 'كلمة السر قصيرة. ستة حروف على الأقل.' },
