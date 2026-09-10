@@ -945,6 +945,29 @@ html[lang="ar"] .chip { text-transform: none; letter-spacing: 0; }
 }
 .card__cup { inline-size: auto; block-size: 132px; display: block; }
 .card__name { font-size: var(--small); font-weight: 500; margin: 0; text-align: center; }
+
+/* The line a cup belongs to, above the cup. Only earns its place under
+   Kind: All, where the five sections are one grid and the card is the only
+   thing that can say what it is; with a kind chosen the header is on screen
+   and this would repeat it once per card. */
+.card__line {
+  display: none; margin: 0; text-align: center; text-wrap: balance;
+  align-items: center; justify-content: center;
+  /* Two lines are reserved whether or not they are used. Limited Edition ·
+     Sadu wraps at this card width and the others do not, and cards in a row
+     stretch to the tallest, so without a fixed box the cups in a row would
+     start at two different heights. The lh unit is the honest way to say it;
+     the em is for anything that does not know lh yet. */
+  min-block-size: 3.1em; min-block-size: 2lh;
+  font-size: var(--micro); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--fg-dim);
+}
+html[lang="ar"] .card__line { text-transform: none; letter-spacing: 0; }
+.cards--all .card__line { display: flex; }
+
+/* Both of these set display, which beats the [hidden] default of display:none,
+   so filtering would leave them on screen without this. */
+.card[hidden], .lineup__head[hidden] { display: none; }
 .card__price {
   margin: 0; font-size: var(--micro); letter-spacing: .1em;
   color: var(--fg-dim); font-variant-numeric: tabular-nums;

@@ -115,12 +115,14 @@
     var el = document.createElement('article');
     el.className = 'card';
     el.setAttribute('data-id', key);
+    el.setAttribute('data-line', line.slug);
 
     var price = line.priceKwd == null
       ? '<p class="card__price card__price--unset">' + t('menu.price.unset') + '</p>'
       : '<p class="card__price">' + money(line.priceKwd) + '</p>';
 
     el.innerHTML =
+      '<p class="card__line">' + pick(line) + '</p>' +
       '<div class="card__stage">' + cupSVG(item, line) + '</div>' +
       '<h3 class="card__name">' + pick(item) + '</h3>' + price +
       '<button type="button" class="card__add" data-add="' + key + '"></button>';
@@ -178,15 +180,42 @@
     return true;
   }
 
+  function lineOf(slug) {
+    return window.CUP_CATALOGUE.lines.filter(function (l) { return l.slug === slug; })[0];
+  }
+
+  /* Kind: All is one flat grid of every cup, each card carrying its own line
+     name, rather than five titled sections. Fifteen Classic cards is more than
+     a screen, so a heading above the section has scrolled away by the time you
+     are looking at the cups under it — the name has to travel with the card.
+     Pick a single kind and the grid narrows to it and that line's header comes
+     back, because then the heading is on screen with everything it names, and
+     repeating it on all fifteen cards would only be noise. */
   function apply() {
     var cat = window.CUP_CATALOGUE;
+    var flat = filters.line === 'all';
     var shown = 0;
-    document.querySelectorAll('.lineup').forEach(function (sec) {
-      var line = cat.lines.filter(function (l) { return l.slug === sec.getAttribute('data-line'); })[0];
-      var ok = line && matches(line, cat);
-      sec.hidden = !ok;
-      if (ok) shown += line.items.length;
+    var concept = false;
+
+    document.querySelectorAll('[data-head]').forEach(function (head) {
+      head.hidden = flat || head.getAttribute('data-head') !== filters.line;
     });
+
+    document.querySelectorAll('.card[data-line]').forEach(function (el) {
+      var line = lineOf(el.getAttribute('data-line'));
+      var ok = !!line && matches(line, cat);
+      el.hidden = !ok;
+      if (ok) { shown++; if (line.concept) concept = true; }
+    });
+
+    var grid = document.querySelector('[data-grid]');
+    if (grid) grid.classList.toggle('cards--all', flat);
+
+    /* The note follows the concept cups rather than the concept section, which
+       no longer exists on its own when every kind is on screen at once. */
+    var note = document.querySelector('[data-concept-note]');
+    if (note) note.hidden = !concept;
+
     var count = document.querySelector('[data-menu-count]');
     if (count) count.textContent = shown + ' ' + t(shown === 1 ? 'menu.item' : 'menu.items');
     var empty = document.querySelector('[data-menu-empty]');
@@ -251,11 +280,15 @@
     if (!host || !cat) return;
 
     host.innerHTML = '';
+
+    /* One section, not five: every header is built and only the one for the
+       chosen kind is ever shown, and all thirty-six cards share a single grid
+       so that Kind: All is a continuous run rather than five short ones. */
+    var sec = document.createElement('section');
+    sec.className = 'lineup';
+
     cat.lines.forEach(function (line, i) {
       var body = cat.bodies[line.body] || {};
-      var sec = document.createElement('section');
-      sec.className = 'lineup';
-      sec.setAttribute('data-line', line.slug);
 
       var dims = body.handle
         ? body.heightCm + ' × ' + body.topDiameterCm + ' cm'
@@ -263,6 +296,8 @@
 
       var head = document.createElement('div');
       head.className = 'lineup__head';
+      head.setAttribute('data-head', line.slug);
+      head.hidden = true;
       head.innerHTML =
         '<p class="frame__no">' + String(i + 1).padStart(2, '0') + '</p>' +
         '<h2 class="display display--2">' + pick(line) + '</h2>' +
@@ -279,20 +314,24 @@
       });
       head.appendChild(chips);
       sec.appendChild(head);
-
-      var grid = document.createElement('div');
-      grid.className = 'cards';
-      line.items.forEach(function (item) { grid.appendChild(card(item, line)); });
-      sec.appendChild(grid);
-
-      if (line.concept) {
-        var note = document.createElement('p');
-        note.className = 'pending';
-        note.textContent = t('menu.concept.note');
-        sec.appendChild(note);
-      }
-      host.appendChild(sec);
     });
+
+    var grid = document.createElement('div');
+    grid.className = 'cards';
+    grid.setAttribute('data-grid', '');
+    cat.lines.forEach(function (line) {
+      line.items.forEach(function (item) { grid.appendChild(card(item, line)); });
+    });
+    sec.appendChild(grid);
+
+    var note = document.createElement('p');
+    note.className = 'pending';
+    note.setAttribute('data-concept-note', '');
+    note.hidden = true;
+    note.textContent = t('menu.concept.note');
+    sec.appendChild(note);
+
+    host.appendChild(sec);
 
     buildFilters(cat);
     apply();
