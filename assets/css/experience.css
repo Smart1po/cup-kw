@@ -1026,6 +1026,16 @@ html[lang="ar"] .card__line { text-transform: none; letter-spacing: 0; }
 .filter__group { display: grid; gap: .5rem; justify-items: start; }
 .filter__group .micro { color: var(--fg-dim); }
 
+/* Collections is the cut the other three narrow, so it takes the whole first
+   row rather than joining the wrap as a fourth group. The bar is flex at this
+   width, so that is a 100% basis and not a column span. */
+.filter__group--coll { flex-basis: 100%; }
+
+/* The line under the filters saying where a hand-tagged collection came from.
+   It sits with the filters rather than in the grid, because it is about the
+   list and not about any cup in it. */
+[data-coll-note] { margin-block-start: 1rem; max-inline-size: 52ch; }
+
 /* ---- features, behind a funnel ---- */
 
 /* The funnel anchors its own panel, so the panel follows the button when the

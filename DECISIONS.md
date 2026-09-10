@@ -273,6 +273,47 @@ the side of the cup. It has happened twice. Centre it in one place.
 
 ---
 
+## The four collections, and which two are honest
+
+The menu leads with four buttons — All cups, New arrivals, Limited edition, Best sellers —
+because that is the cut a visitor arrives wanting. Categories, capacity and features are
+still underneath and still narrow whatever the collection leaves.
+
+They are not all the same kind of claim, and the code keeps them apart on purpose.
+
+`all` is every cup. `limited` is **derived**: it asks the line for the `limited` feature it
+already carries, so the Sadu line answers because it *is* a limited edition. Nothing was
+tagged to make that button work, and correcting the feature moves the button with it.
+
+`new` and `best` are **hand-tagged and marked `placeholder: true`** in `catalogue.js`. There
+is no release date on anything in this repository and no sales data anywhere in it, so
+membership is an editorial guess for the pitch — the same standing as the two invented prices
+and the demo contact handles. Two consequences follow, and both should survive:
+
+1. While either one is the active filter, the page carries a line saying the list was picked
+   by hand and not from release dates or sales figures. A "best seller" that is really a
+   favourite is exactly the claim the README forbids, and the fix is not to delete the button
+   but to say where the list came from until the data exists.
+2. When real data arrives, replace the ids and drop the `placeholder` flag. The note
+   disappears on its own — nothing else has to change.
+
+Membership ids are `line/item`, the same key the cart stores. A cup renamed in `items` has to
+be renamed here too, or it silently leaves the collection.
+
+**A collection is a property of the cup, not of the line.** Categories, capacity and features
+are properties of the line — every item in a line shares them — but best sellers pull from
+Classic, Sadu and Advanced at once. That distinction cost nothing here only because the grid
+had already gone flat for `Categories: All`; collections ride the same pass over the cards.
+It is also why the file header in `menu.js` no longer says filtering happens per line. That
+claim had already stopped being true.
+
+One thing fell out of it: **a head needs cups under it, not just a selected category.** New
+arrivals with Categories set to Advanced matches nothing, and before this the Advanced
+heading stood over an empty grid with the "nothing matches" line beneath it. `apply()` counts
+visible cards per line before deciding which head to show.
+
+---
+
 ## Things that were considered and rejected
 
 - **A video.** An advert clip was on the home page for one commit and was replaced by the 3D
@@ -299,6 +340,7 @@ the side of the cup. It has happened twice. Centre it in one place.
 | Heat Test readings | `content.js` → `heatTest.rows` |
 | Cup-holder results | `content.js` → `fit.entries` — physically tested cars only |
 | Contact handles | `content.js` → `contact` |
+| New arrivals / Best sellers membership | `catalogue.js` → `collections` — hand-picked, `placeholder: true` |
 | Capacity, hours cold/hot, weight, steel grade | `content.js` → `product` |
 | Order status is customer-editable | it lives in `auth.users` metadata — `SUPABASE.md` carries the table that fixes it |
 | The `[ MOUDHI ]` wordmark | hard-coded in `assets/js/cup3d.js` |

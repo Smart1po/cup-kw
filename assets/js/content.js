@@ -441,6 +441,16 @@ window.CUP_STRINGS = {
   'cup.word.on':  { en: 'Printed line: on',  ar: 'السطر المطبوع: شغّال' },
   'cup.word.off': { en: 'Printed line: off', ar: 'السطر المطبوع: مطفي' },
   'shop.all':      { en: 'All', ar: 'الكل' },
+  'shop.collections': { en: 'Collections', ar: 'المجموعات' },
+  'coll.all':      { en: 'All cups', ar: 'كل الأكواب' },
+  'coll.new':      { en: 'New arrivals', ar: 'وصل جديد' },
+  'coll.limited':  { en: 'Limited edition', ar: 'إصدار محدود' },
+  'coll.best':     { en: 'Best sellers', ar: 'الأكثر مبيعاً' },
+  /* Shown under the filters whenever a hand-tagged collection is the one being
+     looked at, because "best sellers" reads as a fact about sales and this one
+     is not one yet. See collections in catalogue.js. */
+  'coll.note':     { en: 'Picked by hand for the pitch — not from release dates or sales figures.',
+                     ar: 'مختارة بالإيد للعرض — لا من تواريخ إصدار ولا من أرقام بيع.' },
   'shop.kind':     { en: 'Categories', ar: 'الفئات' },
   'shop.capacity': { en: 'Capacity', ar: 'الحجم' },
   'shop.features': { en: 'Features', ar: 'المواصفات' },
